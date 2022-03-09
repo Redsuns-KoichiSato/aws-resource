@@ -1,0 +1,32 @@
+body {
+  background-color: #fafafa;
+}
+#root{
+  background-color: #fafafa;
+}
+header {
+  background: #232f3e;
+  color: #d5dbdb;
+}
+header > .container {
+  padding: 5px;
+}
+header h1{
+  font-size: 1.4em;
+  padding-top: .3em;
+}
+footer{
+  background: #232f3e;
+  color: #d5dbdb;
+}
+.main_app{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #fff;
+  border: #999797e0 1px solid;
+}
+.spinner{
+  font-size: .25em;
+  max-height: 5em;
+  max-width: 5em; 
+}
