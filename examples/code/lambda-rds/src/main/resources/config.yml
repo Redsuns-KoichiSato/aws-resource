@@ -1,0 +1,8 @@
+credentials:
+  username: <YOUR_USERNAME>
+  password: <YOUR_PASSWORD>
+databaseConf:
+  name: ExampleDB
+  hostname: <YOUR_DB_HOSTNAME>
+  port: 3306
+  driver: mariadb

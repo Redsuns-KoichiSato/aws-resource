@@ -1,0 +1,1060 @@
+
+<!DOCTYPE html>
+<html lang='it'>
+<head>
+<title>Developing on AWS - Lab 1 (Java) - Configure the Development Environment | Qwiklabs</title>
+<script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Diego","lastname":"Brignoli","fullname":"Diego Brignoli","company":"Beta80","email":"diego.brignoli@beta80group.it","origin":"it-flane, direct","subscriptions":0,"id":"a61e1fd9f1a7d5ef061dbe892bae5f9f","qlCreatedAt":"2022-03-07 13:40:45 UTC","optIn":true,"current_organization_id":null,"current_organization_role":null};gon.segment=null;gon.deployment="it-flane";gon.content={"type":"Lab","id":73285,"name":"Developing on AWS - Lab 1 (Java) - Configure the Development Environment"};
+//]]>
+</script>
+<script>
+  dataLayer = [
+    {user: gon.current_user},
+    {content: gon.content}
+  ];
+</script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/polyfills/webcomponents-loader-60a166e60df2787cca5915e2ced8c317457f421a20f02601b937a72275ac441a.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-2beee108ba05276bc429223ee82ed81449d233c93d45af5da84add895e101218.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-b44c688caf0e24039ff5020ad65695458c8c0edbd37ac5431ce3efa6d80f07e0.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors__it-c5bb7dbc14336638421f7b3f9e4f32567ff92565d683255515ad93ae6d7e7992.js"></script>
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="7opDU2ejKeJI6tOoIFb6YuT/opEywiLSdK+W5aeZuFxJR6kALlLnRoEMhuLjs0GuTtZa0Hr9ZKUgIWpbIxtXLA==" />
+<meta content='width=device-width, initial-scale=1.0, user-scalable=yes' name='viewport'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<meta content='[{&quot;id&quot;:&quot;recaptcha_experiment&quot;,&quot;optimize_id&quot;:&quot;dpViOcLkT3qS4TvL2mRojA&quot;,&quot;title&quot;:&quot;No Recaptcha shown for trusted users&quot;,&quot;variant_index&quot;:1,&quot;variant&quot;:&quot;no_recaptcha&quot;}]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:14798}' name='help-api-product-data'>
+<meta content='In this lab the student verifies the specific IDE is installed and configured to access AWS Services. Students will learn about the feature available with the AWS Toolkit. They also use IAM to understand how permissions work.' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='Developing on AWS - Lab 1 (Java) - Configure the Development Environment | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='In this lab the student verifies the specific IDE is installed and configured to access AWS Services. Students will learn about the feature available with the AWS Toolkit. They also use IAM to understand how permissions work.' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+
+
+
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+<link href='/favicon-32.png' rel='shortcut icon' type='image/x-icon'>
+
+
+
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+<link rel="stylesheet" media="screen" href="https://cdn.qwiklabs.com/stylesheets/application_old/locales/it.css" />
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-1c1adc018a83f53f78a5b6f624572a32bf4f3c935b02a026b7bf82afe02b4dae.css" />
+
+<style>
+  :root {
+    --primary-text-on-surface-color: #1A73E8;
+    --primary-text-on-surface-color-dark: #1568d6;
+    --primary-text-on-surface-color-darker: #135ec1;
+    --primary-text-on-surface-color-darkest: #1154ac;
+    --primary-surface-color: #1A73E8;
+    --primary-surface-color-rgb: 26,115,232;
+    --primary-surface-color-light: #d1e3fa;
+    --primary-surface-color-lightest: #e8f1fd;
+    --text-on-primary-color: #FFFFFF;
+    --accent-text-on-surface-color: #F29900;
+    --accent-surface-color: #F9AB00;
+    --accent-surface-color-rgb: 249,171,0;
+    --accent-surface-color-light: #ffefcc;
+    --text-on-accent-color: #202124;
+  }
+</style>
+
+
+
+</head>
+<body class='lab-show l-full no-nav application-new focuses focuses-show lab-show l-full no-nav '>
+<div class='header-container'>
+<div class='header'>
+<ql-toolbar jumpEnabled>
+<div class='header__title' slot='title'>
+<ql-icon-button label="Indietro" href="/classrooms/2083" id="4f76bcb53d592a04" target="_self" tip="Indietro">arrow_back</ql-icon-button>
+<h1 class='ql-headline-6'>Developing on AWS - Lab 1 (Java) - Configure the Development Environment</h1>
+</div>
+<div class='header__actions' slot='action'>
+<ql-icon-button id='control-panel-target' style='display: none;'>
+dashboard
+</ql-icon-button>
+<ql-menu for='control-panel-target' id='control-panel-menu'></ql-menu>
+<ql-icon-button class='mobile-hide' icon='help_outline' id='help-menu-button' label='Apri il menu Guida' tip='Guida'></ql-icon-button>
+<ql-menu for='help-menu-button' id='help-menu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='lab' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:14798},&quot;context&quot;:&quot;lab&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/contact_us' label='Email support' target='_blank'></ql-menu-item>
+<ql-menu-item label='Chat support' onClick='ql.chat.open()'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button class='mobile-hide' icon='language' id='language' label='Seleziona le preferenze relative alla lingua' tip='Lingua'></ql-icon-button>
+<ql-menu for='language'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/classrooms/2083/labs/14560?locale=ar' label='العربية‬‎' lang='ar'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/classrooms/2083/labs/14560?locale=de' label='Deutsch' lang='de'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/classrooms/2083/labs/14560?locale=en' label='English' lang='en'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/classrooms/2083/labs/14560?locale=es' label='español (Latinoamérica)' lang='es'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/classrooms/2083/labs/14560?locale=fr' label='français' lang='fr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/classrooms/2083/labs/14560?locale=fr_CA' label='français (Canada)' lang='fr-CA'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/classrooms/2083/labs/14560?locale=he' label='עברית' lang='he'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/classrooms/2083/labs/14560?locale=id' label='bahasa Indonesia' lang='id'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/classrooms/2083/labs/14560?locale=it' label='Italiano' lang='it'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/classrooms/2083/labs/14560?locale=ja' label='日本語' lang='ja'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/classrooms/2083/labs/14560?locale=ko' label='한국어' lang='ko'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/classrooms/2083/labs/14560?locale=pl' label='Polski' lang='pl'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/classrooms/2083/labs/14560?locale=pt_BR' label='português (Brasil)' lang='pt-BR'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/classrooms/2083/labs/14560?locale=pt_PT' label='português (Portugal)' lang='pt-PT'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/classrooms/2083/labs/14560?locale=ru' label='русский' lang='ru'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/classrooms/2083/labs/14560?locale=tr' label='Türkçe' lang='tr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/classrooms/2083/labs/14560?locale=zh' label='简体中文' lang='zh'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/classrooms/2083/labs/14560?locale=zh_TW' label='繁體中文' lang='zh-TW'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button id='my_account' label='Account personale' tip='Account personale'>
+<ql-avatar></ql-avatar>
+</ql-icon-button>
+<ql-menu for='my_account' id='my_account_menu' style='max-height: 640px'>
+<div class='my-account-menu'>
+<ql-avatar class='l-mtl l-mbl' size='120'></ql-avatar>
+<div class='my-account-menu__user-info l-mbl'>
+<h4 class='ql-subhead-1'>Diego Brignoli</h4>
+<p class='ql-body-2 text--light'>diego.brignoli@beta80group.it</p>
+<p class='ql-body-2 text--light'>
+</p>
+</div>
+<div class='buttons l-mbl'>
+<a class="button button--hairline" id="settings" href="/my_account/profile">Impostazioni</a>
+</div>
+<hr>
+<ql-button data-analytics-action='clicked_sign_out' href='/users/sign_out' method='delete'>
+Esci
+</ql-button>
+<div class='privacy l-mtl'>
+<a class="ql-caption text--light" href="/privacy_policy">Privacy</a>
+<span class='ql-caption text--light l-mls l-mrs'>&middot;</span>
+<a class="ql-caption text--light" href="/terms_of_service">Termini</a>
+</div>
+</div>
+</ql-menu>
+
+</div>
+</ql-toolbar>
+
+</div>
+</div>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class="custom-logo"><img alt="Qwiklabs" height="24" aria-label="Qwiklabs" src="https://cdn.qwiklabs.com/yjTIzMprll8xFSNHNul7y7IDev3CoxdLyHeDu9qmu2Q%3D" /></div>
+</div>
+<nav class='ql-sidenav'>
+<ql-sidenav-item href='/' icon='home' label='Home page'></ql-sidenav-item>
+
+<ql-sidenav-item href='/catalog' icon='school' label='Catalogo'></ql-sidenav-item>
+
+<ql-sidenav-item active href='/profile' icon='event_note' label='Profilo'></ql-sidenav-item>
+
+</nav>
+
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main' id='jump-content'>
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+<ql-drawer-container class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;Developing on AWS - Lab 1 (Java) - Configure the Development Environment&quot;,&quot;lab_name&quot;:&quot;Developing on AWS - Lab 1 (Java) - Configure the Development Environment&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;it-flane&quot;}' data-focus-id='14560' data-lab-billing-limit='0.0' data-lab-duration='7200' data-parent='classroom' id='lab-container'>
+<ql-drawer id='terminal-drawer' slot='drawer' style='width: calc(100% - 480px)'>
+<iframe allow='clipboard-read' class='terminal' id='embedded-resource'></iframe>
+</ql-drawer>
+<ql-drawer-content class='js-lab-wrapper' id='lab-content' slot='drawer-content'>
+<ql-drawer-container id='lab-content-container'>
+<ql-drawer id='control-panel-drawer' open slot='drawer' width='320'>
+<ql-lab-control-panel class='ql-lab-control-panel__max-height control-panel js-lab-control-panel' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labDetails='[]' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}' studentResources='[]'>
+</ql-lab-control-panel>
+</ql-drawer>
+<ql-drawer-content id='lab-instructions' slot='drawer-content'>
+<ql-snackbar id='alert-snackbar'></ql-snackbar>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message' role='alert'></p>
+<ql-icon-button class='alert__close js-alert-close' icon='clear'></ql-icon-button>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<div class='lab-content__renderable-instructions js-lab-content'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+Developing on AWS - Lab 1 (Java) - Configure the Development Environment
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>2 ore </span>
+<span>Gratis</span>
+<div class='lab__rating'>
+<a aria-label="Recensioni del lab" href="/focuses/14560/reviews?parent=classroom"><div class='rateit' data-rateit-readonly='true' data-rateit-value='4.6'></div>
+
+</a><ql-button aria-label='Valuta lab' id='rate-lab-btn' label='Valuta lab' text></ql-button>
+</div>
+</div>
+</div>
+<div class='lab-outline-place-holder'></div>
+
+<div class='markdown-lab-instructions js-markdown-instructions no-select' id='markdown-lab-instructions'>
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/aws-logo.png" alt=""></p>
+
+
+
+<p>© 2022 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited. All trademarks are the property of their owners.</p>
+
+<p>Note: Do not include any personal, identifying, or confidential information into the lab environment. Information entered may be visible to others.</p>
+
+<p>Corrections, feedback, or other questions? Contact us at <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification</em></a>.</p>
+
+<p><strong>Duration</strong></p>
+
+<p>This lab will require around <strong>45 minutes</strong> to complete.</p>
+
+<p><a id="prerequisites" target="_blank"></a></p>
+
+<h2 id="step1">Prerequisites</h2>
+
+<p>This lab requires:</p>
+<ul>
+<li>Access to a Microsoft Windows or MacOS notebook computer with a Wi-Fi connection.</li>
+<li>An Internet browser such as Chrome, Firefox, or IE9+.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Previous versions of Internet Explorer are not supported.</li>
+<li>A Microsoft Remote Desktop client to connect to your development Amazon Elastic Compute Cloud (Amazon EC2) instance.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You can use an iPad or tablet device to access these directions in the lab console.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Review additional lab environment specific details in the <a href="#appendix" target="_self">Appendix.</a>
+</li>
+</ul>
+<h2 id="step2">Overview</h2>
+
+<p>In this lab, you are going to connect to your sandbox environment that you will use to build out your end-to-end application for this course. You will verify the appropriate development tools are installed and configured to access AWS services. You will review your specific IDE, learn how the AWS Toolkit works, and you will use AWS Identity and Access Management (IAM) to understand how permissions work.</p>
+
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-1-java/instructions/en_us/images/lab1-diagram.png" alt="Lab 1 Diagram of Amazon EC2 instance, IAM, and Amazon S3 service icons"></p>
+
+<h3>Objectives</h3>
+
+<p>After completing this lab, you will be able to:</p>
+<ul>
+<li>Connect to a developer environment.</li>
+<li>Verify the IDE and the AWS CLI are installed and configured to use the application profile.</li>
+<li>Verify the necessary permissions have been granted to run AWS CLI commands.</li>
+<li>Assign an IAM policy to a role to delete an Amazon Simple Storage Service (Amazon S3) bucket.</li>
+</ul>
+
+
+<h2 id="step3">Start Lab</h2>
+<ol start="1">
+<li>At the top of your screen, launch your lab by choosing <span style="background-color:#34A853;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#34A853;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Start Lab</span>
+</li>
+</ol>
+<p>This starts the process of provisioning your lab resources. An estimated amount of time to provision your lab resources is displayed. You must wait for your resources to be provisioned before continuing.</p>
+
+<p><i class="fas fa-info-circle"></i> If you are prompted for a token, use the one distributed to you (or credits you have purchased). </p>
+<ol start="2">
+<li>Open your lab by choosing <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span>
+</li>
+</ol>
+<p>This opens an AWS Management Console sign-in page.</p>
+<ol start="3">
+<li>On the sign-in page, configure:</li>
+</ol><ul>
+<li>
+<strong>IAM user name:</strong> <input readonly class="copyable-inline-input" size="10" type="text" value="awsstudent">
+</li>
+<li>
+<strong>Password:</strong> Paste the value of <strong>Password</strong> from the left side of the lab page</li>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Sign In</span>
+</li>
+</ul>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Do not change the Region unless instructed.</strong></p>
+
+
+
+<h3>Common Login Errors</h3>
+
+<p><strong>Error: You must first log out</strong></p>
+
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/logouterror.png" alt=""></p>
+
+<p>If you see the message, <strong>You must first log out before logging into a different AWS account:</strong> </p>
+<ul>
+<li>Choose <strong>here</strong>
+</li>
+<li>Close your browser tab to return to your initial lab window</li>
+<li>Choose <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span> again</li>
+</ul>
+
+
+<h2 id="step4">Task 0: Connect to your development environment</h2>
+
+<p>In this task, you will connect to your development environment.</p>
+
+<p><a id="connection-options" target="_blank"></a></p>
+<ol start="4">
+<li>Choose a method to connect to the development environment from the options below:</li>
+</ol><ul>
+<li><a href="#connect_guacamole" target="_self">Connect to Your Windows Dev Instance using Apache Guacamole</a></li>
+<li><a href="#connect_win_mac" target="_self">Connect to Your Windows Dev Instance from a MacOS Machine using RDP</a></li>
+<li><a href="#connect_win_win" target="_self">Connect to Your Windows Dev Instance from a Windows Machine using RDP</a></li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> When lab instructions in subsequent sections require you to issue commands, use the <strong>IntelliJ terminal</strong>.</p>
+
+<p><i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong> This lab is designed for both experienced and newer developers:</p>
+<ul>
+<li><p>For more experienced developers who enjoy a challenge, there are <strong>High-Level Instructions</strong> before each task that should provide you enough information to help you complete the task.</p></li>
+<li><p>Once you complete the updates test your code to ensure it works, troubleshoot if needed, and then move on to the next task.</p></li>
+<li><p>For newer developers, there are <strong>Detailed Instructions</strong> to guide you through each step of the lab.</p></li>
+</ul>
+
+
+<h2 id="step5">Task 1: Review the developer environment</h2>
+
+<p>In this set of tasks, you will verify that the <strong>AWS CLI</strong> and <strong>IntelliJ IDE</strong> have been installed and configured.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Verify IntelliJ installation.</li>
+<li>Verify installation of the AWS CLI.</li>
+<li>Verify region value is set correctly, to the value to the left of these instructions, using <input readonly class="copyable-inline-input" size="13" type="text" value="aws configure">.</li>
+<li>Run the <input readonly class="copyable-inline-input" size="13" type="text" value="aws configure"> command to list available application profiles.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 1.1: Verify the IDE installation</h3>
+<ol start="5">
+<li><p>Return to the <strong>RDP session</strong> you started earlier, and verify that there is an <strong>IntelliJ IDEA</strong> desktop icon indicating that it has been installed.</p></li>
+<li><p>Open <strong>IntelliJ</strong> from the desktop shortcut.</p></li>
+</ol><ul>
+<li>From the <strong>LICENSE AGREEMENT</strong> window, select the check box reading <input readonly class="copyable-inline-input" size="70" type="text" value="I confirm that I have read and accept the terms of this User Agreement"> and then choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#000000;border-color:#0073bb;">Continue</span>
+</li>
+<li>From the <strong>DATA SHARING</strong> window, choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#000000;border-color:#0073bb;">Don't Send</span>
+</li>
+<li>From the <strong>Welcome</strong> screen, choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">+</span> <strong>New Project</strong>.</li>
+<li>Next, choose <strong>Maven</strong> and then choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Next</span>
+</li>
+<li>For <strong>Name:</strong> type <input readonly class="copyable-inline-input" size="4" type="text" value="test"> and choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Finish</span>
+</li>
+</ul><ol start="7">
+<li>Close the following windows.</li>
+</ol><ul>
+<li><strong>Tip of the Day</strong></li>
+<li><strong>Code With Me</strong></li>
+<li><strong>What's New in IntelliJ IDEA</strong></li>
+<li><strong>Cookies and IP address...</strong></li>
+<li>Any notifications such as <strong>AWS Toolkit Metrics</strong>
+</li>
+</ul>
+<h3>Task 1.2: Verify the AWS CLI installation</h3>
+<ol start="8">
+<li>Open an <strong>IntelliJ terminal</strong> (tab at the bottom on the left side of the IntelliJ window) and verify that the <strong>AWS CLI</strong> is installed by running the command below:</li>
+</ol><pre class="highlight plaintext"><code>aws --version&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i>  <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">aws-cli/2.1.38 Python/3.8.8 Windows/10 exe/AMD64 prompt/off<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> The output indicates the version of the <strong>AWS CLI</strong> installed is version <strong>2</strong>. Your version may be newer than the version listed.</p>
+<ol start="9">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> The <input readonly class="copyable-inline-input" size="11" type="text" value="credentials"> file has already been populated with access keys for the <input readonly class="copyable-inline-input" size="9" type="text" value="developer"> user. Verify that the <strong>AWS CLI</strong> is configured to use the appropriate <strong>region</strong> and <strong>output format</strong> with the command below:</li>
+</ol><pre class="highlight plaintext"><code>aws configure&#x000A;</code></pre><ol start="10">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> When prompted, verify the following and press <strong>ENTER</strong> to move on to the next value as no changes are needed:</li>
+</ol>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example output:</strong></p>
+
+<p><span style="font-family:Courier;">AWS Access Key ID [None]:</span><br><br>
+<span style="font-family:Courier;">AWS Secret Access Key [None]:</span><br><br>
+<span style="font-family:Courier;">Default region name [us-east-1]: </span><br><br>
+<span style="font-family:Courier;">Default output format [yaml]: </span><br></p>
+<ol start="11">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> To see the full list of pre-configured <strong>profiles</strong>, run the command below:</li>
+</ol><pre class="highlight plaintext"><code>aws configure list-profiles&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">default<br><br>
+testuser<br><br>
+developer<br><br>
+developer-user<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Moving forward, you will issue <strong>AWS CLI</strong> commands using the <input readonly class="copyable-inline-input" size="9" type="text" value="developer"> profile, as it is already mapped to a role named <strong>application-notes-role</strong> as a best practice. You will verify the application role has sufficient permissions in a later task.</p>
+
+<p><a id="todo-1" target="_blank"></a></p>
+<ol start="12">
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Using the <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/sts/index.html" target="_blank">AWS CLI Command Reference for AWS Security Token Service (AWS STS)</a>, choose the correct command to run to determine which <strong>role</strong> the <strong>developer profile</strong> is tied to for <strong>TODO 1</strong>:</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight plaintext"><code>aws sts get-access-key-info --profile developer&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight plaintext"><code>aws sts get-caller-identity --profile developer&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;"> Account: '123456789101'<br><br>
+Arn: arn:aws:sts::123456789101:assumed-role/notes-application-role/botocore-session-1623964647<br><br>
+UserId: AROAVDCTPMY4FOWV3KWGV:botocore-session-1623964647<br>
+</span></p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  You can find the solution to this step in the <a href="#todo-1-solution" target="_self">TODO 1 Solution</a> section at the bottom of these instructions.</p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully reviewed the developer environment.</p>
+
+
+
+<h2 id="step6">Task 2: Review the AWS Toolkit extension options</h2>
+
+<p>Verify that the <strong>AWS Toolkit</strong> is installed and functional.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Open the <strong>AWSToolkit</strong> extension window.</li>
+<li>Verify the <strong>profile</strong> is set to use <input readonly class="copyable-inline-input" size="9" type="text" value="developer">.</li>
+<li>Verify the <strong>region</strong> matches the value to the left of these instructions.</li>
+<li>Review the service resources in the <strong><i class="fas fa-cube"></i></strong> <strong>AWS Explorer</strong>.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+<ol start="13">
+<li>From the top menu, choose <strong>View</strong> &gt; <strong>Tool Windows</strong> &gt; <strong><i class="fas fa-cube"></i></strong> <strong>AWS Explorer</strong>.</li>
+<li>From the <strong>AWS Explorer</strong> pane, you can see the values assigned for the <strong>Profile</strong> and the <strong>Region</strong>:</li>
+</ol><ul>
+<li>Update the profile from <input readonly class="copyable-inline-input" size="23" type="text" value="No credentials selected"> to use the <strong>developer</strong> profile, because it has elevated privileges.</li>
+<li>Make sure the <strong>Region</strong> matches the region value shown to the left of these instructions.
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> If you don't see your region choose <strong>All Regions</strong> <i class="fas fa-caret-right"></i> and choose the correct region.</li>
+</ul><ol start="15">
+<li>Using the <strong>AWS Explorer</strong>, you can view, create, update, and delete resources for various AWS services. You may want to review the services to familiarize yourself with the options available.</li>
+</ol>
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully reviewed the AWS Toolkit.</p>
+
+
+
+<p><a id="task4" target="_blank"></a></p>
+
+<h2 id="step7">Task 3: Verify IAM Permissions</h2>
+
+<p>In this set of tasks, you will run a command to list the Amazon S3 buckets in this account, attempt to delete a bucket, and run the <input readonly class="copyable-inline-input" size="7" type="text" value="--debug"> command to see where it fails.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Run <input readonly class="copyable-inline-input" size="6" type="text" value="aws s3"> command to <strong>view</strong> all s3 buckets.</li>
+<li>Run <input readonly class="copyable-inline-input" size="6" type="text" value="aws s3"> command to <strong>delete</strong> an obsolete s3 bucket with <input readonly class="copyable-inline-input" size="14" type="text" value="deletemebucket"> in the name.</li>
+<li>Run <input readonly class="copyable-inline-input" size="6" type="text" value="aws s3"> command to <strong>delete</strong> an obsolete s3 bucket with <input readonly class="copyable-inline-input" size="14" type="text" value="deletemebucket"> in the name with the debug option.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 3.1: View Amazon S3 buckets in your account with the AWS CLI</h3>
+<ol start="16">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to list the Amazon S3 buckets for this account:</li>
+</ol><pre class="highlight plaintext"><code>aws s3 ls --profile developer&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Similar output expected:</strong></p>
+
+<p><span style="font-family:Courier;">2021-05-14 16:07:43 qls-179634-049d0fe03a7ad679-lab1bucket-1ju0b17x8s3mf<br><br>
+2021-05-14 16:07:43 qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Buckets listed in this output are limited to those with the description of <input readonly class="copyable-inline-input" size="4" type="text" value="lab1"> in the name. Your list may include others not mentioned here.</p>
+
+<p><a id="todo-2" target="_blank"></a></p>
+
+<h3>Task 3.2: Delete an Amazon S3 bucket with the AWS CLI</h3>
+<ol start="17">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Create a variable named <strong>bucketToDelete</strong> and set its value to the <strong>BucketNameToDelete</strong> value to the left of these instructions with the command below. It will be referenced in future commands.</li>
+</ol><pre class="highlight java"><code><span class="n">set</span> <span class="n">bucketToDelete</span><span class="o">=&lt;</span><span class="n">BucketNameToDelete</span><span class="o">&gt;</span>&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong></p>
+
+<p><span style="font-family:Courier;">set bucketToDelete=qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp</span></p>
+<ol start="18">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Choose the correct code snippet to run that will delete the bucket with <input readonly class="copyable-inline-input" size="14" type="text" value="deletemebucket"> in the name for <strong>TODO 2</strong>. Use the <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/index.html" target="_blank">AWS CLI Command Reference for Amazon S3</a> as needed.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight plaintext"><code>aws s3 remove-bucket s3://%bucketToDelete% --profile developer&#x000A;&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight plaintext"><code>aws s3 rb s3://%bucketToDelete% --profile developer&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">remove_bucket failed: remove_bucket failed: s3://qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp An error occurred (AccessDenied) when calling the DeleteBucket operation: Access Denied</span></p>
+
+<p>You encountered the error, <strong>Access Denied</strong>. It appears there is a permissions issue with running this command.</p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  You can find the solution to this step in the <a href="#todo-2-solution" target="_self">TODO 2 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 3.3: Debug the Amazon S3 delete bucket command</h3>
+
+<p>When you include the <strong>--debug</strong> option, details include (among other things):</p>
+<ul>
+<li>Looking for credentials</li>
+<li>Parsing the provided parameters</li>
+<li>Constructing the request sent to AWS servers</li>
+<li>The contents of the request sent to AWS</li>
+<li>The contents of the raw response</li>
+<li>The formatted output</li>
+</ul><ol start="19">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to delete the bucket with <input readonly class="copyable-inline-input" size="14" type="text" value="deletemebucket"> in the name.</li>
+</ol><pre class="highlight plaintext"><code>aws s3 rb s3://%bucketToDelete% --profile developer --debug&#x000A;</code></pre>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> The output can be rather lengthy, so the bulleted list below highlights the information in the output that will help you to understand the process and why the request was denied.</p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+<ul>
+<li>Start of debug which breaks down the request into the individual parts.</li>
+</ul>
+<p><span style="font-family:Courier;"> 2021-06-15 20:29:26,376 - MainThread - awscli.clidriver - DEBUG - Arguments entered to CLI: ['s3', 'rb', 's3://qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp', '--profile', 'developer', '--debug']<br>
+</span></p>
+<ul>
+<li>Sets the <strong>config variable</strong> and then skips the <strong>environment variable</strong> since a profile was specified.</li>
+</ul>
+<p><span style="font-family:Courier;"> 2021-06-15 20:29:26,486 - MainThread - botocore.session - DEBUG - Setting config variable for profile to 'developer'<br>
+</span><br></p>
+
+<p><span style="font-family:Courier;"> 2021-06-15 20:29:26,486 - MainThread - botocore.credentials - DEBUG - Skipping environment variable credential check because profile name was explicitly set.<br>
+</span><br></p>
+<ul>
+<li>Now it begins the <strong>authentication process</strong> looking at the instance's metadata.</li>
+</ul>
+<p><span style="font-family:Courier;">2021-06-15 20:29:26,533 - MainThread - botocore.credentials - DEBUG - Looking for credentials via: assume-role<br><br>
+2021-06-15 20:29:26,533 - MainThread - botocore.credentials - DEBUG - Looking for credentials via: assume-role-with-web-identity<br><br>
+2021-06-15 20:29:26,533 - MainThread - botocore.credentials - DEBUG - Looking for credentials via: sso<br><br>
+2021-06-15 20:29:26,533 - MainThread - botocore.credentials - DEBUG - Looking for credentials via: shared-credentials-file<br><br>
+2021-06-15 20:29:26,533 - MainThread - botocore.credentials - INFO - Found credentials in shared credentials file: ~/.aws/credentials<br>
+</span></p>
+<ul>
+<li>Next, it prepares the <strong>S3 request</strong> after verifying the <strong>signature</strong> using <strong>v4 auth</strong>, creates response headers, a response body, and returns the list of buckets.</li>
+</ul>
+<p><span style="font-family:Courier;">2021-06-15 20:29:26,669 - MainThread - botocore.auth - DEBUG - Signature:<br>
+19e1d96f64bff46816f092bdf262ad2b41c1f51508a553f7b5d3a80ea01e685f<br><br>
+2021-06-15 20:29:26,669 - MainThread - botocore.endpoint - DEBUG - Sending http request: &lt;AWSPreparedRequest stream_output=False, method=DELETE, url=<a href="https://qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp.s3.us-west-2.amazonaws.com/" target="_blank">https://qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp.s3.us-west-2.amazonaws.com/</a>, headers={'User-Agent': b'aws-cli/2.2.11 Python/3.8.8 Windows/10 exe/AMD64 prompt/off command/s3.rb', 'X-Amz-Date': b'20210615T202926Z', 'X-Amz-Content-SHA256': b'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', 'Authorization': b'AWS4-HMAC-SHA256 Credential=AKIAWJ4TGPGSMFPHX7FL/20210615/us-west-2/s3/ aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=19e1d96f64bff46816f092bdf262ad2b41c1f51508a553f7b5d3a80ea01e685f', 'Content-Length': '0'}&gt;<br>
+</span></p>
+<ul>
+<li>Finally, it connects to the <strong>Amazon S3 endpoint</strong> and encounters a <strong>403 error</strong> of <strong>Access Denied</strong>.</li>
+</ul>
+<p><span style="font-family:Courier;">2021-06-15 20:29:26,669 - MainThread - botocore.httpsession - DEBUG - Certificate path: C:\Program Files\Amazon\AWSCLIV2\botocore\cacert.pem<br><br>
+2021-06-15 20:29:26,669 - MainThread - urllib3.connectionpool - DEBUG - Starting new HTTPS connection (1): qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp.s3.us-west-2.amazonaws.com:443<br><br>
+2021-06-15 20:29:26,732 - MainThread - urllib3.connectionpool - DEBUG - <a href="https://qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp.s3.us-west-2.amazonaws.com:443" target="_blank">https://qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp.s3.us-west-2.amazonaws.com:443</a> "DELETE / HTTP/1.1" 403 None<br><br>
+2021-06-15 20:29:26,732 - MainThread - botocore.parsers - DEBUG - Response headers: {'x-amz-request-id': 'Q2DVGA74K2EVVHPV', 'x-amz-id-2': 'HW0qS1bmJLoLFYpet7h7ZviI2QkHu1Kcv5+a+PeN9mqdGo4qsaTLC452O80bmwb+nXG7O0nnMEg=', 'Content-Type': 'application/xml', 'Transfer-Encoding': 'chunked', 'Date': 'Tue, 15 Jun 2021 20:29:26 GMT', 'Server': 'AmazonS3'}<br><br>
+2021-06-15 20:29:26,732 - MainThread - botocore.parsers - DEBUG - Response body:<br><br>
+b'&lt;?xml version="1.0" encoding="UTF-8"?&gt;\n&lt;Error&gt;&lt;Code&gt;AccessDenied&lt;/Code&gt;&lt;Message&gt;Access Denied&lt;/Message&gt;&lt;RequestId&gt;Q2DVGA74K2EVVHPV&lt;/RequestId&gt;&lt;HostId&gt;HW0qS1bmJLoLFYpet7h7ZviI2QkHu1Kcv5+a+PeN9mqdGo4qsaTLC452O80bmwb+nXG7O0nnMEg=&lt;/HostId&gt;&lt;/Error&gt;'<br>
+</span><br></p>
+
+<p><span style="font-family:Courier;">remove_bucket failed: s3://qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp An error occurred (AccessDenied) when calling the DeleteBucket operation: Access Denied<br>
+</span><br></p>
+
+<p>This command failed because the the <strong>notes-application-role</strong> does not have the <input readonly class="copyable-inline-input" size="15" type="text" value="s3:DeleteBucket"> IAM permission delegated to it.</p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully verified the IAM permissions.</p>
+
+
+
+<h2 id="step8">Task 4: Add the missing permissions to your developer role</h2>
+
+<p>To address the permission issue you just encountered, you need to assign the appropriate permission to the <input readonly class="copyable-inline-input" size="22" type="text" value="notes-application-role">. To save some time you will use a managed <strong>IAM policy</strong> that has already been created. First you will review the policy, which contains the <input readonly class="copyable-inline-input" size="15" type="text" value="s3:DeleteBucket"> permission, and then you will attach it to the <input readonly class="copyable-inline-input" size="22" type="text" value="notes-application-role">. Then you will run the command to delete the <input readonly class="copyable-inline-input" size="14" type="text" value="lab1-delete-me"> bucket.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> In most organizations, control of granting, removing, and elevating IAM permissions is administered by a member of the security team. For learning purposes, we have enabled you the ability to add a customer managed policy with the <strong>s3:DeleteBucket</strong> permission and apply it to this specific role.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Run <input readonly class="copyable-inline-input" size="7" type="text" value="aws iam"> command to review permissions for <input readonly class="copyable-inline-input" size="23" type="text" value="S3-Delete-Bucket-Policy">.</li>
+<li>Run <input readonly class="copyable-inline-input" size="7" type="text" value="aws iam"> command to attach the <input readonly class="copyable-inline-input" size="23" type="text" value="S3-Delete-Bucket-Policy"> to the <input readonly class="copyable-inline-input" size="22" type="text" value="notes-application-role">.</li>
+<li>Run <input readonly class="copyable-inline-input" size="6" type="text" value="aws s3"> command to remove the obsolete bucket with the prefix of <input readonly class="copyable-inline-input" size="14" type="text" value="deletemebucket"> in the name.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 4.1: Review a customer managed IAM policy</h3>
+<ol start="20">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to list the ARN for the <strong>S3-Delete-Bucket-Policy</strong>.</li>
+</ol><pre class="highlight java"><code><span class="n">aws</span> <span class="n">iam</span> <span class="n">list</span><span class="o">-</span><span class="n">policies</span> <span class="o">--</span><span class="n">output</span> <span class="n">text</span> <span class="o">--</span><span class="n">query</span> <span class="s">"Policies[?PolicyName == `S3-Delete-Bucket-Policy`].Arn"</span> <span class="o">--</span><span class="n">profile</span> <span class="n">developer</span>&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">arn:aws:iam::123456789101:policy/S3-Delete-Bucket-Policy<br>
+</span></p>
+<ol start="21">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below but update the <strong>ARN-Place-Holder</strong> with the ARN from the previous command.</li>
+</ol><pre class="highlight java"><code><span class="n">set</span> <span class="n">policyArn</span><span class="o">=&lt;</span><span class="n">ARN</span><span class="o">-</span><span class="n">Place</span><span class="o">-</span><span class="n">Holder</span><span class="o">&gt;</span>&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong></p>
+
+<p><span style="font-family:Courier;">set policyArn=arn:aws:iam::123456789101:policy/S3-Delete-Bucket-Policy</span></p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+<ol start="22">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to review the existing policy document for the <input readonly class="copyable-inline-input" size="23" type="text" value="S3-Delete-Bucket-Policy"> policy, which you will use to grant delete bucket permissions:</li>
+</ol><pre class="highlight plaintext"><code>aws iam get-policy-version --policy-arn %policyArn% --version-id v1 --profile developer&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">PolicyVersion:<br><br>
+  CreateDate: '2021-06-17T19:42:42+00:00'<br><br>
+  Document:<br><br>
+      Statement:<br><br>
+      - Action:<br><br>
+        - s3:DeleteBucket<br><br>
+        Effect: Allow<br><br>
+        Resource: arn:aws:s3:::qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp<br><br>
+      Version: '2012-10-17'<br><br>
+  IsDefaultVersion: true<br><br>
+  VersionId: v1<br><br>
+</span></p>
+
+<p><a id="todo-3" target="_blank"></a></p>
+
+<h3>Task 4.2: Attach the IAM policy to the notes-application-role</h3>
+<ol start="23">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Attach the <input readonly class="copyable-inline-input" size="23" type="text" value="S3-Delete-Bucket-Policy"> policy to the <input readonly class="copyable-inline-input" size="22" type="text" value="notes-application-role"> role for <strong>TODO 3</strong>. <i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Use the correct command from the options listed in the <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/index.html" target="_blank">AWS CLI Command Reference for IAM</a>
+</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You will specify the <strong>$policyArn</strong> variable for the <input readonly class="copyable-inline-input" size="10" type="text" value="policy-arn"> value.</p>
+<ul>
+<li>Choice A</li>
+</ul><pre class="highlight plaintext"><code>aws iam attach-role-policy --policy-arn %policyArn% --role-name notes-application-role --profile developer&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight plaintext"><code>aws iam attach-role-policy --policy-arn %policyArn% --user-name notes-application-role --profile developer&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  You can find the solution to this step in the <a href="#todo-3-solution" target="_self">TODO 3 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 4.3: Review the policies attached to the role</h3>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> To verify the policy was added, run the following IAM command:</li>
+</ul><pre class="highlight plaintext"><code>aws iam list-attached-role-policies --role-name notes-application-role --profile developer&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">AttachedPolicies:<br><br>
+- PolicyArn: arn:aws:iam::aws:policy/ReadOnlyAccess<br>
+  PolicyName: ReadOnlyAccess<br><br>
+- PolicyArn: arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore<br>
+  PolicyName: AmazonSSMManagedInstanceCore<br><br>
+- PolicyArn: arn:aws:iam::123456789101:policy/S3-Delete-Bucket-Policy     &lt;---------------<br><br>
+  PolicyName: S3-Delete-Bucket-Policy     &lt;---------------<br>
+</span></p>
+
+<h3>Task 4.4: Run the bucket delete command and verify it has been deleted</h3>
+<ol start="24">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Now that the <strong>notes-application-role</strong> has the permissions to delete the bucket with <input readonly class="copyable-inline-input" size="14" type="text" value="deletemebucket"> in the name, run the command below to delete the bucket:</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You will again use the <strong>bucketToDelete</strong> variable to specify the bucket name.</p>
+<pre class="highlight plaintext"><code>aws s3 rb s3://%bucketToDelete% --profile developer&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">remove_bucket: qls-179634-049d0fe03a7ad679-lab1deletemebucket-1hw90koclfctp<br>
+</span></p>
+<ol start="25">
+<li>To verify the bucket has been removed, type the command below:</li>
+</ol><pre class="highlight plaintext"><code>aws s3 ls --profile developer&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">qls-179634-049d0fe03a7ad679-lab1bucket-1ju0b17x8s3mf<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Output here is limited to only buckets with <strong>lab1</strong> in the name.</p>
+<ul>
+<li><p>You can verify the bucket has been removed in the <strong>IntelliJ IDE</strong> if you refresh the <strong>Amazon S3</strong> menu in the <strong>AWS Explorer</strong> pane.</p></li>
+<li><p>You can verify the bucket has been deleted in the <strong>Amazon S3</strong> console as well.</p></li>
+</ul>
+
+
+<p><a id="end" target="_blank"></a></p>
+
+<h2 id="step9">Summary</h2>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations on completing the lab! For the <strong>Java</strong> version you can now:</p>
+<ul>
+<li>Connect to a developer environment.</li>
+<li>Verify the IDE and the AWS CLI are installed and configured to use the application profile.</li>
+<li>Verify the necessary permissions have been granted to run AWS CLI commands.</li>
+<li>Assign an IAM policy to a role to delete an Amazon S3 bucket.</li>
+</ul>
+<h2 id="step10">End Lab</h2>
+
+<p>Follow these steps to close the console, end your lab, and evaluate the experience.</p>
+<ol start="26">
+<li><p>Return to the AWS Management Console.</p></li>
+<li><p>On the navigation bar, choose <strong>awsstudent@&lt;AccountNumber&gt;</strong>, and then choose <strong>Sign Out</strong>.</p></li>
+<li><p>Choose <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-family:Google Sans;font-weight:bold;font-size:90%;color:#444;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">OK</span></p></li>
+<li><p>(Optional):</p></li>
+</ol><ul>
+<li>Select the applicable number of stars <i class="far fa-star"></i>
+</li>
+<li>Type a comment</li>
+<li>
+<p>Choose <strong>Submit</strong></p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+</li>
+</ul>
+<p>You may close the window if you don't want to provide feedback.<br>
+For more information about AWS Training and Certification, see <a href="https://aws.amazon.com/training/" target="_blank"><em>https://aws.amazon.com/training/</em></a>.</p>
+
+<p><em>Your feedback is welcome and appreciated.</em></p>
+
+<p>If you would like to share any feedback, suggestions, or corrections, please provide the details in our <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification Contact Form</em></a>.</p>
+
+
+
+<h2 id="step11">Additional Resources</h2>
+
+<p><a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/sts/index.html" target="_blank">AWS CLI Command Reference for AWS Security Token Service (AWS STS)</a><br>
+<a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3/index.html" target="_blank">AWS CLI Command Reference for Amazon S3</a><br>
+<a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/iam/index.html" target="_blank">AWS CLI Command Reference for IAM</a></p>
+
+<h2 id="step12">Challenge Code Solutions</h2>
+
+<p><a id="todo-1-solution" target="_blank"></a></p>
+
+<h3>TODO 1 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because it calls the command to retrieve the account identifier of an access key ID.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong></p></li>
+</ul><pre class="highlight plaintext"><code>aws sts get-caller-identity --profile developer&#x000A;</code></pre>
+<p><a href="#todo-1" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-2-solution" target="_blank"></a></p>
+
+<h3>TODO 2 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because <input readonly class="copyable-inline-input" size="13" type="text" value="remove-bucket"> is not an available object operation.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong></p></li>
+</ul><pre class="highlight plaintext"><code>aws s3 rb s3://%bucketToDelete% --profile developer&#x000A;&#x000A;</code></pre>
+<p><a href="#todo-2" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-3-solution" target="_blank"></a></p>
+
+<h3>TODO 3 Solution</h3>
+<ul>
+<li><strong>Choice A is the correct code snippet.</strong></li>
+</ul><pre class="highlight plaintext"><code>aws iam attach-role-policy --policy-arn %policyArn% --role-name notes-application-role --profile developer&#x000A;</code></pre><ul>
+<li>Choice B is incorrect because <strong>--user-name</strong> is not an available option.</li>
+</ul>
+<p><a href="#todo-3" target="_self">Return to the instructions</a></p>
+
+
+
+<h2 id="step13">RDP Connection Options</h2>
+
+<p><a id="connect_guacamole" target="_blank"></a></p>
+
+<h3>Connect to Your Windows Dev Instance using Apache Guacamole</h3>
+<ol start="31">
+<li><p>In the <strong>Connection Details</strong> section, copy the <strong>GuacamoleLink</strong> and paste it into a browser.</p></li>
+<li><p>Go to the Apache Guacamole sign-in, in the browser and sign in using the following steps:</p></li>
+</ol><ul>
+<li>For <strong>Username</strong>, enter: <input readonly class="copyable-inline-input" size="7" type="text" value="student">
+</li>
+<li>For <strong>Password</strong>, use value for <strong>AdministratorPassword</strong> to the left of these instructions.</li>
+<li>Choose <strong>Log In</strong>.</li>
+</ul>
+<p>The connection to your remote instance should start momentarily. Once you open a connection, you will see an image of the Dev instance desktop. You can interact with this image just as you would your normal desktop or any remote desktop client.</p>
+
+<p>You are now connected to your Windows Dev instance in the browser using Guacamole.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+<ol start="33">
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> <strong><em>How to copy and paste when using Guacamole browser session?</em></strong>
+</li>
+</ol><ul>
+<li>Open the Clipboard editor by choosing <strong>Ctrl -&gt; Alt -&gt; Shift</strong> on Windows or <strong>command</strong> -&gt; <strong>control</strong> -&gt; <strong>shift</strong> on MacOS.</li>
+<li>Copy your text from lab instructions and paste it to the Clipboard editor of the session.</li>
+<li>Close the Clipboard editor by choosing <strong>Ctrl -&gt; Alt -&gt; Shift</strong> on Windows or <strong>command</strong> -&gt; <strong>control</strong> -&gt; <strong>shift</strong> on MacOS.</li>
+<li>Now, you can use regular paste commands in your session from Clipboard. You can also either edit or replace the clipboard for the subsequent copies.</li>
+</ul><ol start="34">
+<li><a href="#connection-options" target="_self">Return to the instructions</a></li>
+</ol>
+
+
+<p><a id="connect_win_mac" target="_blank"></a></p>
+
+<h3>Connect to the Windows Dev Instance from a MacOS Machine</h3>
+
+<p>In this section, you connect to a Windows Amazon EC2 instance from your MacOS machine.</p>
+<ol start="35">
+<li>Install Microsoft Remote Desktop if it is not already installed. To install, complete the following:</li>
+</ol><ul>
+<li>At the top of the screen select the Apple icon.</li>
+<li>Select <strong>About This Mac</strong>.</li>
+<li>Take note of your MacOS version.</li>
+<li>From the Dock launch <strong>App store</strong>.</li>
+<li><p>Search for the following string: <input readonly class="copyable-inline-input" size="24" type="text" value="Microsoft Remote Desktop">.</p></li>
+<li><p>Choose <strong>Install</strong> or <strong>GET</strong> to install the appropriate version.</p></li>
+<li><p>At the time of this writing, the current MacOS version is OSX 10.15.7 and you install Microsoft Remote Desktop Version 10.5.2. The connection instructions will be based on this version.</p></li>
+</ul><ol start="36">
+<li><p>To open <strong>Microsoft Remote Desktop</strong> on the Dock select <strong>Launchpad</strong>, then select <strong>Microsoft Remote Desktop</strong>.</p></li>
+<li><p>To create a new connection, from the top menu select <strong>Connections</strong> &gt; <strong>Add PC</strong> and fill in the following fields:</p></li>
+</ol><ul>
+<li>
+<strong>PC name:</strong> <em>Paste in the WindowsInstanceIP copied from the Lab Properties to the left of these instructions.</em>
+</li>
+<li>
+<strong>User account:</strong> <input readonly class="copyable-inline-input" size="13" type="text" value="Administrator">
+</li>
+<li>
+<strong>Friendly name:</strong> <input readonly class="copyable-inline-input" size="20" type="text" value="Windows Dev Instance">
+</li>
+<li>
+<i class="far fa-check-square" style="color:#0073bb;"></i> <strong>Reconnect if the connection is dropped:</strong> <em>Select this option if not already selected.</em>
+</li>
+<li>Choose <strong>Add</strong>.</li>
+</ul><ol start="38">
+<li><p>From the navigation panel to the left of these instructions, copy the <strong>WindowsPassword</strong> to the clipboard.</p></li>
+<li><p>Go back to your Microsoft Remote Desktop connection window, and open the context menu for the <strong>Windows Dev Instance</strong> connection and choose <strong>Open</strong>.</p></li>
+<li><p>You will see the following message, <strong>You are connecting to the RDP host "IP.Address.Listed.Here". There certificate couldn't be verified back to a root certificate. Your connection may not be secure. Do you want to continue?</strong> Choose <strong>Continue</strong>.</p></li>
+<li><p>Once prompted for the password, enter the password that you copied to the clipboard and choose <strong>Continue</strong>.</p></li>
+</ol>
+<p><strong>Result</strong></p>
+
+<p>Your connection to your remote instance should start momentarily. When lab instructions in subsequent sections require a command window, open or use a PowerShell window.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+
+<p><a href="#connection-options" target="_self">Return to the instructions</a></p>
+
+
+
+<p><a id="connect_win_win" target="_blank"></a></p>
+
+<h3>Connect to Your Windows Dev Instance from a Windows Machine</h3>
+<ol start="42">
+<li><p>Copy the <strong>WindowsInstanceIP</strong> from the navigation pane to the left of these instructions.</p></li>
+<li><p>Open the Remote Desktop Connection application on your computer.</p></li>
+</ol><ul>
+<li>Choose the <strong>Start</strong> icon, and choose the <strong>Search</strong> icon. Type in <input readonly class="copyable-inline-input" size="25" type="text" value="Remote Desktop Connection">. Choose the application when it appears in the <strong>Programs</strong> list.</li>
+</ul><ol start="44">
+<li><p>For <strong>Computer</strong>, paste the <strong>IP</strong> of the Windows instance.</p></li>
+<li><p>Choose <strong>Connect</strong>.</p></li>
+<li><p>Remote Desktop Connection will prompt you with a login dialog asking for your username and password. By default, the application will use your current Windows username and domain. To change this, choose <strong>Use another account</strong>.</p></li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> On Windows 10, select <strong>More Choices</strong> before choosing <strong>Use a different account</strong>.</p>
+<ol start="47">
+<li><p>From the navigation pane to the left of these instructions, copy the <strong>AdministratorPassword</strong>.</p></li>
+<li><p>For your login credentials, use the following values:</p></li>
+</ol><ul>
+<li>For <strong>User name</strong>, enter: <input readonly class="copyable-inline-input" size="14" type="text" value="\Administrator">
+</li>
+<li>For <strong>Password</strong>, paste the password from the clipboard.</li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> The <input readonly class="copyable-inline-input" size="1" type="text" value="\"> in the user name is important because it tells Remote Desktop Connection that you are logging in as the local Administrator and not as a domain user.</p>
+<ol start="49">
+<li>To connect to your instance, choose <strong>OK</strong>. If you receive a prompt that the certificate used to verify the connection was not a known, trusted root certificate, choose <strong>Yes</strong>.</li>
+</ol>
+<p><strong>Result</strong></p>
+
+<p>Your connection to your remote instance should start momentarily. When lab instructions in subsequent sections require a command window, open or use a Powershell window.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+
+<p><a href="#connection-options" target="_self">Return to the instructions</a></p>
+
+
+
+<p><a id="appendix" target="_blank"></a></p>
+
+<h2 id="step14">Appendix</h2>
+
+<h3>AWS Services Not Used in This Lab</h3>
+
+<p>AWS services that are not used in this lab are deactivated in the lab environment. In addition, the capabilities of the services used in this lab are limited to what the lab requires. Expect errors when accessing other services or performing actions beyond those provided in this lab guide.</p>
+
+<h3>Icon Key</h3>
+
+<p>Various icons are used throughout this lab to call attention to certain aspects of the guide. The following list explains the purpose for each one:</p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Specifies the command you must run.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> Verifies the output of a command or edited file.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Specifies important hints, tips, guidance, or advice.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Specifies where to find more information.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong>  Calls attention to information of special interest or importance. Failure to read the note does not result in physical harm to the equipment or data, but could result in the need to repeat certain steps.</li>
+<li>
+<i class="fas fa-user-shield" style="color:#00a1c9;"></i> <strong>Security:</strong> Identifies opportunities to incorporate security best practices.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#d13212;"></i> <strong>WARNING:</strong>  Draws special attention to actions that are irreversible and could potentially impact the failure of a command or process. Includes warnings about configurations that cannot be changed after they are made.</li>
+<li>
+<i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong> Suggests a moment to pause to consider how you might apply a concept in your own environment or to initiate a conversation about the topic at hand.</li>
+<li>
+<p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In some cases, you may run a script or apply a file that has been pre-created for you. This icon signifies a code block that is used to display the contents of the script or file you interacted with.</p>
+<ul>
+<li>When you need to copy only a certain part of a code block, there will be numbered <strong>TODO</strong> comments in the code.</li>
+</ul>
+</li>
+<li><p><i class="far fa-compass" style="color:#dd6b10;"></i> <strong>Context:</strong>  When asked to open the <strong>Context Menu</strong> for an item, this is the same action as right-clicking for a mouse or the appropriate action for your particular pointing device.</p></li>
+<li><p><em><span style="background-color:#232f3e;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;"><i class="fas fa-search"></i> Search for services, features, marketplace products, and docs</span></em><br>
+The <strong>Unified Search</strong> allows you to easily search for services, features, AWS Documentation and discover information without leaving the AWS Management Console. You can access the search bar using a keyboard shortcut (alt-s or option-s), autocomplete by using the right arrow key, and navigate to the top search result by pressing the enter key.</p></li>
+</ul>
+<p><a href="#prerequisites" target="_self">Return to the instructions</a></p>
+
+</div>
+</div>
+
+
+<div class='lab-content__end-lab-button js-end-lab-button-container hidden'>
+<ql-lab-control-button class='js-end-lab-button' running></ql-lab-control-button>
+</div>
+<!-- / TODO: Move recommendations into the end lab modal -->
+</ql-drawer-content>
+<ql-drawer end id='outline-drawer' open slot='drawer' width='320'>
+<div aria-label='Sommario del lab' role='navigation'>
+<ul class='lab-content__outline js-lab-content-outline'>
+<li><a href='#step1'>Prerequisites</a></li><li><a href='#step2'>Overview</a></li><li><a href='#step3'>Start Lab</a></li><li><a href='#step4'>Task 0: Connect to your development environment</a></li><li><a href='#step5'>Task 1: Review the developer environment</a></li><li><a href='#step6'>Task 2: Review the AWS Toolkit extension options</a></li><li><a href='#step7'>Task 3: Verify IAM Permissions</a></li><li><a href='#step8'>Task 4: Add the missing permissions to your developer role</a></li><li><a href='#step9'>Summary</a></li><li><a href='#step10'>End Lab</a></li><li><a href='#step11'>Additional Resources</a></li><li><a href='#step12'>Challenge Code Solutions</a></li><li><a href='#step13'>RDP Connection Options</a></li><li><a href='#step14'>Appendix</a></li>
+</ul>
+</div>
+</ql-drawer>
+</ql-drawer-container>
+</ql-drawer-content>
+</ql-drawer-container>
+
+
+
+</div>
+</main>
+
+<span class='hidden' id='flash-sibling-before'></span>
+<ql-snackbar></ql-snackbar>
+
+
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='modal-content mdl-shadow--24dp'>
+<div class='modal-body'>
+<p class='l-mbm'>
+In this lab the student verifies the specific IDE is installed and configured to access AWS Services. Students will learn about the feature available with the AWS Toolkit. They also use IAM to understand how permissions work.
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Durata:
+</strong>
+Configurazione in 11 m
+&middot;
+Accesso da 120 m
+&middot;
+Completamento in 120 m
+</p>
+<p class='small-label l-mbs'>
+<strong>Area geografica AWS:</strong>
+[us-west-2] <strong>US West (Oregon)</strong>
+</p>
+<p class='small-label l-mbs'>
+
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://it-flane.qwiklabs.com/catalog_lab/73285">https://it-flane.qwiklabs.com/catalog_lab/73285</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='button button--text' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<ql-dialog headline='Qual è il tuo livello di soddisfazione rispetto a questo lab?&lt;span aria-hidden=&quot;true&quot;&gt;*&lt;/span&gt;' id='lab-review-dialog'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div aria-labelledby='lab-review-dialog' aria-required='true' aria-valuemax='5' aria-valuemin='0' aria-valuenow='0' class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0' id='lab-review-rateit' role='slider' tabindex='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="14798" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="2083" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="73285" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="14560" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Commenti aggiuntivi</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</form><ql-button disabled id='submit' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+<ql-dialog headline='Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?' icon='error_outline' id='js-lab-are-you-sure-dialog'>
+<ql-button id='js-are-you-sure-button' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    ql.chat.init();
+  ql.jumpContent.init();
+  initLabContent();
+  ql.labOutline.links.init();
+  initLabReviewModal();
+  initLabReviewTranslations( {"star_amount_1":"1 stelle su 5","star_amount_2":"2 stelle su 5","star_amount_3":"3 stelle su 5","star_amount_4":"4 stelle su 5","star_amount_5":"5 stelle su 5"} )
+  ql.labAssessment.init();
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?","in_progress":"*In corso*","ending":"*Conclusione*","starting":"*Avvio… Attendi*","end_concurrent_labs":"È possibile eseguire un solo lab alla volta. Per avviare questo lab, conferma di voler terminare tutti i lab esistenti.","copied":"Copiato","no_resource":"Errore durante il recupero della risorsa.","no_support":"Non viene fornita assistenza","mac_press":"Premi ⌘-C per copiare","thanks_review":"Grazie per aver inserito una recensione per questo lab.","windows_press":"Premi Ctrl+C per copiare","days":"giorni"} );
+  ql.labRun.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+
+</body>
+</html>
+

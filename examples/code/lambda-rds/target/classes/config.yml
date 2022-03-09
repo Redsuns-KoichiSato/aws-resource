@@ -1,0 +1,8 @@
+credentials:
+  username: kiritonya
+  password: Goghetto1106.
+databaseConf:
+  name: ExampleDB
+  hostname: mysqlforlambdatest-diego.clwtaymfcl8u.eu-west-3.rds.amazonaws.com
+  port: 3306
+  driver: mariadb

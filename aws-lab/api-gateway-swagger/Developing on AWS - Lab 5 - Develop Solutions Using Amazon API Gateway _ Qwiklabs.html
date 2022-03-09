@@ -1,0 +1,890 @@
+
+<!DOCTYPE html>
+<html lang='it'>
+<head>
+<title>Developing on AWS - Lab 5 - Develop Solutions Using Amazon API Gateway | Qwiklabs</title>
+<script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Diego","lastname":"Brignoli","fullname":"Diego Brignoli","company":"Beta80","email":"diego.brignoli@beta80group.it","origin":"it-flane, direct","subscriptions":0,"id":"a61e1fd9f1a7d5ef061dbe892bae5f9f","qlCreatedAt":"2022-03-07 13:40:45 UTC","optIn":true,"current_organization_id":null,"current_organization_role":null};gon.segment=null;gon.deployment="it-flane";gon.content={"type":"Lab","id":73986,"name":"Developing on AWS - Lab 5 - Develop Solutions Using Amazon API Gateway"};
+//]]>
+</script>
+<script>
+  dataLayer = [
+    {user: gon.current_user},
+    {content: gon.content}
+  ];
+</script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/polyfills/webcomponents-loader-60a166e60df2787cca5915e2ced8c317457f421a20f02601b937a72275ac441a.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-2beee108ba05276bc429223ee82ed81449d233c93d45af5da84add895e101218.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-b44c688caf0e24039ff5020ad65695458c8c0edbd37ac5431ce3efa6d80f07e0.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors__it-c5bb7dbc14336638421f7b3f9e4f32567ff92565d683255515ad93ae6d7e7992.js"></script>
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="GKBCOi2dDHLoLMZTShW197rRFIsSmRqD7s0ZA4CL/kS/bahpZGzC1iHKkxmJ8A47EPjsylqmXPS6Q+W9BAkRNA==" />
+<meta content='width=device-width, initial-scale=1.0, user-scalable=yes' name='viewport'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<meta content='[{&quot;id&quot;:&quot;recaptcha_experiment&quot;,&quot;optimize_id&quot;:&quot;dpViOcLkT3qS4TvL2mRojA&quot;,&quot;title&quot;:&quot;No Recaptcha shown for trusted users&quot;,&quot;variant_index&quot;:1,&quot;variant&quot;:&quot;no_recaptcha&quot;}]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:14798}' name='help-api-product-data'>
+<meta content='In this lab, you will create an Amazon API Gateway resource for your application.' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='Developing on AWS - Lab 5 - Develop Solutions Using Amazon API Gateway | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='In this lab, you will create an Amazon API Gateway resource for your application.' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+
+
+
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+<link href='/favicon-32.png' rel='shortcut icon' type='image/x-icon'>
+
+
+
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+<link rel="stylesheet" media="screen" href="https://cdn.qwiklabs.com/stylesheets/application_old/locales/it.css" />
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-1c1adc018a83f53f78a5b6f624572a32bf4f3c935b02a026b7bf82afe02b4dae.css" />
+
+<style>
+  :root {
+    --primary-text-on-surface-color: #1A73E8;
+    --primary-text-on-surface-color-dark: #1568d6;
+    --primary-text-on-surface-color-darker: #135ec1;
+    --primary-text-on-surface-color-darkest: #1154ac;
+    --primary-surface-color: #1A73E8;
+    --primary-surface-color-rgb: 26,115,232;
+    --primary-surface-color-light: #d1e3fa;
+    --primary-surface-color-lightest: #e8f1fd;
+    --text-on-primary-color: #FFFFFF;
+    --accent-text-on-surface-color: #F29900;
+    --accent-surface-color: #F9AB00;
+    --accent-surface-color-rgb: 249,171,0;
+    --accent-surface-color-light: #ffefcc;
+    --text-on-accent-color: #202124;
+  }
+</style>
+
+
+
+</head>
+<body class='lab-show l-full no-nav application-new focuses focuses-show lab-show l-full no-nav '>
+<div class='header-container'>
+<div class='header'>
+<ql-toolbar jumpEnabled>
+<div class='header__title' slot='title'>
+<ql-icon-button label="Indietro" href="/classrooms/2083" id="6ffaf10ff39bad03" target="_self" tip="Indietro">arrow_back</ql-icon-button>
+<h1 class='ql-headline-6'>Developing on AWS - Lab 5 - Develop Solutions Using Amazon API Gateway</h1>
+</div>
+<div class='header__actions' slot='action'>
+<ql-icon-button id='control-panel-target' style='display: none;'>
+dashboard
+</ql-icon-button>
+<ql-menu for='control-panel-target' id='control-panel-menu'></ql-menu>
+<ql-icon-button class='mobile-hide' icon='help_outline' id='help-menu-button' label='Apri il menu Guida' tip='Guida'></ql-icon-button>
+<ql-menu for='help-menu-button' id='help-menu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='lab' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:14798},&quot;context&quot;:&quot;lab&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/contact_us' label='Email support' target='_blank'></ql-menu-item>
+<ql-menu-item label='Chat support' onClick='ql.chat.open()'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button class='mobile-hide' icon='language' id='language' label='Seleziona le preferenze relative alla lingua' tip='Lingua'></ql-icon-button>
+<ql-menu for='language'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/classrooms/2083/labs/14570?locale=ar' label='العربية‬‎' lang='ar'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/classrooms/2083/labs/14570?locale=de' label='Deutsch' lang='de'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/classrooms/2083/labs/14570?locale=en' label='English' lang='en'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/classrooms/2083/labs/14570?locale=es' label='español (Latinoamérica)' lang='es'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/classrooms/2083/labs/14570?locale=fr' label='français' lang='fr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/classrooms/2083/labs/14570?locale=fr_CA' label='français (Canada)' lang='fr-CA'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/classrooms/2083/labs/14570?locale=he' label='עברית' lang='he'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/classrooms/2083/labs/14570?locale=id' label='bahasa Indonesia' lang='id'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/classrooms/2083/labs/14570?locale=it' label='Italiano' lang='it'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/classrooms/2083/labs/14570?locale=ja' label='日本語' lang='ja'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/classrooms/2083/labs/14570?locale=ko' label='한국어' lang='ko'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/classrooms/2083/labs/14570?locale=pl' label='Polski' lang='pl'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/classrooms/2083/labs/14570?locale=pt_BR' label='português (Brasil)' lang='pt-BR'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/classrooms/2083/labs/14570?locale=pt_PT' label='português (Portugal)' lang='pt-PT'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/classrooms/2083/labs/14570?locale=ru' label='русский' lang='ru'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/classrooms/2083/labs/14570?locale=tr' label='Türkçe' lang='tr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/classrooms/2083/labs/14570?locale=zh' label='简体中文' lang='zh'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/classrooms/2083/labs/14570?locale=zh_TW' label='繁體中文' lang='zh-TW'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button id='my_account' label='Account personale' tip='Account personale'>
+<ql-avatar></ql-avatar>
+</ql-icon-button>
+<ql-menu for='my_account' id='my_account_menu' style='max-height: 640px'>
+<div class='my-account-menu'>
+<ql-avatar class='l-mtl l-mbl' size='120'></ql-avatar>
+<div class='my-account-menu__user-info l-mbl'>
+<h4 class='ql-subhead-1'>Diego Brignoli</h4>
+<p class='ql-body-2 text--light'>diego.brignoli@beta80group.it</p>
+<p class='ql-body-2 text--light'>
+</p>
+</div>
+<div class='buttons l-mbl'>
+<a class="button button--hairline" id="settings" href="/my_account/profile">Impostazioni</a>
+</div>
+<hr>
+<ql-button data-analytics-action='clicked_sign_out' href='/users/sign_out' method='delete'>
+Esci
+</ql-button>
+<div class='privacy l-mtl'>
+<a class="ql-caption text--light" href="/privacy_policy">Privacy</a>
+<span class='ql-caption text--light l-mls l-mrs'>&middot;</span>
+<a class="ql-caption text--light" href="/terms_of_service">Termini</a>
+</div>
+</div>
+</ql-menu>
+
+</div>
+</ql-toolbar>
+
+</div>
+</div>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class="custom-logo"><img alt="Qwiklabs" height="24" aria-label="Qwiklabs" src="https://cdn.qwiklabs.com/yjTIzMprll8xFSNHNul7y7IDev3CoxdLyHeDu9qmu2Q%3D" /></div>
+</div>
+<nav class='ql-sidenav'>
+<ql-sidenav-item href='/' icon='home' label='Home page'></ql-sidenav-item>
+
+<ql-sidenav-item href='/catalog' icon='school' label='Catalogo'></ql-sidenav-item>
+
+<ql-sidenav-item active href='/profile' icon='event_note' label='Profilo'></ql-sidenav-item>
+
+</nav>
+
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main' id='jump-content'>
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+<ql-drawer-container class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;Developing on AWS - Lab 5 - Develop Solutions Using Amazon API Gateway&quot;,&quot;lab_name&quot;:&quot;Developing on AWS - Lab 5 - Develop Solutions Using Amazon API Gateway&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;it-flane&quot;}' data-focus-id='14570' data-lab-billing-limit='0.0' data-lab-duration='7200' data-parent='classroom' id='lab-container'>
+<ql-drawer id='terminal-drawer' slot='drawer' style='width: calc(100% - 480px)'>
+<iframe allow='clipboard-read' class='terminal' id='embedded-resource'></iframe>
+</ql-drawer>
+<ql-drawer-content class='js-lab-wrapper' id='lab-content' slot='drawer-content'>
+<ql-drawer-container id='lab-content-container'>
+<ql-drawer id='control-panel-drawer' open slot='drawer' width='320'>
+<ql-lab-control-panel class='ql-lab-control-panel__max-height control-panel js-lab-control-panel' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labDetails='[]' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}' studentResources='[]'>
+</ql-lab-control-panel>
+</ql-drawer>
+<ql-drawer-content id='lab-instructions' slot='drawer-content'>
+<ql-snackbar id='alert-snackbar'></ql-snackbar>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message' role='alert'></p>
+<ql-icon-button class='alert__close js-alert-close' icon='clear'></ql-icon-button>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<div class='lab-content__renderable-instructions js-lab-content'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+Developing on AWS - Lab 5 - Develop Solutions Using Amazon API Gateway
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>2 ore </span>
+<span>Gratis</span>
+<div class='lab__rating'>
+<a aria-label="Recensioni del lab" href="/focuses/14570/reviews?parent=classroom"><div class='rateit' data-rateit-readonly='true' data-rateit-value='4.6'></div>
+
+</a><ql-button aria-label='Valuta lab' id='rate-lab-btn' label='Valuta lab' text></ql-button>
+</div>
+</div>
+</div>
+<div class='lab-outline-place-holder'></div>
+
+<div class='markdown-lab-instructions js-markdown-instructions no-select' id='markdown-lab-instructions'>
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/aws-logo.png" alt=""></p>
+
+
+
+<p>© 2022 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited. All trademarks are the property of their owners.</p>
+
+<p>Note: Do not include any personal, identifying, or confidential information into the lab environment. Information entered may be visible to others.</p>
+
+<p>Corrections, feedback, or other questions? Contact us at <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification</em></a>.</p>
+
+<p><strong>Duration</strong></p>
+
+<p>This lab will require <strong>60 minutes</strong> to complete.</p>
+
+<p><a id="prerequisites" target="_blank"></a></p>
+
+<h2 id="step1">Prerequisites</h2>
+
+<p>This lab requires:</p>
+<ul>
+<li>Access to a Microsoft Windows or MacOS notebook computer with a Wi-Fi connection.</li>
+<li>An Internet browser such as Chrome, Firefox, or IE9+.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Previous versions of Internet Explorer are not supported.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You can use an iPad or tablet device to access these directions in the lab console.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Review additional lab environment specific details in the <a href="#appendix" target="_self">Appendix.</a>
+</li>
+</ul>
+<h2 id="step2">Overview</h2>
+
+<p>Now that you have the core backend set up for storage, database, and compute processing, you need a way for users to access the AWS Lambda functions over the internet.</p>
+
+<p>In this lab, you will create an Amazon API Gateway resource for your application. You will then configure two methods for that resource to allow access to two of your AWS Lambda functions. With these methods you will validate the requests and transform the responses returned from the Lambda functions. Finally, you will configure Cross-Origin Request Sharing (CORS) headers to allow access for your web application that will be added in the next lab.</p>
+
+<p>Once you have completed this lab, your deployment will look like the following diagram:</p>
+
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-5/instructions/en_us/images/lab5-diagram.png" alt="Lab 5 diagram"></p>
+
+<h3>Objectives</h3>
+
+<p>After completing this lab, you will be able to:</p>
+<ul>
+<li>Create RESTful API resources and configure CORS for your application.</li>
+<li>Integrate API methods with AWS Lambda functions to process application data.</li>
+<li>Configure mapping templates to transform the pass-through data during method integration.</li>
+<li>Create a request model for API methods to ensure that the pass-through data format complies with application rules.</li>
+<li>Deploy the API to a stage and validate the results using the API endpoint.</li>
+</ul>
+
+
+<h2 id="step3">Start Lab</h2>
+<ol start="1">
+<li>At the top of your screen, launch your lab by choosing <span style="background-color:#34A853;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#34A853;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Start Lab</span>
+</li>
+</ol>
+<p>This starts the process of provisioning your lab resources. An estimated amount of time to provision your lab resources is displayed. You must wait for your resources to be provisioned before continuing.</p>
+
+<p><i class="fas fa-info-circle"></i> If you are prompted for a token, use the one distributed to you (or credits you have purchased). </p>
+<ol start="2">
+<li>Open your lab by choosing <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span>
+</li>
+</ol>
+<p>This opens an AWS Management Console sign-in page.</p>
+<ol start="3">
+<li>On the sign-in page, configure:</li>
+</ol><ul>
+<li>
+<strong>IAM user name:</strong> <input readonly class="copyable-inline-input" size="10" type="text" value="awsstudent">
+</li>
+<li>
+<strong>Password:</strong> Paste the value of <strong>Password</strong> from the left side of the lab page</li>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Sign In</span>
+</li>
+</ul>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Do not change the Region unless instructed.</strong></p>
+
+
+
+<h3>Common Login Errors</h3>
+
+<p><strong>Error: You must first log out</strong></p>
+
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/logouterror.png" alt=""></p>
+
+<p>If you see the message, <strong>You must first log out before logging into a different AWS account:</strong> </p>
+<ul>
+<li>Choose <strong>here</strong>
+</li>
+<li>Close your browser tab to return to your initial lab window</li>
+<li>Choose <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span> again</li>
+</ul>
+
+
+<h2 id="step4">Task 1: Create a REST API and resource</h2>
+
+<p>In this task you will develop a REST API and resource for your application.</p>
+
+<p><i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong> This lab is designed for both experienced and newer developers:</p>
+<ul>
+<li><p>For more experienced developers who enjoy a challenge, there are <strong>High-Level Instructions</strong> before each task that should provide you enough information to help you complete the task.</p></li>
+<li><p>Once you complete the updates test your code to ensure it works, troubleshoot if needed, and then move on to the next task.</p></li>
+<li><p>For newer developers, there are <strong>Detailed Instructions</strong> to guide you through each step of the lab.</p></li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Create a new <input readonly class="copyable-inline-input" size="13" type="text" value="PollyNotesAPI"> Regional REST API</li>
+<li>Create a <input readonly class="copyable-inline-input" size="6" type="text" value="/notes"> resource with CORS enabled</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 1.1: Create the Amazon API Gateway and resource</h3>
+
+<p>There are several different types of gateways that you can create with Amazon API Gateway. For this application, you will create a REST API.</p>
+
+<p>An Amazon API Gateway REST API is a collection of HTTP resources and methods that are integrated with backend HTTP endpoints, Lambda functions, or other AWS services. You can deploy this collection in one or more stages. Typically, API resources are organized in a resource tree according to the application logic. Each API resource can expose one or more API methods that have unique HTTP verbs supported by API Gateway.</p>
+<ol start="4">
+<li><p>From a browser window opened to the <strong>AWS Management Console</strong> use the <strong>unified search bar</strong> to search for and choose <input readonly class="copyable-inline-input" size="11" type="text" value="API Gateway"></p></li>
+<li><p>For <strong>Choose an API type</strong>, on the <strong>REST API</strong> card, choose <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Build</span></p></li>
+</ol>
+<p><i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong> Be sure not to choose the option reading <strong>REST API</strong> Private.</p>
+<ol start="6">
+<li>On the <strong>Create your first API</strong> popup, choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">OK</span>
+</li>
+</ol><ul>
+<li><p>For <strong>Create new API</strong>, select <i class="fas fa-dot-circle" style="color:#0073bb;"></i> <strong>New API</strong>.</p></li>
+<li><p>For <strong>API name</strong>, enter <input readonly class="copyable-inline-input" size="13" type="text" value="PollyNotesAPI"></p></li>
+</ul><ol start="7">
+<li><p>Leave all other values as the default and choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Create API</span></p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Actions <i class="fas fa-caret-down"></i></span>, choose <strong>Create Resource</strong> and set the following values:</p></li>
+</ol><ul>
+<li><p><strong>Resource Name:</strong> <input readonly class="copyable-inline-input" size="5" type="text" value="notes"></p></li>
+<li><p><strong>Enable API Gateway CORS:</strong>  <i class="fas fa-check-square" style="color:#0073bb;"></i> (Select the checkbox.)</p></li>
+</ul><ol start="9">
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Create Resource</span>
+</li>
+</ol>
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You now have an API and resource that you can build your connections on.</p>
+
+
+
+<h2 id="step5">Task 2: Configure the GET method and add a mapping template to transform responses</h2>
+
+<p>The first Lambda function that you need to allow access to is the list-function.  Whenever a request is sent to the API Gateway resource, using a GET method, this function should be invoked and the response returned to the requester. If a UserId is specified in the event, the Lambda function will only return items that match that UserId. Using the integration request, you will create a mapping template to hard code that parameter for now.</p>
+
+<p>After the request is configured to return items for a single user, it is redundant to include the UserId in every item that is returned. Only returning responses with the information needed, and no more, is important to increase performance and reduce data transfer costs as your application scales.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Configure a GET method for the notes resource, map it to the <strong>list-function</strong>, and test the output.</li>
+<li>Add a mapping template to manually specify <input readonly class="copyable-inline-input" size="20" type="text" value='{"UserId":"student"}'> and confirm the output.</li>
+<li>Create a response mapping template to transform the response to only return the note id and note text.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 2.1: Configure GET method</h3>
+
+<p>There are several methods that can be configured for your new resource, the GET method is the default method that a web browser requests when you browse to a URL. The GET method is used to retrieve data.</p>
+<ol start="10">
+<li>Select the <span style="color:#0073bb;"><strong>/notes</strong></span> resource, choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Actions <i class="fas fa-caret-down"></i></span> , and choose <strong>Create Method</strong>.</li>
+</ol><ul>
+<li><p>In the box that appears following the <span style="color:#0073bb;"><strong>/notes</strong></span> resource, select <strong>GET</strong>, and choose <i class="fas fa-check-circle"></i> (check mark tick).</p></li>
+<li><p>For <strong>Lambda Function</strong>, enter or select <input readonly class="copyable-inline-input" size="13" type="text" value="list-function"></p></li>
+</ul><ol start="11">
+<li><p>Leave all other as the default and choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Save</span></p></li>
+<li><p>On the <strong>Add Permission to Lambda Function</strong> modal, choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">OK</span></p></li>
+<li><p>In the <strong>/notes - GET - Method Execution</strong> panel, choose <span style="color:#0073bb;"><strong>TEST</strong></span></p></li>
+</ol><ul>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;"><i class="fas fa-bolt"></i> Test</span>
+</li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You may have to scroll to see the <strong>Test</strong> button.</p>
+
+<p>The Lambda function is successful and returns a <strong>Status</strong> of <strong>200</strong>.  The <strong>Response Body</strong> now returns a JSON array with all items in the DynamoDB table. You can examine the entire <strong>Log</strong> for more information on how the request was processed.  As the dataset grows larger in production, this would quickly become a performance issue. If the notes are private, it could also be a security issue if every user can download the notes of all users.</p>
+
+<h3>Task 2.2: Update the GET method integration request to pass a UserId variable</h3>
+
+<p>The integration request is the internal interface of a REST API method in API Gateway. In the integration request, you map the body of a route request, or the parameters and body of a method request, to the formats required by the backend.</p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> The mapping templates are a script in <a href="https://velocity.apache.org/engine/devel/vtl-reference.html" target="_blank">Velocity Template Language (VTL)</a> that transforms a request or response body to the needed data format. Mapping templates can be specified in the integration request or in the integration response. They can reference data made available at runtime as context and stage variables.</p>
+
+<p>The mapping can be as simple as an identity transform that passes the headers or body through the integration as-is from the client to the backend for a request. The same is true for a response, in which the payload is passed from the backend to the client.</p>
+<ol start="14">
+<li><p>At the top of the <strong>Method Test</strong> panel, choose <strong><span style="color:#0073bb;"><i class="fas fa-arrow-left"></i> Method Execution</span></strong>.</p></li>
+<li><p>Choose <span style="color:#0073bb;"><strong>Integration Request</strong></span>.</p></li>
+</ol><ul>
+<li><p>Expand <i class="fas fa-caret-right"></i> <strong>Mapping Templates</strong>.</p></li>
+<li><p>Choose <i class="far fa-dot-circle" style="color:#0073bb;"></i> <strong>When there are no templates defined (recommended)</strong>.</p></li>
+<li><p>Choose <i class="fas fa-plus-circle"></i> <span style="color:#0073bb;">Add mapping template</span>.</p></li>
+<li><p>In the <strong>Content-Type</strong> box, enter <input readonly class="copyable-inline-input" size="16" type="text" value="application/json">, and choose <i class="fas fa-check-circle"></i> (check mark tick).</p></li>
+</ul>
+<p>For now, hard code the UserId parameter, in the next lab you will use the current username.</p>
+<ul>
+<li><p>In the code block after <strong>application/json</strong>, enter <input readonly class="copyable-inline-input" size="20" type="text" value='{"UserId":"student"}'></p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Save</span></p></li>
+</ul><ol start="16">
+<li><p>At the top of the <strong>Integration Request</strong> panel, choose <strong><span style="color:#0073bb;"><i class="fas fa-arrow-left"></i> Method Execution</span></strong>.</p></li>
+<li><p>In the <strong>/notes - GET - Method Execution</strong> panel, choose <span style="color:#0073bb;"><strong>TEST</strong></span></p></li>
+</ol><ul>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;"><i class="fas fa-bolt"></i> Test</span>
+</li>
+</ul>
+<p>Once again the Lambda function is successful and the <strong>Status</strong> it returns is <strong>200</strong>.  The <strong>Response Body</strong> now returns a JSON array with only notes where the <strong>UserId</strong> is <em>student</em>. You can examine the entire Execution log for more information on how the request was processed.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> The list-function performs a DynamoDB query operation if a UserId was passed in the event, otherwise it performs a scan.</p>
+
+<h3>Task 2.3: Limit the response data returned from the API method</h3>
+
+<p>Now that you are specifying the UserId in the request, you can reduce the amount of redundant data returned in the response.  You will specify a mapping template for the integration response.</p>
+
+<p>The integration response is the internal interface of a REST API method in API Gateway. You use the integration response to map the status codes, headers, and payload, that are received from the backend, to the response format that is returned to a client app.</p>
+<ol start="18">
+<li><p>At the top of the <strong>/notes - Get - Method Test</strong> panel, choose <strong><span style="color:#0073bb;"><i class="fas fa-arrow-left"></i> Method Execution</span></strong>.</p></li>
+<li><p>Choose <span style="color:#0073bb;">Integration Response</span>.</p></li>
+</ol><ul>
+<li><p>Expand the <i class="fas fa-caret-right"></i> <strong>Method Response status 200</strong> entry by choosing the <i class="fas fa-caret-right"></i> icon.</p></li>
+<li><p>Expand <i class="fas fa-caret-right"></i> <strong>Mapping Templates</strong>.</p></li>
+<li><p>Choose <span style="color:#0073bb;">application/json</span>.</p></li>
+</ul>
+<p><a id="todo-1" target="_blank"></a></p>
+<ol start="20">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In the code block that appears, choose the correct choice and insert it.</li>
+</ol><ul>
+<li>Choice A:</li>
+</ul><pre class="highlight python"><code><span class="c">#set($inputRoot = $input.path('$'))</span>&#x000A;<span class="p">[</span>&#x000A;    <span class="p">{</span>&#x000A;        <span class="s">"NoteId"</span> <span class="p">:</span> <span class="s">"$elem.NoteId"</span><span class="p">,</span>&#x000A;        <span class="s">"Note"</span> <span class="p">:</span> <span class="s">"$elem.Note"</span>&#x000A;    <span class="p">}</span>&#x000A;<span class="p">]</span>&#x000A;</code></pre><ul>
+<li>Choice B:</li>
+</ul><pre class="highlight python"><code><span class="c">#set($inputRoot = $input.path('$'))</span>&#x000A;<span class="p">[</span>&#x000A;    <span class="c">#foreach($elem in $inputRoot)</span>&#x000A;    <span class="p">{</span>&#x000A;    <span class="s">"NoteId"</span> <span class="p">:</span> <span class="s">"$elem.NoteId"</span><span class="p">,</span>&#x000A;    <span class="s">"Note"</span> <span class="p">:</span> <span class="s">"$elem.Note"</span>&#x000A;    <span class="p">}</span> &#x000A;    <span class="c">#if($foreach.hasNext),#end</span>&#x000A;    <span class="c">#end</span>&#x000A;<span class="p">]</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> You can find the solution to this step in the <a href="#todo-1-solution" target="_self">TODO 1 solution</a> section at the bottom of these instructions.</p>
+<ul>
+<li>Choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Save</span>
+</li>
+</ul>
+<p>Now that the integration response has been configured, you can confirm the output by testing the method.</p>
+<ol start="21">
+<li><p>At the top of the <strong>/notes - Get - Integration Response</strong> panel, choose <strong><span style="color:#0073bb;"><i class="fas fa-arrow-left"></i> Method Execution</span></strong>.</p></li>
+<li><p>In the <strong>/notes - GET - Method Execution</strong> panel, choose <span style="color:#0073bb;"><strong>TEST</strong></span></p></li>
+</ol><ul>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;"><i class="fas fa-bolt"></i> Test</span>
+</li>
+</ul>
+<p>The response is now a JSON array with just the <strong>NoteId</strong> and <strong>Note</strong> properties in each object. Since the UserId is not needed in this response you are able to reduce the amount of data returned. As more notes are entered into the system this will exponentially reduce the size of the responses. Smaller responses will lead to better application performance and reduced data transfer costs.</p>
+
+
+
+<h2 id="step6">Task 3: Configure the POST method and add a request validation model</h2>
+
+<p>You now have a way to retrieve data from the database. You need a way to add or update data in the database as well. The next Lambda function to provide access to is the <strong>createUpdate-function</strong>.  To access this function, you will use the <strong>POST</strong> method. When you post a new note to the notes resource, you will include the data to be added (or updated), in the body of your request.  </p>
+
+<p>By default, the entire body is passed to the backend as is. One of the features of the API Gateway is that it can verify the data structure using a Model.</p>
+
+<p>A Model is a data schema specifying the data structure of a request or response payload. A Model is required for generating a strongly typed SDK of an API. It is also used to validate payloads.</p>
+
+<p>By verifying the data structure before it is passed to the backend, you can make sure that the input is formatted correctly before invoking your Lambda function. If the input does not match the Model schema, API Gateway will immediately respond with an error message and not invoke your Lambda function.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Configure the POST method, map it to the <strong>createUpdate-function</strong>, and test the default behavior with a new note object.</li>
+<li>Create a Model that specifies the note schema above. (The Schema can be found in task 3.2 if you need a hint.)</li>
+<li>Configure validation on the request body, enforce the schema, and test a valid and invalid submission.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 3.1: Configure the POST method and add a request validation model</h3>
+
+<p>In this task, you configure the <strong>POST</strong> method to pass requests to the <strong>createUpdate-function</strong>. You will then test the method to make sure it works as expected.</p>
+<ol start="23">
+<li>Select the <strong><span style="color:#0073bb;">/notes</span></strong> resource, choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Actions <i class="fas fa-caret-down"></i></span> and choose <strong>Create Method</strong>.</li>
+</ol><ul>
+<li><p>In the box that appears following the <strong><span style="color:#0073bb;">/notes</span></strong> resource, select <strong>POST</strong>, and choose <i class="fas fa-check-circle"></i> (check mark tick).</p></li>
+<li><p>For <strong>Lambda Function</strong>, enter or select <input readonly class="copyable-inline-input" size="21" type="text" value="createUpdate-function"></p></li>
+</ul><ol start="24">
+<li><p>Leave all other as the default and choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Save</span></p></li>
+<li><p>On the <strong>Add Permission to Lambda Function</strong> modal, choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">OK</span></p></li>
+</ol>
+<p>This method relies on information passed in the body of the request, so you can test it as is.</p>
+<ol start="26">
+<li>In the <strong>/notes - POST - Method Execution</strong> panel, choose <span style="color:#0073bb;"><strong>TEST</strong></span>
+</li>
+</ol><ul>
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In the <strong>Request Body</strong> code block, paste the following JSON object:</li>
+</ul><pre class="highlight python"><code><span class="p">{</span>&#x000A;    <span class="s">"Note"</span><span class="p">:</span> <span class="s">"This is your new note added using the POST method"</span><span class="p">,</span>&#x000A;    <span class="s">"NoteId"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>&#x000A;    <span class="s">"UserId"</span><span class="p">:</span> <span class="s">"student"</span>&#x000A;<span class="p">}</span>&#x000A;</code></pre><ul>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;"><i class="fas fa-bolt"></i> Test</span>
+</li>
+</ul>
+<p>The response body just returns the <strong>NoteId</strong>. You can also examine the entire Execution log for more information on what happened. Using the <strong>GET</strong> method, confirm that the new note was added.</p>
+<ol start="27">
+<li><p>In the <strong>Resources</strong> panel, for the <span style="color:#0073bb;"><strong>/notes</strong></span> resource, choose <span style="color:#0073bb;"><strong>GET</strong></span>.</p></li>
+<li><p>In the <strong>/notes - GET - Method Execution</strong> panel, choose <span style="color:#0073bb;"><strong>TEST</strong></span></p></li>
+</ol><ul>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;"><i class="fas fa-bolt"></i> Test</span>
+</li>
+</ul>
+<p>The <strong>Response Body</strong> now has the note you added and the placeholder notes that were already in the table.</p>
+
+<h3>Task 3.2: Enforce a schema for the POST request body</h3>
+
+<p>The <strong>POST</strong> function works as is, but you can make it better. For instance, if the note isn't submitted or all required fields are not included, there is no need to pass the request to the Lambda function. Using an API Gateway Model, validate that there is information in the body of the request and choose what fields are passed to the function in the body.</p>
+<ol start="29">
+<li><p>In the left navigation panel, under <strong>API: <span style="color:#ec7211;">PollyNotesAPI</span></strong>, choose <strong>Models</strong>.</p></li>
+<li><p>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Create</span></p></li>
+</ol><ul>
+<li><p>For <strong>Model name</strong>, enter <input readonly class="copyable-inline-input" size="9" type="text" value="NoteModel"></p></li>
+<li><p>For <strong>Content type</strong>, enter <input readonly class="copyable-inline-input" size="16" type="text" value="application/json"></p></li>
+</ul>
+<p><a id="todo-2" target="_blank"></a></p>
+<ol start="31">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> For <strong>Model schema</strong>, choose the correct choice and insert it.</li>
+</ol><ul>
+<li>Choice A:</li>
+</ul><pre class="highlight python"><code><span class="p">{</span>&#x000A;    <span class="s">"title"</span><span class="p">:</span> <span class="s">"Note"</span><span class="p">,</span>&#x000A;    <span class="s">"type"</span><span class="p">:</span> <span class="s">"array"</span><span class="p">,</span>&#x000A;    <span class="s">"properties"</span><span class="p">:</span> <span class="p">{</span>&#x000A;        <span class="s">"UserId"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"string"</span><span class="p">},</span>&#x000A;        <span class="s">"NoteId"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"integer"</span><span class="p">},</span>&#x000A;        <span class="s">"Note"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"string"</span><span class="p">}</span>&#x000A;    <span class="p">},</span>&#x000A;    <span class="s">"required"</span><span class="p">:</span> <span class="p">[</span><span class="s">"UserId"</span><span class="p">,</span> <span class="s">"NoteId"</span><span class="p">,</span> <span class="s">"Note"</span><span class="p">]</span>&#x000A;<span class="p">}</span>&#x000A;</code></pre><ul>
+<li>Choice B:</li>
+</ul><pre class="highlight python"><code><span class="p">{</span>&#x000A;    <span class="s">"title"</span><span class="p">:</span> <span class="s">"Note"</span><span class="p">,</span>&#x000A;    <span class="s">"type"</span><span class="p">:</span> <span class="s">"object"</span><span class="p">,</span>&#x000A;    <span class="s">"properties"</span><span class="p">:</span> <span class="p">{</span>&#x000A;        <span class="s">"UserId"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"string"</span><span class="p">},</span>&#x000A;        <span class="s">"NoteId"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"integer"</span><span class="p">},</span>&#x000A;        <span class="s">"Note"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"string"</span><span class="p">}</span>&#x000A;    <span class="p">},</span>&#x000A;    <span class="s">"required"</span><span class="p">:</span> <span class="p">[</span><span class="s">"UserId"</span><span class="p">,</span> <span class="s">"NoteId"</span><span class="p">,</span> <span class="s">"Note"</span><span class="p">]</span>&#x000A;<span class="p">}</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> You can find the solution to this step in the <a href="#todo-2-solution" target="_self">TODO 2 solution</a> section at the bottom of these instructions.</p>
+<ol start="32">
+<li><p>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Create model</span></p></li>
+<li><p>In the left navigation panel, under <strong>API: <span style="color:#ec7211;">PollyNotesAPI</span></strong>, choose <strong>Resources</strong>.</p></li>
+<li><p>In the <strong>Resources</strong> panel, for the <span style="color:#0073bb;"><strong>/notes</strong></span> resource, choose <span style="color:#629300;"><strong>POST</strong></span>.</p></li>
+<li><p>In the <strong>/notes - POST - Method Execution</strong> panel, choose <span style="color:#0073bb;"><strong>Method Request</strong></span>.</p></li>
+</ol><ul>
+<li><p>For <strong>Request Validator</strong>, choose <i class="fas fa-pencil-alt"></i> (edit).</p></li>
+<li><p>Select <strong>Validate body</strong> and choose <i class="fas fa-check-circle"></i> (check mark tick).</p></li>
+<li><p>Expand <i class="fas fa-caret-right"></i> <strong>Request Body</strong></p></li>
+<li><p>Choose <i class="fas fa-plus-circle"></i> <span style="color:#0073bb;">Add model</span></p></li>
+<li><p>For <strong>Content type</strong>, enter <input readonly class="copyable-inline-input" size="16" type="text" value="application/json"></p></li>
+<li><p>For <strong>Model name</strong>, select <strong>NoteModel</strong>.</p></li>
+<li><p>Choose <i class="fas fa-check-circle"></i> (check mark tick).</p></li>
+</ul>
+<h3>Task 3.3: Test the request validator</h3>
+
+<p>You can now test the validator. First, send a note in the payload without the correct schema, and then one that uses the correct schema.</p>
+<ol start="36">
+<li><p>At the top of the <strong>/notes - POST - Method Execution</strong> panel, choose <strong><span style="color:#0073bb;"><i class="fas fa-arrow-left"></i> Method Execution</span></strong>.</p></li>
+<li><p>In the <strong>/notes - POST - Method Execution</strong> panel, choose <span style="color:#0073bb;"><strong>TEST</strong></span></p></li>
+</ol><ul>
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In the <strong>Request Body</strong> code block, paste the following json object.</li>
+</ul><pre class="highlight python"><code><span class="p">{</span>&#x000A;    <span class="s">"Note"</span><span class="p">:</span> <span class="s">"This is your updated note using the Model validation"</span><span class="p">,</span>&#x000A;    <span class="s">"UserId"</span><span class="p">:</span> <span class="s">"student"</span><span class="p">,</span>&#x000A;    <span class="s">"id"</span><span class="p">:</span> <span class="mi">3</span>&#x000A;<span class="p">}</span>&#x000A;</code></pre><ul>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;"><i class="fas fa-bolt"></i> Test</span>
+</li>
+</ul>
+<p>Notice that the test was not successful, there is a <strong>Status</strong> of <strong>400</strong> and the <strong>Response Body</strong> clearly states that there was an <strong>Invalid request body</strong>.  If you review the <strong>Logs</strong>, there is more detail. <em>"Request body does not match model schema for content type application/json: [object has missing required properties (["NoteId"])]"</em></p>
+<ul>
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In the <strong>Request Body</strong> code block, replace what is there with the following json object.</li>
+</ul><pre class="highlight python"><code><span class="p">{</span>&#x000A;    <span class="s">"Note"</span><span class="p">:</span> <span class="s">"This is your updated note using the Model validation"</span><span class="p">,</span>&#x000A;    <span class="s">"UserId"</span><span class="p">:</span> <span class="s">"student"</span><span class="p">,</span>&#x000A;    <span class="s">"NoteId"</span><span class="p">:</span> <span class="mi">3</span>&#x000A;<span class="p">}</span>&#x000A;</code></pre><ul>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;"><i class="fas fa-bolt"></i> Test</span>
+</li>
+</ul>
+<p>With a valid body that matches the enforced schema, the request succeeds and is processed by the Lambda function.</p>
+
+<h2 id="step7">Task 4: Deploy the API with CORS configurations</h2>
+
+<p>Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any other origins (domain, scheme, or port) than its own from which a browser should permit loading of resources. CORS also relies on a mechanism by which browsers make a “preflight” request, to the server hosting the cross-origin resource, in order to check that the server will permit the actual request. In that preflight, the browser sends headers that indicate the HTTP method and headers that will be used in the actual request.</p>
+
+<p>An example of a cross-origin request: the front-end JavaScript code served from <a href="https://domain-a.com" target="_blank">https://domain-a.com</a> uses XMLHttpRequest to make a request for <a href="https://domain-b.com/data.json" target="_blank">https://domain-b.com/data.json</a>.</p>
+
+<p>In later labs, your web application will be accessed with an Amazon S3 domain name, and the API will have an Amazon API Gateway domain name, so this configuration is required for the labs. There are many reasons to host backend APIs with different domains, configuring CORS is a common requirement in API development.</p>
+
+<p>After configuring CORS, you will create a new stage and deploy the API. This creates an endpoint that can be accessed from the internet.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Enable CORS on all methods to allow any origin.</li>
+<li>Deploy the API to a Prod stage.</li>
+<li>Test the API with your web browser.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 4.1: Configure Cross-Origin Request Sharing (CORS)</h3>
+
+<p>When you first created the API, you instructed the service to enable CORS. That created and configured the <strong>OPTIONS</strong> method for the resource. The <strong>OPTIONS</strong> method is requested when browsers perform the "preflight" request.  You have created methods, so you need to configure CORS for those methods.</p>
+
+<p>In this task, you add <strong>Response Headers</strong> to the methods you have configured. You can configure this manually but the instructions below use the API Gateway console to automate the configuration.</p>
+<ol start="38">
+<li><p>In the <strong>Resources</strong> panel, choose <span style="color:#0073bb;"><strong>/notes</strong></span>.</p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Actions <i class="fas fa-caret-down"></i></span> and choose <strong>Enable CORS</strong>.</p></li>
+</ol><ul>
+<li>For <strong>Gateway Responses for <em>PollyNotesAPI</em> API</strong>, check the box for <strong>DEFAULT 4XX</strong> and <strong>DEFAULT 5XX</strong>.</li>
+</ul><ol start="40">
+<li><p>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Enable CORS and replace existing CORS headers</span></p></li>
+<li><p>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Yes, replace existing values</span></p></li>
+</ol>
+<p>For each existing method, this step added <strong>Header Mappings</strong> and <strong>Response Headers</strong> for each status code your methods have configured. Now your web browser will allow CORS for these API methods.  You can modify this configuration to make it more secure in the future when your web front-end and API use known domain names.</p>
+
+<h3>Task 4.2: Deploy the API</h3>
+
+<p>Your API has been configured, but before you can access this configuration with the API endpoint, you need to create a stage and deploy the configuration to that stage.</p>
+
+<p>A stage is a logical reference to a lifecycle state of your API. API stages are identified by API ID and stage name. You could create a "dev" and a "prod" stage, and all changes could be deployed to dev and fully tested before you allow them to be deployed to prod.</p>
+
+<p>Another common strategy is to have a new stage for each major or minor version of your API. Anytime you make a change that could impact legacy versions, of the front end applications that use your API, you could create a new stage (for example, "v2"). Your users would have to change the API endpoint URL to take advantage of the new features after they have confirmed that their code works with the new version.</p>
+
+<p>An API deployment is a point-in-time snapshot of your API Gateway API. To be available for clients to use, the deployment must be associated with one or more API stages.</p>
+<ol start="42">
+<li><p>In the <strong>Resources</strong> panel, choose <span style="color:#0073bb;"><strong>/notes</strong></span>.</p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Actions <i class="fas fa-caret-down"></i></span> and choose <strong>Deploy API</strong>.</p></li>
+</ol><ul>
+<li><p>For <strong>Deployment stage</strong>, choose <strong>[New Stage]</strong>.</p></li>
+<li><p>For <strong>Stage name</strong>, enter <input readonly class="copyable-inline-input" size="4" type="text" value="Prod"></p></li>
+</ul><ol start="44">
+<li><p>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Deploy</span></p></li>
+<li><p>Copy the <span style="color:#0073bb;"><strong>Invoke URL</strong></span> and paste it to a new web browser tab, append <input readonly class="copyable-inline-input" size="6" type="text" value="/notes"> to the end of the URL and press Enter.</p></li>
+</ol>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>The expected output should be a JSON array like the one below. Depending on your web browser, the output may be formatted in a way that is easier to read.</p>
+
+<p><span style="font-family:Courier;">[</span><br><br>
+<span style="font-family:Courier;">{</span><br><br>
+<span style="font-family:Courier;">"NoteId" : "1",</span><br><br>
+<span style="font-family:Courier;">"Note" : "DynamoDB is NoSQL"</span><br><br>
+<span style="font-family:Courier;">},</span><br><br>
+<span style="font-family:Courier;">{</span><br><br>
+<span style="font-family:Courier;">"NoteId" : "2",</span><br><br>
+<span style="font-family:Courier;">"Note" : "A DynamoDB table is schemaless"</span><br><br>
+<span style="font-family:Courier;">},</span><br><br>
+<span style="font-family:Courier;">{</span><br><br>
+<span style="font-family:Courier;">"NoteId" : "3",</span><br><br>
+<span style="font-family:Courier;">"Note" : "This is your updated note using the Model validation"</span><br><br>
+<span style="font-family:Courier;">}</span><br><br>
+<span style="font-family:Courier;">]</span><br></p>
+
+<h2 id="step8">Summary</h2>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You can access your AWS Lambda functions with the Amazon API Gateway.  As you can see, your API is open to the world at this point.  In the next lab, you will secure it before adding any more API methods or resources.</p>
+
+<p>You can now:</p>
+<ul>
+<li>Create RESTful API resources and configure CORS for your application.</li>
+<li>Integrate API methods with AWS Lambda functions to process application data.</li>
+<li>Configure mapping templates to transform the pass-through data during method integration.</li>
+<li>Create a request model for API methods to ensure that the pass-through data format complies with application rules.</li>
+<li>Deploy the API to a stage and validate the results using the API endpoint.</li>
+</ul>
+<h2 id="step9">End Lab</h2>
+
+<p>Follow these steps to close the console, end your lab, and evaluate the experience.</p>
+<ol start="46">
+<li><p>Return to the AWS Management Console.</p></li>
+<li><p>On the navigation bar, choose <strong>awsstudent@&lt;AccountNumber&gt;</strong>, and then choose <strong>Sign Out</strong>.</p></li>
+<li><p>Choose <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-family:Google Sans;font-weight:bold;font-size:90%;color:#444;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">OK</span></p></li>
+<li><p>(Optional):</p></li>
+</ol><ul>
+<li>Select the applicable number of stars <i class="far fa-star"></i>
+</li>
+<li>Type a comment</li>
+<li>
+<p>Choose <strong>Submit</strong></p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+</li>
+</ul>
+<p>You may close the window if you don't want to provide feedback.<br>
+For more information about AWS Training and Certification, see <a href="https://aws.amazon.com/training/" target="_blank"><em>https://aws.amazon.com/training/</em></a>.</p>
+
+<p><em>Your feedback is welcome and appreciated.</em></p>
+
+<p>If you would like to share any feedback, suggestions, or corrections, please provide the details in our <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification Contact Form</em></a>.</p>
+
+<h2 id="step10">Additional Resources</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html" target="_blank">Amazon API Gateway Developer Guide</a></li>
+<li><a href="https://velocity.apache.org/engine/devel/vtl-reference.html" target="_blank">Velocity Template Language (VTL)</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" target="_blank">Cross-Origin Resource Sharing (CORS)</a></li>
+</ul>
+
+
+<h2 id="step11">Code Challenge Solutions</h2>
+
+<p><a id="todo-1-solution" target="_blank"></a></p>
+
+<h3>TODO 1 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because it does not parse each object.</p></li>
+<li><p><strong>Choice B is correct code snippet.</strong><br>
+In this case, your response received is list of objects and you need to parse each object.</p></li>
+</ul><pre class="highlight python"><code>&#x000A;<span class="c">#set($inputRoot = $input.path('$'))</span>&#x000A;<span class="p">[</span>&#x000A;    <span class="c">#foreach($elem in $inputRoot)</span>&#x000A;    <span class="p">{</span>&#x000A;        <span class="s">"NoteId"</span> <span class="p">:</span> <span class="s">"$elem.NoteId"</span><span class="p">,</span>&#x000A;        <span class="s">"Note"</span> <span class="p">:</span> <span class="s">"$elem.Note"</span>&#x000A;    <span class="p">}</span>&#x000A;    <span class="c">#if($foreach.hasNext),#end</span>&#x000A;    <span class="c">#end</span>&#x000A;<span class="p">]</span>&#x000A;&#x000A;</code></pre>
+<p><a href="#todo-1" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-2-solution" target="_blank"></a></p>
+
+<h3>TODO 2 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because the type property is set to an <strong>array</strong>.</p></li>
+<li><p><strong>Choice B is correct code snippet.</strong><br>
+In this scenario, you are receiving the request as an object, not an array.</p></li>
+</ul><pre class="highlight python"><code>&#x000A;<span class="p">{</span>&#x000A;    <span class="s">"title"</span><span class="p">:</span> <span class="s">"Note"</span><span class="p">,</span>&#x000A;    <span class="s">"type"</span><span class="p">:</span> <span class="s">"object"</span><span class="p">,</span>&#x000A;    <span class="s">"properties"</span><span class="p">:</span> <span class="p">{</span>&#x000A;        <span class="s">"UserId"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"string"</span><span class="p">},</span>&#x000A;        <span class="s">"NoteId"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"integer"</span><span class="p">},</span>&#x000A;        <span class="s">"Note"</span><span class="p">:</span> <span class="p">{</span><span class="s">"type"</span><span class="p">:</span> <span class="s">"string"</span><span class="p">}</span>&#x000A;    <span class="p">},</span>&#x000A;    <span class="s">"required"</span><span class="p">:</span> <span class="p">[</span><span class="s">"UserId"</span><span class="p">,</span> <span class="s">"NoteId"</span><span class="p">,</span> <span class="s">"Note"</span><span class="p">]</span>&#x000A;<span class="p">}</span>&#x000A;&#x000A;</code></pre>
+<p><a href="#todo-2" target="_self">Return to the instructions</a></p>
+
+
+
+<p><a id="appendix" target="_blank"></a></p>
+
+<h2 id="step12">Appendix</h2>
+
+<h3>AWS Services Not Used in This Lab</h3>
+
+<p>AWS services that are not used in this lab are deactivated in the lab environment. In addition, the capabilities of the services used in this lab are limited to what the lab requires. Expect errors when accessing other services or performing actions beyond those provided in this lab guide.</p>
+
+<h3>Icon key</h3>
+
+<p>Various icons are used throughout this lab to call attention to certain aspects of the guide. The following list explains the purpose for each one:</p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Specifies the command you must run.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong> See an example.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong> Verify the output of a command or edited file.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Specifies important hints, tips, guidance, or advice.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Specifies where to find more information.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong> Calls attention to information of special interest or importance. Failure to read the note does not result in physical harm to the equipment or data, but could result in the need to repeat certain steps.</li>
+<li>
+<i class="fas fa-user-shield" style="color:#00a1c9;"></i> <strong>Security:</strong> Identifies opportunities to incorporate security best practices.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#d13212;"></i> <strong>WARNING:</strong> Draws special attention to actions that are irreversible and could potentially impact the failure of a command or process. Includes warnings about configurations that cannot be changed after they are made.</li>
+<li>
+<i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong> Suggests a moment to pause to consider how you might apply a concept in your own environment or to initiate a conversation about the topic at hand.</li>
+<li>
+<p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In some cases, you may execute a script or apply a file that has been pre-created for you. This icon signifies a code block that is used to display the contents of the script or file you interacted with.</p>
+<ul>
+<li>When you need to copy only a certain part of a code block, there will be numbered <strong>TODO</strong> comments in the code.<span><br><br></span>
+</li>
+</ul>
+</li>
+<li><p><i class="far fa-compass" style="color:#dd6b10;"></i> <strong>Context:</strong> When asked to open the <strong>Context Menu</strong> for an item, this is the same action as right-clicking for a mouse or the appropriate action for your particular pointing device.</p></li>
+</ul>
+<p><a href="#prerequisites" target="_self">Return to the instructions</a></p>
+
+</div>
+</div>
+
+
+<div class='lab-content__end-lab-button js-end-lab-button-container hidden'>
+<ql-lab-control-button class='js-end-lab-button' running></ql-lab-control-button>
+</div>
+<!-- / TODO: Move recommendations into the end lab modal -->
+</ql-drawer-content>
+<ql-drawer end id='outline-drawer' open slot='drawer' width='320'>
+<div aria-label='Sommario del lab' role='navigation'>
+<ul class='lab-content__outline js-lab-content-outline'>
+<li><a href='#step1'>Prerequisites</a></li><li><a href='#step2'>Overview</a></li><li><a href='#step3'>Start Lab</a></li><li><a href='#step4'>Task 1: Create a REST API and resource</a></li><li><a href='#step5'>Task 2: Configure the GET method and add a mapping template to transform responses</a></li><li><a href='#step6'>Task 3: Configure the POST method and add a request validation model</a></li><li><a href='#step7'>Task 4: Deploy the API with CORS configurations</a></li><li><a href='#step8'>Summary</a></li><li><a href='#step9'>End Lab</a></li><li><a href='#step10'>Additional Resources</a></li><li><a href='#step11'>Code Challenge Solutions</a></li><li><a href='#step12'>Appendix</a></li>
+</ul>
+</div>
+</ql-drawer>
+</ql-drawer-container>
+</ql-drawer-content>
+</ql-drawer-container>
+
+
+
+</div>
+</main>
+
+<span class='hidden' id='flash-sibling-before'></span>
+<ql-snackbar></ql-snackbar>
+
+
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='modal-content mdl-shadow--24dp'>
+<div class='modal-body'>
+<p class='l-mbm'>
+In this lab, you will create an Amazon API Gateway resource for your application.
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Durata:
+</strong>
+Configurazione in 1 m
+&middot;
+Accesso da 120 m
+&middot;
+Completamento in 120 m
+</p>
+<p class='small-label l-mbs'>
+<strong>Area geografica AWS:</strong>
+[us-west-2] <strong>US West (Oregon)</strong>
+</p>
+<p class='small-label l-mbs'>
+
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://it-flane.qwiklabs.com/catalog_lab/73986">https://it-flane.qwiklabs.com/catalog_lab/73986</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='button button--text' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<ql-dialog headline='Qual è il tuo livello di soddisfazione rispetto a questo lab?&lt;span aria-hidden=&quot;true&quot;&gt;*&lt;/span&gt;' id='lab-review-dialog'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div aria-labelledby='lab-review-dialog' aria-required='true' aria-valuemax='5' aria-valuemin='0' aria-valuenow='0' class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0' id='lab-review-rateit' role='slider' tabindex='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="14798" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="2083" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="73986" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="14570" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Commenti aggiuntivi</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</form><ql-button disabled id='submit' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+<ql-dialog headline='Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?' icon='error_outline' id='js-lab-are-you-sure-dialog'>
+<ql-button id='js-are-you-sure-button' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    ql.chat.init();
+  ql.jumpContent.init();
+  initLabContent();
+  ql.labOutline.links.init();
+  initLabReviewModal();
+  initLabReviewTranslations( {"star_amount_1":"1 stelle su 5","star_amount_2":"2 stelle su 5","star_amount_3":"3 stelle su 5","star_amount_4":"4 stelle su 5","star_amount_5":"5 stelle su 5"} )
+  ql.labAssessment.init();
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?","in_progress":"*In corso*","ending":"*Conclusione*","starting":"*Avvio… Attendi*","end_concurrent_labs":"È possibile eseguire un solo lab alla volta. Per avviare questo lab, conferma di voler terminare tutti i lab esistenti.","copied":"Copiato","no_resource":"Errore durante il recupero della risorsa.","no_support":"Non viene fornita assistenza","mac_press":"Premi ⌘-C per copiare","thanks_review":"Grazie per aver inserito una recensione per questo lab.","windows_press":"Premi Ctrl+C per copiare","days":"giorni"} );
+  ql.labRun.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,18 @@
+{
+    "FunctionName": "<YOUR_LAMBDA_FUNCTION_NAME>",
+    "Runtime": "<YOUR_RUNTIME>",
+    "Role": "<YOUR_LAMBDA_FUNCTION_ROLE_ARN>",
+    "Handler": "<YOUR_HANDLER>",
+    "Description": "",
+    "Timeout": 10,
+    "MemorySize": 1024,
+    "VpcConfig": {
+        "SubnetIds": [
+            "<YOUR_SUBNET_ID>",
+	    "<YOUR_SUBNET_ID>"
+        ],
+        "SecurityGroupIds": [
+            "<YOUR_SUBNET_SECURITY_GROUP_ID>"
+        ]
+    }
+}

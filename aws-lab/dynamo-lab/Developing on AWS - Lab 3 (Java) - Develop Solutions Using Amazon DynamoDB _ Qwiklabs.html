@@ -1,0 +1,1335 @@
+
+<!DOCTYPE html>
+<html lang='it'>
+<head>
+<title>Developing on AWS - Lab 3 (Java) - Develop Solutions Using Amazon DynamoDB | Qwiklabs</title>
+<script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Diego","lastname":"Brignoli","fullname":"Diego Brignoli","company":"Beta80","email":"diego.brignoli@beta80group.it","origin":"it-flane, direct","subscriptions":0,"id":"a61e1fd9f1a7d5ef061dbe892bae5f9f","qlCreatedAt":"2022-03-07 13:40:45 UTC","optIn":true,"current_organization_id":null,"current_organization_role":null};gon.segment=null;gon.deployment="it-flane";gon.content={"type":"Lab","id":73982,"name":"Developing on AWS - Lab 3 (Java) - Develop Solutions Using Amazon DynamoDB"};
+//]]>
+</script>
+<script>
+  dataLayer = [
+    {user: gon.current_user},
+    {content: gon.content}
+  ];
+</script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/polyfills/webcomponents-loader-60a166e60df2787cca5915e2ced8c317457f421a20f02601b937a72275ac441a.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-2beee108ba05276bc429223ee82ed81449d233c93d45af5da84add895e101218.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-b44c688caf0e24039ff5020ad65695458c8c0edbd37ac5431ce3efa6d80f07e0.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors__it-c5bb7dbc14336638421f7b3f9e4f32567ff92565d683255515ad93ae6d7e7992.js"></script>
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="mIAgbkX27AlVNmTSuzD26cn6fl1di+QIVVuFR9/7msE/Tco9DAcirZzQMZh41U0lY9OGHBW0on8B1Xn5W3l1sQ==" />
+<meta content='width=device-width, initial-scale=1.0, user-scalable=yes' name='viewport'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<meta content='[{&quot;id&quot;:&quot;recaptcha_experiment&quot;,&quot;optimize_id&quot;:&quot;dpViOcLkT3qS4TvL2mRojA&quot;,&quot;title&quot;:&quot;No Recaptcha shown for trusted users&quot;,&quot;variant_index&quot;:1,&quot;variant&quot;:&quot;no_recaptcha&quot;}]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:14798}' name='help-api-product-data'>
+<meta content='In this lab, students will develop programs to create an Amazon DynamoDB table to store notes for the lab application and perform CRUD operation on the table.' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='Developing on AWS - Lab 3 (Java) - Develop Solutions Using Amazon DynamoDB | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='In this lab, students will develop programs to create an Amazon DynamoDB table to store notes for the lab application and perform CRUD operation on the table.' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+
+
+
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+<link href='/favicon-32.png' rel='shortcut icon' type='image/x-icon'>
+
+
+
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+<link rel="stylesheet" media="screen" href="https://cdn.qwiklabs.com/stylesheets/application_old/locales/it.css" />
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-1c1adc018a83f53f78a5b6f624572a32bf4f3c935b02a026b7bf82afe02b4dae.css" />
+
+<style>
+  :root {
+    --primary-text-on-surface-color: #1A73E8;
+    --primary-text-on-surface-color-dark: #1568d6;
+    --primary-text-on-surface-color-darker: #135ec1;
+    --primary-text-on-surface-color-darkest: #1154ac;
+    --primary-surface-color: #1A73E8;
+    --primary-surface-color-rgb: 26,115,232;
+    --primary-surface-color-light: #d1e3fa;
+    --primary-surface-color-lightest: #e8f1fd;
+    --text-on-primary-color: #FFFFFF;
+    --accent-text-on-surface-color: #F29900;
+    --accent-surface-color: #F9AB00;
+    --accent-surface-color-rgb: 249,171,0;
+    --accent-surface-color-light: #ffefcc;
+    --text-on-accent-color: #202124;
+  }
+</style>
+
+
+
+</head>
+<body class='lab-show l-full no-nav application-new focuses focuses-show lab-show l-full no-nav '>
+<div class='header-container'>
+<div class='header'>
+<ql-toolbar jumpEnabled>
+<div class='header__title' slot='title'>
+<ql-icon-button label="Indietro" href="/classrooms/2083" id="5f1e688f378723f7" target="_self" tip="Indietro">arrow_back</ql-icon-button>
+<h1 class='ql-headline-6'>Developing on AWS - Lab 3 (Java) - Develop Solutions Using Amazon DynamoDB</h1>
+</div>
+<div class='header__actions' slot='action'>
+<ql-icon-button id='control-panel-target' style='display: none;'>
+dashboard
+</ql-icon-button>
+<ql-menu for='control-panel-target' id='control-panel-menu'></ql-menu>
+<ql-icon-button class='mobile-hide' icon='help_outline' id='help-menu-button' label='Apri il menu Guida' tip='Guida'></ql-icon-button>
+<ql-menu for='help-menu-button' id='help-menu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='lab' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:14798},&quot;context&quot;:&quot;lab&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/contact_us' label='Email support' target='_blank'></ql-menu-item>
+<ql-menu-item label='Chat support' onClick='ql.chat.open()'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button class='mobile-hide' icon='language' id='language' label='Seleziona le preferenze relative alla lingua' tip='Lingua'></ql-icon-button>
+<ql-menu for='language'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/classrooms/2083/labs/14566?locale=ar' label='العربية‬‎' lang='ar'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/classrooms/2083/labs/14566?locale=de' label='Deutsch' lang='de'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/classrooms/2083/labs/14566?locale=en' label='English' lang='en'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/classrooms/2083/labs/14566?locale=es' label='español (Latinoamérica)' lang='es'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/classrooms/2083/labs/14566?locale=fr' label='français' lang='fr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/classrooms/2083/labs/14566?locale=fr_CA' label='français (Canada)' lang='fr-CA'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/classrooms/2083/labs/14566?locale=he' label='עברית' lang='he'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/classrooms/2083/labs/14566?locale=id' label='bahasa Indonesia' lang='id'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/classrooms/2083/labs/14566?locale=it' label='Italiano' lang='it'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/classrooms/2083/labs/14566?locale=ja' label='日本語' lang='ja'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/classrooms/2083/labs/14566?locale=ko' label='한국어' lang='ko'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/classrooms/2083/labs/14566?locale=pl' label='Polski' lang='pl'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/classrooms/2083/labs/14566?locale=pt_BR' label='português (Brasil)' lang='pt-BR'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/classrooms/2083/labs/14566?locale=pt_PT' label='português (Portugal)' lang='pt-PT'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/classrooms/2083/labs/14566?locale=ru' label='русский' lang='ru'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/classrooms/2083/labs/14566?locale=tr' label='Türkçe' lang='tr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/classrooms/2083/labs/14566?locale=zh' label='简体中文' lang='zh'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/classrooms/2083/labs/14566?locale=zh_TW' label='繁體中文' lang='zh-TW'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button id='my_account' label='Account personale' tip='Account personale'>
+<ql-avatar></ql-avatar>
+</ql-icon-button>
+<ql-menu for='my_account' id='my_account_menu' style='max-height: 640px'>
+<div class='my-account-menu'>
+<ql-avatar class='l-mtl l-mbl' size='120'></ql-avatar>
+<div class='my-account-menu__user-info l-mbl'>
+<h4 class='ql-subhead-1'>Diego Brignoli</h4>
+<p class='ql-body-2 text--light'>diego.brignoli@beta80group.it</p>
+<p class='ql-body-2 text--light'>
+</p>
+</div>
+<div class='buttons l-mbl'>
+<a class="button button--hairline" id="settings" href="/my_account/profile">Impostazioni</a>
+</div>
+<hr>
+<ql-button data-analytics-action='clicked_sign_out' href='/users/sign_out' method='delete'>
+Esci
+</ql-button>
+<div class='privacy l-mtl'>
+<a class="ql-caption text--light" href="/privacy_policy">Privacy</a>
+<span class='ql-caption text--light l-mls l-mrs'>&middot;</span>
+<a class="ql-caption text--light" href="/terms_of_service">Termini</a>
+</div>
+</div>
+</ql-menu>
+
+</div>
+</ql-toolbar>
+
+</div>
+</div>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class="custom-logo"><img alt="Qwiklabs" height="24" aria-label="Qwiklabs" src="https://cdn.qwiklabs.com/yjTIzMprll8xFSNHNul7y7IDev3CoxdLyHeDu9qmu2Q%3D" /></div>
+</div>
+<nav class='ql-sidenav'>
+<ql-sidenav-item href='/' icon='home' label='Home page'></ql-sidenav-item>
+
+<ql-sidenav-item href='/catalog' icon='school' label='Catalogo'></ql-sidenav-item>
+
+<ql-sidenav-item active href='/profile' icon='event_note' label='Profilo'></ql-sidenav-item>
+
+</nav>
+
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main' id='jump-content'>
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+<ql-drawer-container class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;Developing on AWS - Lab 3 (Java) - Develop Solutions Using Amazon DynamoDB&quot;,&quot;lab_name&quot;:&quot;Developing on AWS - Lab 3 (Java) - Develop Solutions Using Amazon DynamoDB&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;it-flane&quot;}' data-focus-id='14566' data-lab-billing-limit='0.0' data-lab-duration='7200' data-parent='classroom' id='lab-container'>
+<ql-drawer id='terminal-drawer' slot='drawer' style='width: calc(100% - 480px)'>
+<iframe allow='clipboard-read' class='terminal' id='embedded-resource'></iframe>
+</ql-drawer>
+<ql-drawer-content class='js-lab-wrapper' id='lab-content' slot='drawer-content'>
+<ql-drawer-container id='lab-content-container'>
+<ql-drawer id='control-panel-drawer' open slot='drawer' width='320'>
+<ql-lab-control-panel class='ql-lab-control-panel__max-height control-panel js-lab-control-panel' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labDetails='[]' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}' studentResources='[]'>
+</ql-lab-control-panel>
+</ql-drawer>
+<ql-drawer-content id='lab-instructions' slot='drawer-content'>
+<ql-snackbar id='alert-snackbar'></ql-snackbar>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message' role='alert'></p>
+<ql-icon-button class='alert__close js-alert-close' icon='clear'></ql-icon-button>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<div class='lab-content__renderable-instructions js-lab-content'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+Developing on AWS - Lab 3 (Java) - Develop Solutions Using Amazon DynamoDB
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>2 ore </span>
+<span>Gratis</span>
+<div class='lab__rating'>
+<a aria-label="Recensioni del lab" href="/focuses/14566/reviews?parent=classroom"><div class='rateit' data-rateit-readonly='true' data-rateit-value='4.6667'></div>
+
+</a><ql-button aria-label='Valuta lab' id='rate-lab-btn' label='Valuta lab' text></ql-button>
+</div>
+</div>
+</div>
+<div class='lab-outline-place-holder'></div>
+
+<div class='markdown-lab-instructions js-markdown-instructions no-select' id='markdown-lab-instructions'>
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/aws-logo.png" alt=""></p>
+
+
+
+<p>© 2022 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited. All trademarks are the property of their owners.</p>
+
+<p>Note: Do not include any personal, identifying, or confidential information into the lab environment. Information entered may be visible to others.</p>
+
+<p>Corrections, feedback, or other questions? Contact us at <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification</em></a>.</p>
+
+<p><strong>Duration</strong></p>
+
+<p>This lab will require approximately <strong>60 minutes</strong> to complete.</p>
+
+<p><a id="prerequisites" target="_blank"></a></p>
+
+<h2 id="step1">Prerequisites</h2>
+
+<p>This lab requires:</p>
+<ul>
+<li>Access to a Microsoft Windows or MacOS notebook computer with a Wi-Fi connection.</li>
+<li>An Internet browser such as Chrome, Firefox, or IE9+.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Previous versions of Internet Explorer are not supported.</li>
+<li>A Microsoft Remote Desktop client to connect to your development Amazon Elastic Compute Cloud (Amazon EC2) instance.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You can use an iPad or tablet device to access these directions in the lab console.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Review additional lab environment specific details in the <a href="#appendix" target="_self">Appendix.</a>
+</li>
+</ul>
+<h2 id="step2">Overview</h2>
+
+<p>In this lab you will use the AWS CLI to create an Amazon DynamoDB table named <strong>Notes</strong> to store notes and process the data in that table. You will define key properties for the table as needed. You will load sample test data from a JSON file that you created in the previous lab, and you will write a variety of queries to search specific notes used in your application. You will update specific notes based on attribute conditions.</p>
+
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-3-java/instructions/en_us/images/lab-3-diagram.png" alt="Lab 3 diagram"></p>
+
+<p>You are initially provided an incomplete source code. You will use clues to complete the missing pieces of the code at TODO placeholders. Once the syntax-free code is filled out, you will run and review the results.</p>
+
+<h3>Objectives</h3>
+
+<p>After completing this lab, you will be able to:</p>
+<ul>
+<li>Interact with DynamoDB programmatically using low-level, document, and high-level APIs in your programs.</li>
+<li>Create a table using waiters with a primary key, sort key and desired provisioned throughput.</li>
+<li>Load a table by reading JSON objects from a file.</li>
+<li>Search items from a table based on key attributes, filters, expressions, and paginations.</li>
+<li>Update items by adding new attributes and changing data conditionally.</li>
+<li>Access DynamoDB data using object-persistence model.</li>
+</ul>
+
+
+<h2 id="step3">Start Lab</h2>
+<ol start="1">
+<li>At the top of your screen, launch your lab by choosing <span style="background-color:#34A853;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#34A853;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Start Lab</span>
+</li>
+</ol>
+<p>This starts the process of provisioning your lab resources. An estimated amount of time to provision your lab resources is displayed. You must wait for your resources to be provisioned before continuing.</p>
+
+<p><i class="fas fa-info-circle"></i> If you are prompted for a token, use the one distributed to you (or credits you have purchased). </p>
+<ol start="2">
+<li>Open your lab by choosing <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span>
+</li>
+</ol>
+<p>This opens an AWS Management Console sign-in page.</p>
+<ol start="3">
+<li>On the sign-in page, configure:</li>
+</ol><ul>
+<li>
+<strong>IAM user name:</strong> <input readonly class="copyable-inline-input" size="10" type="text" value="awsstudent">
+</li>
+<li>
+<strong>Password:</strong> Paste the value of <strong>Password</strong> from the left side of the lab page</li>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Sign In</span>
+</li>
+</ul>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Do not change the Region unless instructed.</strong></p>
+
+
+
+<h3>Common Login Errors</h3>
+
+<p><strong>Error: You must first log out</strong></p>
+
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/logouterror.png" alt=""></p>
+
+<p>If you see the message, <strong>You must first log out before logging into a different AWS account:</strong> </p>
+<ul>
+<li>Choose <strong>here</strong>
+</li>
+<li>Close your browser tab to return to your initial lab window</li>
+<li>Choose <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span> again</li>
+</ul>
+
+
+<h2 id="step4">Task 0: Connect to your development environment and configure IntelliJ</h2>
+
+<p>In this set of tasks, you will connect to your development environment. Once connected you will open IntelliJ and configure the IDE for use in this lab.</p>
+
+<h3>Task 0.1: Connect to the development environment</h3>
+
+<p><a id="connection-options" target="_blank"></a></p>
+<ol start="4">
+<li>Choose a method to connect to the development environment from the options below:</li>
+</ol><ul>
+<li><a href="#connect_guacamole" target="_self">Connect to Your Windows Dev Instance using Apache Guacamole</a></li>
+<li><a href="#connect_win_mac" target="_self">Connect to Your Windows Dev Instance from a MacOS Machine using RDP</a></li>
+<li><a href="#connect_win_win" target="_self">Connect to Your Windows Dev Instance from a Windows Machine using RDP</a></li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  When lab instructions in subsequent sections require you to issue commands, use the <strong>IntelliJ Terminal</strong> as certain steps have been configured with variables based on the use of the terminal.</p>
+
+<p><i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong>  This lab is designed for both experienced and newer developers:</p>
+<ul>
+<li><p>For more experienced developers who enjoy a challenge, there are <strong>High-Level Instructions</strong> before each task that should provide you enough information to help you complete the task.</p></li>
+<li><p>Once you complete the updates test your code to ensure it works, troubleshoot if needed, and then move on to the next task.</p></li>
+<li><p>For newer developers, there are <strong>Detailed Instructions</strong> to guide you through each step of the lab.</p></li>
+</ul>
+<h3>Task 0.2: Configure the IntelliJ IDE</h3>
+<ol start="5">
+<li>Open <strong>IntelliJ</strong> from the desktop icon.</li>
+</ol><ul>
+<li>From the <strong>LICENSE AGREEMENT</strong> window, select the check box reading <i class="fas fa-check-square" style="color:#0073bb;"></i> <input readonly class="copyable-inline-input" size="70" type="text" value="I confirm that I have read and accept the terms of this User Agreement"> and then choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#000000;border-color:#0073bb;">Continue</span>
+</li>
+<li>From the <strong>DATA SHARING</strong> window, choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#000000;border-color:#0073bb;">Don't Send</span>
+</li>
+</ul><ol start="6">
+<li>From the <strong>Welcome</strong> screen, choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;"><i class="far fa-folder-open"></i></span> <strong>Open</strong> &gt; navigate to <input readonly class="copyable-inline-input" size="12" type="text" value="C:\code\java"> &gt; select <input readonly class="copyable-inline-input" size="7" type="text" value="pom.xml"> &gt; <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">OK</span> &gt; <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Open as Project</span> &gt; <i class="far fa-check-square" style="color:#0073bb;"></i> Trust projects in C:/code &gt; <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Trust Project</span>
+</li>
+</ol>
+<p><i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong>   Wait for the underlying processes to complete as they download plugins/dependencies and other tasks that can cause errors if you do not wait for those tasks to complete. You can observe this status at the bottom of the screen.</p>
+<ol start="7">
+<li><p>Close the <strong>Tip of the Day</strong> window.</p></li>
+<li><p>Set the <strong>AWS Connections Setting</strong> to use the <input readonly class="copyable-inline-input" size="7" type="text" value="default"> profile and set the <input readonly class="copyable-inline-input" size="6" type="text" value="region"> to the value to the left of these instructions.</p></li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You can set this from the option at the bottom-right of the screen or if you open the <strong>AWS Explorer</strong> tab from the lower-left of the screen. Also set the region to match the region value to the left of these instructions.</p>
+<ol start="9">
+<li><p>You will now assign the SDK to the project. Choose <strong>File</strong> &gt; <strong>Project Structure...</strong> &gt; <strong>Project SDK:</strong> <input readonly class="copyable-inline-input" size="34" type="text" value="11 Amazon Corretto version 11.0.11"> &gt; <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">OK</span></p></li>
+<li><p>From the <strong>Project</strong> pane, open <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>resources</strong> &gt; <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties">. This file is used throughout this lab to house each program's variables. Keep this file open; you will be referring to it in future tasks.</p></li>
+</ol>
+
+
+<h2 id="step5">Task 1: Create an Amazon DynamoDB table using the AWS CLI</h2>
+
+<p>In this task, you will use the developer sandbox and the <strong>AWS CLI</strong> to create a table with a primary key, sort key, and provisioned throughput. You will use waiters as needed to ensure the availability of the table.</p>
+<ol start="11">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong>  Open a <strong>Terminal</strong> session from the tab at the bottom and run the following code snippet to create the <strong>notes</strong> table.</li>
+</ol><pre class="highlight plaintext"><code>aws dynamodb create-table ^&#x000A;  --table-name Notes ^&#x000A;  --attribute-definitions AttributeName=UserId,AttributeType=S AttributeName=NoteId,AttributeType=N ^&#x000A;  --key-schema AttributeName=UserId,KeyType=HASH AttributeName=NoteId,KeyType=RANGE ^&#x000A;  --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 &#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">TableDescription:<br>
+    AttributeDefinitions:<br>
+    - AttributeName: NoteId<br>
+      AttributeType: N<br>
+    - AttributeName: UserId<br>
+      AttributeType: S<br>
+    CreationDateTime: '2021-08-06T16:25:45.597000+00:00'<br>
+    ItemCount: 0<br>
+    KeySchema:<br>
+    - AttributeName: UserId<br>
+      KeyType: HASH<br>
+    - AttributeName: NoteId<br>
+      KeyType: RANGE<br>
+    ProvisionedThroughput:<br>
+      NumberOfDecreasesToday: 0<br>
+      ReadCapacityUnits: 5<br>
+      WriteCapacityUnits: 5<br>
+    TableArn: arn:aws:dynamodb:us-west-2:123456789101:table/notes<br>
+    TableId: baf3ba96-f1ef-49ba-a701-fcf2bc83c296<br>
+    TableName: Notes<br>
+    TableSizeBytes: 0<br>
+    TableStatus: CREATING<br>
+    :<br>
+    :<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  CreateTable is an asynchronous operation. Upon receiving a <strong>CreateTable</strong> request, DynamoDB immediately returns a response with a <strong>TableStatus</strong> of <strong>CREATING</strong> . After the table is created, DynamoDB sets the <strong>TableStatus</strong> to <strong>ACTIVE</strong> . You can perform read and write operations only on an <strong>ACTIVE</strong> table.</p>
+<ol start="12">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong>  Run the command below to use a <strong>wait table-exists</strong> to ensure the table has been created before moving on to the next step:</li>
+</ol><pre class="highlight plaintext"><code>&#x000A;aws dynamodb wait table-exists --table-name Notes&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+<ol start="13">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong>  Run the command below to return the current status of the table as confirmation:</li>
+</ol><pre class="highlight plaintext"><code>&#x000A;aws dynamodb describe-table --table-name Notes | findstr TableStatus&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Waiter <strong>table-exists</strong> polls  with describe-table  every 20 seconds until <strong>Table.TableStatus</strong> returns <strong>ACTIVE</strong>.</p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">TableStatus: ACTIVE<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You should observe that the output pauses on the same line as the <em>wait</em> command, until the table's status updates to <strong>ACTIVE</strong>. Then it runs the next command which prints the current status of the table.</p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully created a table in Amazon DynamoDB.</p>
+
+
+
+<p><a id="task2" target="_blank"></a></p>
+
+<h2 id="step6">Task 2: Load data into the table</h2>
+
+<p>Now that you have created your <strong>Notes</strong> table, you will develop a program to import the <strong>notes.json</strong> data into the table. This file contains sample notes that you will use in your application. The file is already stored in the project folder. You will the use <strong>put-item</strong> operation matching the key attributes that you defined.</p>
+
+<p><strong>Pseudocode:</strong> <em>notesLoadData.java</em></p>
+<ul>
+<li>Create DynamoDB service client and read input query parameters.</li>
+<li>Define a document API wrapper around the client.</li>
+<li>Read notes.json data file iteratively and build item with UserId, NoteId, and Note as a node.</li>
+<li>Run putItem operation by mapping keys and other attribute values.</li>
+<li>Catch errors and exceptions as needed.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Review the initial data available in the file <input readonly class="copyable-inline-input" size="23" type="text" value="C:\code\java\notes.json">
+</li>
+<li>Open the <input readonly class="copyable-inline-input" size="13" type="text" value="notesLoadData"> file from the project.</li>
+<li>Build DynamoDB service client with basic configurations.</li>
+<li>Build the request for put-item using the key attributes and values.</li>
+<li>Use iterators to loop through the file to load all the records.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 2.1: Create the request for put-item</h3>
+
+<p>The <strong>putItem</strong> method is used to load each note from the input file to the <strong>Notes</strong> table. If the note already exists, it replaces it.</p>
+<ol start="14">
+<li><p>First, review the <strong>notes.json</strong> file to see the data that will be loaded into the table. From the <strong>Project</strong> pane, open <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <input readonly class="copyable-inline-input" size="10" type="text" value="notes.json">. Close this file once you are familiar with the contents.</p></li>
+<li><p>From the <strong>Project</strong> pane, open <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>java</strong> &gt; <strong>dev.labs.dynamodb</strong> &gt;  <input readonly class="copyable-inline-input" size="13" type="text" value="notesLoadData"></p></li>
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Find the <strong>TODO 0</strong>, and add the following code to build the <strong>DynamoDB client</strong> and define a <strong>document API wrapper</strong> around the <strong>client</strong>:</p></li>
+</ol><pre class="highlight javascript"><code>        <span class="c1">//Create DynamoDB client</span>&#x000A;        <span class="nx">AmazonDynamoDB</span> <span class="nx">client</span> <span class="o">=</span> <span class="nx">AmazonDynamoDBClientBuilder</span><span class="p">.</span><span class="nx">standard</span><span class="p">()</span>&#x000A;                <span class="p">.</span><span class="nx">build</span><span class="p">();</span>&#x000A;&#x000A;        <span class="c1">//Use the DynamoDB document API wrapper</span>&#x000A;        <span class="nx">DynamoDB</span> <span class="nx">dynamoDB</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DynamoDB</span><span class="p">(</span><span class="nx">client</span><span class="p">);</span>&#x000A;</code></pre>
+<p><a id="todo-1" target="_blank"></a></p>
+<ol start="17">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 1</strong> with the correct snippet below to build the request for <strong>put-item</strong>.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code><span class="n">table</span><span class="o">.</span><span class="na">putItem</span><span class="o">(</span>&#x000A;               <span class="k">new</span> <span class="nf">Item</span><span class="o">()</span>&#x000A;               <span class="o">.</span><span class="na">withPrimaryKey</span><span class="o">(</span><span class="s">"NoteId"</span><span class="o">,</span> <span class="n">noteId</span><span class="o">)</span>&#x000A;               <span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">"Note"</span><span class="o">,</span> <span class="n">note</span><span class="o">)</span>&#x000A;                <span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code><span class="n">table</span><span class="o">.</span><span class="na">putItem</span><span class="o">(</span>&#x000A;               <span class="k">new</span> <span class="nf">Item</span><span class="o">()</span>&#x000A;               <span class="o">.</span><span class="na">withPrimaryKey</span><span class="o">(</span><span class="s">"UserId"</span><span class="o">,</span> <span class="n">userId</span><span class="o">,</span> <span class="s">"NoteId"</span><span class="o">,</span> <span class="n">noteId</span><span class="o">)</span>&#x000A;               <span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">"Note"</span><span class="o">,</span> <span class="n">note</span><span class="o">)</span>&#x000A;                <span class="o">);</span>&#x000A;</code></pre><ol start="18">
+<li>Save your changes.</li>
+</ol>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Learn about the <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/JavaDocumentAPIItemCRUD.html#PutDocumentAPIJava" target="_blank">put-item method</a></p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-1-solution" target="_self">TODO 1 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 2.2: Test your code</h3>
+
+<p>Now it is time to run the code to test the program and ensure it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="18" type="text" value="notesLoadData.java"> file.</p>
+<ol start="19">
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'notesLoadData.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom and verify that it finishes <strong>Recompiling</strong> before proceeding.</p>
+<ol start="20">
+<li><p>Once recompiled, you can close this file.</p></li>
+<li><p><i class="fas fa-keyboard"></i> <strong>Command:</strong>  Use <strong>Maven</strong> from the command line with the following command from the <strong>terminal</strong>:</p></li>
+</ol><pre class="highlight plaintext"><code>mvn -q exec:java -Dexec.mainClass="dev.labs.dynamodb.notesLoadData"&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">   Loading "Notes" table with data from file "notes.json"<br>
+</span></p>
+
+<p><span style="font-family:Courier;"> PutItem succeeded: testuser 1 hello<br>
+PutItem succeeded: testuser 2 this is my first note<br>
+PutItem succeeded: newbie 1 Free swag code: 1234<br>
+PutItem succeeded: newbie 2 I love DynamoDB<br>
+PutItem succeeded: student 1 DynamoDB is NoSQL<br>
+PutItem succeeded: student 2 A DynamoDB table is schemaless<br>
+PutItem succeeded: student 3 PartiQL is a SQL compatible language for DynamoDB<br>
+PutItem succeeded: student 5 Maximum size of an item is ____ KB ?<br>
+PutItem succeeded: student 4 I love DynamoDB<br>
+</span></p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully loaded items into your table.</p>
+
+
+
+<p><a id="task3" target="_blank"></a></p>
+
+<h2 id="step7">Task 3: Query data using a primary key and projections</h2>
+
+<p>In this task, you will read existing data from the <strong>Notes</strong> table. You will use the <strong>Query</strong> operation to get all the notes belonging to a specific user but will only retrieve two attributes with names as <strong>NoteId</strong> and <strong>Note</strong>.</p>
+
+<p>While reading data from a table, Amazon DynamoDB returns all the item attributes by default. To get only some, rather than all of the attributes, use a <strong>projection expression</strong>. To retrieve a single attribute, specify its name. For multiple attributes, the names must be comma-separated.</p>
+
+<p><strong>Pseudocode:</strong> <em>notesQuery.java</em></p>
+<ul>
+<li>Create DynamoDB service client, use Document API wrapper, and read input query parameters.</li>
+<li>Get table information.</li>
+<li>Build request: Query specification with Primary attributes/values to match desired item, but projects only <strong>NoteId</strong> and <strong>Note</strong>.</li>
+<li>Run query, retrieve response, and process each item form the response using an iterator.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Use <strong>KeyConditionExpression</strong> to match the primary key attribute with the value you entered, but project only <strong>NoteId</strong> and <strong>Note</strong>.</li>
+<li>Run query and retrieve response as an item collection.</li>
+<li>Process each item form the response using an iterator.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 3.1: Build the QuerySpec request using the primary key and a projection expression</h3>
+
+<p>Develop code to query the Notes table based on the <strong>UserId</strong>. Then project the <strong>NoteId</strong> and the <strong>Note</strong> for each record.</p>
+<ol start="22">
+<li>From the <strong>Project</strong> pane, open <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>resources</strong> &gt; <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file.</li>
+<li>Review the value set for <strong>user_id</strong>. It should be set to <strong>student</strong>. This is the primary key you will use to query for notes.</li>
+<li>From the <strong>Project</strong> pane, open <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>java</strong> &gt; <strong>dev.labs.dynamodb</strong> &gt;  <input readonly class="copyable-inline-input" size="10" type="text" value="notesQuery">.</li>
+</ol>
+<p><a id="todo-2" target="_blank"></a></p>
+<ol start="25">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 2</strong> with the correct snippet below to build the <strong>QuerySpec</strong> request using the primary key and <strong>withProjectExpression</strong>. You need to read all notes for your user and retrieve only attributes for <strong>NoteId</strong> and <strong>Note</strong>.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code><span class="n">QuerySpec</span> <span class="n">spec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QuerySpec</span><span class="o">()</span>&#x000A;                <span class="o">.</span><span class="na">withKeyConditionExpression</span><span class="o">(</span><span class="s">"UserId = :v_Id and NoteId = :v_nId"</span><span class="o">)</span>&#x000A;                <span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">()</span>&#x000A;                        <span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">":v_Id"</span><span class="o">,</span> <span class="n">userId</span><span class="o">)</span>&#x000A;                        <span class="o">.</span><span class="na">withInt</span><span class="o">(</span><span class="s">":v_nId"</span><span class="o">,</span> <span class="n">noteId</span><span class="o">));</span>&#x000A;&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code><span class="n">QuerySpec</span> <span class="n">spec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QuerySpec</span><span class="o">()</span>&#x000A;                <span class="o">.</span><span class="na">withProjectionExpression</span><span class="o">(</span><span class="s">"NoteId, Note"</span><span class="o">)</span>&#x000A;                <span class="o">.</span><span class="na">withKeyConditionExpression</span><span class="o">(</span><span class="s">"UserId = :v_Id"</span><span class="o">)</span>&#x000A;                <span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">()</span>&#x000A;                        <span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">":v_Id"</span><span class="o">,</span> <span class="n">userId</span><span class="o">));</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Learn about QuerySpec using <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/QuerySpec.html" target="_blank">withKeyConditionExpression</a></p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-2-solution" target="_self">TODO 2 Solution</a> section at the bottom of these instructions.</p>
+
+<p><a id="todo-3" target="_blank"></a></p>
+
+<h3>Task 3.2: Query the table</h3>
+
+<p>Now that the query specs have been specified, you will retrieve the response. A Query operation always returns a result set. If no matching items are found, the result set will be empty. Query results are always sorted by the sort key value. There will be an array of item attributes that match the query criteria. Each element in this array consists of an attribute name and the value for that attribute.</p>
+<ol start="26">
+<li><p>Continue editing the <input readonly class="copyable-inline-input" size="10" type="text" value="notesQuery"> file.</p></li>
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 3</strong> with the correct snippet below to build the <strong>QueryOutcome</strong> request.</p></li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code> <span class="n">ItemCollection</span><span class="o">&lt;</span><span class="n">QueryOutcome</span><span class="o">&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="n">spec</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code> <span class="n">ItemCollection</span><span class="o">&lt;</span><span class="n">QueryOutcome</span><span class="o">&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="n">spec</span><span class="o">);</span>&#x000A;</code></pre><ol start="28">
+<li>Save your changes.</li>
+</ol>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Learn about <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/QuerySpec.html" target="_blank">QuerySpec</a></p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-3-solution" target="_self">TODO 3 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 3.3: Test your code</h3>
+
+<p>Now it is time to run the code to test the program and ensure it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="10" type="text" value="notesQuery"> file.</p>
+<ol start="29">
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'notesQuery.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom and verify that it finishes <strong>Recompiling</strong> before proceeding.</p>
+<ol start="30">
+<li><p>Once recompiled, you can close this file.</p></li>
+<li><p><i class="fas fa-keyboard"></i> <strong>Command:</strong>  Use <strong>Maven</strong> from the command line with the following command from the <strong>terminal</strong>:</p></li>
+</ol><pre class="highlight plaintext"><code>mvn -q exec:java -Dexec.mainClass="dev.labs.dynamodb.notesQuery"&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">Query all notes belong to a user "student" and displaying "NoteId" and "Note" attributes only:<br>
+{<br>
+  "NoteId" : 1,<br>
+  "Note" : "DynamoDB is NoSQL"<br>
+}<br>
+{<br>
+  "NoteId" : 2,<br>
+  "Note" : "A DynamoDB table is schemaless"<br>
+}<br>
+{<br>
+  "NoteId" : 3,<br>
+  "Note" : "PartiQL is a SQL compatible language for DynamoDB"<br>
+}<br>
+{<br>
+  "NoteId" : 4,<br>
+  "Note" : "I love DynamoDB"<br>
+}<br>
+{<br>
+  "NoteId" : 5,<br>
+  "Note" : "Maximum size of an item is ____ KB ?"<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  The results include only <strong>NoteId</strong> and the <strong>Note</strong> but not the <strong>UserId</strong> because it was not specified in the projection expression.</p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You now know how to retrieve items from your table.</p>
+
+
+
+<h2 id="step8">Task 4: Scan the table with a paginator</h2>
+
+<p>In this task, you will read all existing data from the <strong>Notes</strong> table. You will use <strong>Scan</strong> operation to read the entire table and filter only items with specific search text as part of notes.</p>
+
+<p>The <strong>Scan</strong> operation returns one or more items and item attributes by accessing <strong>every</strong> item in a table or a secondary index. To have DynamoDB return fewer items, you can provide a <strong>FilterExpression</strong> operation. DynamoDB <em>paginates</em> the results from <strong>Scan</strong> operations. With pagination, the <strong>Scan</strong> results are divided into "pages" of data that are 1 MB in size (or less). An application can process the first page of results, then the second page, and so on. You can also limit the maximum number of items to be retrieved in a single page.</p>
+
+<p><strong>Pseudocode:</strong> <em>notesScan.java</em></p>
+<ul>
+<li>Create DynamoDB client, use Document API wrapper, and initialize the Read operations input.</li>
+<li>Build the scan request with filter expression for a search text in the note.</li>
+<li>Build Scan specification with filter expression, values, list of attributes to project.</li>
+<li>Limit the response Page size.</li>
+<li>Process each item on the current page from the Scan response using a page iterator.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Update the <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file and update the <strong>searchText</strong> variable so it is set to <input readonly class="copyable-inline-input" size="3" type="text" value="SQL">.</li>
+<li>Build the Scan specification using withFilterExpression for <strong>Note</strong> and project the <strong>UserId</strong>, <strong>NoteId</strong>, and <strong>Note</strong>.</li>
+<li>Process each item on the current page using page iterator.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<p><a id="todo-4" target="_blank"></a></p>
+
+<h3>Task 4.1: Build a ScanSpec</h3>
+
+<p>In this task, you will update the search criteria to <strong>SQL</strong>. Then you will create the updateSpec request.</p>
+<ol start="32">
+<li>From the <strong>Project</strong> pane, open <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>resources</strong> &gt; <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file.</li>
+<li><p>Update the <strong>searchText</strong> variable so it is set to <input readonly class="copyable-inline-input" size="3" type="text" value="SQL">, and save the changes to this file. Each note will be searched for this value.</p></li>
+<li><p>From the <strong>Project</strong> pane, open the <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>java</strong> &gt; <strong>dev</strong> &gt; <strong>labs</strong> &gt; <strong>dynamodb</strong> &gt; <input readonly class="copyable-inline-input" size="9" type="text" value="notesScan"> file.</p></li>
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 4</strong> with the correct snippet below to build the <strong>ScanSpec</strong> request using the <strong>withFilterExpression</strong> and the <strong>withProjectionExpression</strong>.</p></li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code><span class="n">ScanSpec</span> <span class="n">scanSpec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ScanSpec</span><span class="o">()</span>&#x000A;                <span class="o">.</span><span class="na">withFilterExpression</span><span class="o">(</span><span class="s">"contains (Note, :v_txt)"</span><span class="o">)</span>&#x000A;                <span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">().</span><span class="na">withString</span><span class="o">(</span><span class="s">":v_txt"</span><span class="o">,</span> <span class="n">searchText</span><span class="o">))</span>&#x000A;                <span class="o">.</span><span class="na">withProjectionExpression</span><span class="o">(</span><span class="s">"UserId, NoteId, Note"</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code><span class="n">ScanSpec</span> <span class="n">scanSpec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ScanSpec</span><span class="o">()</span>&#x000A;                <span class="o">.</span><span class="na">withFilterExpression</span><span class="o">(</span><span class="s">"begins_with (Note, :v_txt)"</span><span class="o">)</span>&#x000A;                <span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">()</span>&#x000A;                <span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">":v_txt"</span><span class="o">,</span> <span class="n">searchText</span><span class="o">))</span>&#x000A;                <span class="o">.</span><span class="na">withProjectionExpression</span><span class="o">(</span><span class="s">"UserId, NoteId, Note"</span><span class="o">);</span>&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Learn about ScanSpec using <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/ScanSpec.html" target="_blank">withFilterExpression here</a></p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-4-solution" target="_self">TODO 4 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 4.2: Configure the paginator</h3>
+
+<p>In this task, you will set the pagination to a value of <strong>1</strong>. This will ensure only one item per page from the Scan response is returned.</p>
+<ol start="36">
+<li>Continue editing the <input readonly class="copyable-inline-input" size="9" type="text" value="notesScan"> file.</li>
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 5</strong> to update the paginator from a value of <strong>15</strong> to a new value of <strong>1</strong>.</li>
+</ol>
+<h3>Task 4.3: Build a paginator</h3>
+
+<p>In this task, you will build a paginator to process each item on the current page.</p>
+<ol start="38">
+<li>Continue editing the <input readonly class="copyable-inline-input" size="9" type="text" value="notesScan"> file.</li>
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 6</strong> with the following code snippet.</li>
+</ol><pre class="highlight java"><code><span class="n">Iterator</span><span class="o">&lt;</span><span class="n">Item</span><span class="o">&gt;</span> <span class="n">item</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="na">iterator</span><span class="o">();</span>&#x000A;</code></pre><ol start="40">
+<li>Save your changes.</li>
+</ol>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Learn about <a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/enhanced/dynamodb/model/PageIterable.html" target="_blank">PageIterable</a></p>
+
+<p><a id="task4-4" target="_blank"></a></p>
+
+<h3>Task 4.4: Test your code</h3>
+
+<p>Now it is time to run the code to test the script and ensure it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="9" type="text" value="notesScan"> file.</p>
+<ol start="41">
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'notesScan.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom and verify that it has finished <strong>Recompiling</strong> before proceeding.</p>
+<ol start="42">
+<li><p>Once recompiled, you can close this file.</p></li>
+<li><p><i class="fas fa-keyboard"></i> <strong>Command:</strong>  Use <strong>Maven</strong> from the command line with the following command from the <strong>terminal</strong>:</p></li>
+</ol><pre class="highlight plaintext"><code>mvn -q exec:java -Dexec.mainClass="dev.labs.dynamodb.notesScan"&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;"> SCANNING TABLE...</span><br><br><br>
+<span style="font-family:Courier;">Page: 1</span><br><br><br>
+<span style="font-family:Courier;">Page: 2</span><br><br><br>
+<span style="font-family:Courier;">Page: 3</span><br><br><br>
+<span style="font-family:Courier;">{</span><br><br>
+<span style="font-family:Courier;">  "NoteId" : 1,</span><br><br>
+<span style="font-family:Courier;">  "UserId" : "student",</span><br><br>
+<span style="font-family:Courier;">  "Note" : "DynamoDB is NoSQL"</span><br><br>
+<span style="font-family:Courier;">}</span><br><br><br>
+<span style="font-family:Courier;">Page: 4</span><br><br>
+<span style="font-family:Courier;">Page: 5</span><br><br>
+<span style="font-family:Courier;">{</span><br><br>
+<span style="font-family:Courier;">  "NoteId" : 3,</span><br><br>
+<span style="font-family:Courier;">  "UserId" : "student",</span><br><br>
+<span style="font-family:Courier;">  "Note" : "PartiQL is a SQL compatible language for DynamoDB"</span><br><br>
+<span style="font-family:Courier;">}</span><br><br><br>
+<span style="font-family:Courier;">Page: 6</span><br><br><br>
+<span style="font-family:Courier;">Page: 7</span><br><br><br>
+<span style="font-family:Courier;">Page: 8</span><br><br><br>
+<span style="font-family:Courier;">Page: 9</span><br><br><br>
+<span style="font-family:Courier;">Page: 10</span><br><br></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  If using the <strong>Limit</strong> parameters, a single <strong>Scan</strong> operation reads up to the maximum number of items set. There is a maximum of <strong>1 MB</strong> of data and then you apply any filtering to the results using <strong>FilterExpression</strong>. Thus, only one page from the scanned response is returned and displays when search text <strong>SQL</strong> matches.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You can update the <strong>search_text</strong> variable to another word, like <strong>DynamoDB</strong>, to see which records are projected.</p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You now know how to retrieve items from your table.</p>
+
+
+
+<h2 id="step9">Task 5: Update an item in the Table</h2>
+
+<p>Using the updateItem method of a Table object can update existing attribute values, add new attributes, or delete attributes from an existing item. The updateItem method only modifies the item attributes that you specify in the input; the other attributes in the item remain unchanged. Use <em>ReturnValues</em> if you want to access the item attributes as they appear before or after they are updated.</p>
+
+<p>In this task, you will add a new attribute <strong>Is_Incomplete</strong> for a specific user note, assigning its value to <strong>Yes</strong>. Later, you will update the same item with a different note text adding the condition <strong>Is_Incomplete</strong> is <strong>Yes</strong>. You will return the item attributes after the updated operation.</p>
+
+<p><strong>Pseudocode:</strong> <em>notesUpdate.java</em></p>
+<ul>
+<li>Create DynamoDB service client and read input query parameters.</li>
+<li>Build update spec request object using <em>withUpdateExpression</em> and run to use keys and update expressions. You will add a new attribute and assign value.<br>
+</li>
+<li>Build update spec request object using <em>withConditionExpression</em> and run. You will update an item with new note text only if matches the condition.<br>
+</li>
+<li>If update condition doesn’t match then it will capture <em>ConditionalCheckFailedException</em> expression.</li>
+<li>Display the results and errors as needed.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Build update specification to add <strong>Is_Incomplete</strong> attribute and assign value <strong>Yes</strong> for matching KEYs. Return all attributes after the update operation.</li>
+<li>Build update specification to update attributes <strong>Note</strong> and <strong>Is_Incomplete</strong> for matching KEYs, only if <strong>Is_Incomplete</strong> is assigned with <strong>Yes</strong>. Return only updated attributes after the update operation.</li>
+<li>Allow update to the note text only if it is incomplete.</li>
+<li>Capture the exception from update operation for a failed conditional check.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 5.1: Add a new attribute</h3>
+
+<p>In this task, you will add a new attribute <strong>Is_Incomplete</strong> for a specific user note, and assign its value to <strong>Yes</strong>. You will work with an item belonging to user <strong>student</strong> and note id <strong>5</strong>. You will update the item keys in the config file then build the request to update this item and return all attributes after the update operation.</p>
+<ol start="44">
+<li><p>From the <strong>Project</strong> pane, open <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>resources</strong> &gt; <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file.</p></li>
+<li><p>Update the <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file with a value of <strong>5</strong> for the <strong>note_id</strong> variable and save the changes.</p></li>
+</ol>
+<p><a id="todo-7" target="_blank"></a></p>
+<ol start="46">
+<li><p>From the <strong>Project</strong> pane, open the <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>java</strong> &gt; <strong>dev</strong> &gt; <strong>labs</strong> &gt; <strong>dynamodb</strong> &gt; <input readonly class="copyable-inline-input" size="11" type="text" value="notesUpdate"> file.</p></li>
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 7</strong> with the correct snippet below to build the <strong>UpdateSpec</strong> request using the <strong>withUpdateExpression</strong>.</p></li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code><span class="n">UpdateItemSpec</span> <span class="n">updateItemSpec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UpdateItemSpec</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">withPrimaryKey</span><span class="o">(</span><span class="s">"UserId"</span><span class="o">,</span> <span class="n">userId</span><span class="o">,</span> <span class="s">"NoteId"</span><span class="o">,</span> <span class="n">noteId</span><span class="o">)</span>&#x000A;<span class="o">.</span><span class="na">withUpdateExpression</span><span class="o">(</span><span class="s">"set #inc = :val1"</span><span class="o">)</span>&#x000A;<span class="o">.</span><span class="na">withNameMap</span><span class="o">(</span><span class="k">new</span> <span class="n">NameMap</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="s">"#inc"</span><span class="o">,</span> <span class="s">"Is_Incomplete"</span><span class="o">))</span>&#x000A;<span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">":val1"</span><span class="o">,</span> <span class="s">"Yes"</span><span class="o">))</span>&#x000A;<span class="o">.</span><span class="na">withReturnValues</span><span class="o">(</span><span class="n">ReturnValue</span><span class="o">.</span><span class="na">ALL_NEW</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code><span class="n">UpdateItemSpec</span> <span class="n">updateItemSpec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UpdateItemSpec</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">withPrimaryKey</span><span class="o">(</span><span class="s">"UserId"</span><span class="o">,</span> <span class="n">userId</span><span class="o">,</span> <span class="s">"NoteId"</span><span class="o">,</span> <span class="n">noteId</span><span class="o">)</span>&#x000A;<span class="o">.</span><span class="na">withUpdateExpression</span><span class="o">(</span><span class="s">"set #inc = :val1"</span><span class="o">)</span>&#x000A;<span class="o">.</span><span class="na">withNameMap</span><span class="o">(</span><span class="k">new</span> <span class="n">NameMap</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="s">"#inc"</span><span class="o">,</span> <span class="s">"Is_Incomplete"</span><span class="o">))</span>&#x000A;<span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">":val1"</span><span class="o">,</span> <span class="s">"Yes"</span><span class="o">))</span>&#x000A;<span class="o">.</span><span class="na">withReturnValues</span><span class="o">(</span><span class="n">ReturnValue</span><span class="o">.</span><span class="na">ALL_OLD</span><span class="o">);</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Learn about UpdateSpec using <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/UpdateItemSpec.html" target="_blank">withUpdateExpression</a></p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-7-solution" target="_self">TODO 7 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 5.2: Test your code</h3>
+
+<p>Now it is time to run the code to test the script and ensure it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="11" type="text" value="notesUpdate"> file.</p>
+<ol start="48">
+<li>Save your changes to the <input readonly class="copyable-inline-input" size="11" type="text" value="notesUpdate"> file.</li>
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'notesUpdate.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom and verify that it finishes <strong>Recompiling</strong> before proceeding.</p>
+<ol start="50">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong>  Use <strong>Maven</strong> from the command line with the following command from the <strong>terminal</strong>:</li>
+</ol><pre class="highlight plaintext"><code>mvn -q exec:java -Dexec.mainClass="dev.labs.dynamodb.notesUpdate"&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">UPDATE#1: Printing item after adding the new attribute "Is_Incomplete" :<br>
+{<br>
+   "NoteId" : 5,<br>
+   "Is_Incomplete" : "Yes",<br>
+   "UserId" : "student",<br>
+   "Note" : "Maximum size of an item is ____ KB ?"<br>
+}<br>
+</span></p>
+
+<p>Notice the response added the new attribute <strong>Is_Incomplete</strong> with <strong>Yes</strong> and returned all the attributes after the update operation. The note text of this item appears to be incomplete with a blank; you will update it with a complete text in next task.</p>
+<ol start="51">
+<li>You can verify this in the <strong>DynamoDB</strong> console.</li>
+</ol><ul>
+<li>Open the <strong>DynamoDB</strong> console &gt; <strong>Tables</strong> &gt;  <span style="color:#0073bb;">Notes</span> &gt; <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Actions <i class="fas fa-caret-down"></i></span>  &gt; <em>Explore Items</em> &gt; <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">View Items</span> &gt; <i class="fas fa-caret-down"></i> <strong>Notes</strong> <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Scan</span> &gt; <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Notes <i class="fas fa-caret-down"></i></span> &gt; <span style="background-color:#ec7211;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Run</span>
+</li>
+</ul>
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-3-java/instructions/en_us/images/is_incomplete.png" alt="Notes new attribute for is_incomplete"></p>
+
+<p><a id="task5-3" target="_blank"></a></p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You can now update specific attributes in your table.</p>
+
+<h3>Task 5.3: Update an item conditionally</h3>
+
+<p>In this task, you will update the same item with a new note text and set <strong>Is_Incomplete</strong> to <strong>No</strong>, but only with the condition if <strong>Is_Incomplete</strong> is set to <strong>Yes</strong>. You will update and return only the updated item attributes after the update operation.</p>
+<ol start="52">
+<li><p>Edit the <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file so that the <strong>new_note</strong> variable value is to to the following value:<br>
+<input readonly class="copyable-inline-input" size="39" type="text" value="Maximum item size in DynamoDB is 400 KB"></p></li>
+<li><p>Save the changes to the <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file.</p></li>
+<li><p>Continue editing the <input readonly class="copyable-inline-input" size="11" type="text" value="notesUpdate"> file.</p></li>
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 8</strong> with the following code snippet to allow the <strong>Is_Complete</strong> attribute to be evaluated.</p></li>
+</ol><pre class="highlight java"><code><span class="o">.</span><span class="na">withConditionExpression</span><span class="o">(</span><span class="s">"Is_Incomplete = :v_old"</span><span class="o">)</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Learn about UpdateSpec using <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/UpdateItemSpec.html" target="_blank">withConditionExpression</a></p>
+
+<p><a id="task5-4" target="_blank"></a></p>
+
+<h3>Task 5.4: Capture a conditional check failed exception</h3>
+
+<p>In the previous steps, you specified optional parameters for the updateItem method, including a condition that must be met in order for the update is to occur. If the condition you specify is not met, the AWS SDK for Java throws a conditional check failed exception. In this task you will capture that failed exception.<br>
+<a id="todo-9" target="_blank"></a></p>
+<ol start="56">
+<li>Continue editing the <input readonly class="copyable-inline-input" size="11" type="text" value="notesUpdate"> file.</li>
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the code in <strong>TODO 9</strong> with the correct snippet below to build the <strong>catch</strong> for the <strong>ConditionalCheckFailedException</strong>.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight javascript"><code><span class="k">catch</span> <span class="p">(</span><span class="nx">ConditionalCheckFailedException</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>&#x000A;            <span class="nx">System</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nx">println</span><span class="p">(</span><span class="s2">"\nUPDATE#2 - REPEAT: Printing item after the conditional update for the item - \""</span> <span class="o">+</span> <span class="nx">userId</span> <span class="o">+</span> <span class="s2">"\" and \""</span> <span class="o">+</span> <span class="nx">noteId</span> <span class="o">+</span> <span class="s2">"\"  - FAILURE:"</span><span class="p">);</span>&#x000A;            <span class="nx">System</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nx">println</span><span class="p">(</span><span class="s2">"UpdateItem failed on item due to unmatching condition!"</span><span class="p">);</span>&#x000A;            <span class="nx">System</span><span class="p">.</span><span class="nx">err</span><span class="p">.</span><span class="nx">println</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">getMessage</span><span class="p">());</span>&#x000A;        <span class="p">}</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight javascript"><code><span class="k">catch</span> <span class="p">(</span><span class="nx">TransactionConflictException</span> <span class="nx">e</span><span class="p">)</span> <span class="p">{</span>&#x000A;            <span class="nx">System</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nx">println</span><span class="p">(</span><span class="s2">"\nUPDATE#2 - REPEAT: Printing item after the conditional update for the item - \""</span> <span class="o">+</span> <span class="nx">userId</span> <span class="o">+</span> <span class="s2">"\" and \""</span> <span class="o">+</span> <span class="nx">noteId</span> <span class="o">+</span> <span class="s2">"\"  - FAILURE:"</span><span class="p">);</span>&#x000A;            <span class="nx">System</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nx">println</span><span class="p">(</span><span class="s2">"UpdateItem failed on item due to unmatching condition!"</span><span class="p">);</span>&#x000A;            <span class="nx">System</span><span class="p">.</span><span class="nx">err</span><span class="p">.</span><span class="nx">println</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">getMessage</span><span class="p">());</span>&#x000A;        <span class="p">}</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Learn about UpdateSpec using <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/model/ConditionalCheckFailedException.html" target="_blank">ConditionalCheckFailedException</a></p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-9-solution" target="_self">TODO 9 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 5.5: Test your code</h3>
+
+<p>In this task, you will run the program to verify if the conditional update is working as expected. You will invoke the <em>updateExistingAttributeConditionally</em> method twice to notice the condition check fail effect. The first invoke should successfully update the item with new text, and the second invoke should fail the update with an error.  </p>
+<ol start="58">
+<li><p>Next, you will add the code below to invoke update operation with conditional check:</p></li>
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Update the existing code for <strong>TODO 10</strong> with the following code snippet.</p></li>
+</ol><pre class="highlight java"><code>        <span class="c1">//Allow update to the Notes item only if the note is incomplete - SUCCESS</span>&#x000A;        <span class="n">updateExistingAttributeConditionally</span><span class="o">(</span><span class="n">table</span><span class="o">,</span> <span class="n">qUserId</span><span class="o">,</span> <span class="n">qNoteId</span><span class="o">,</span> <span class="n">newNote</span><span class="o">);</span>&#x000A;&#x000A;        <span class="c1">//Allow update to the Notes item only if the note is incomplete - FAILURE</span>&#x000A;        <span class="n">updateExistingAttributeConditionally</span><span class="o">(</span><span class="n">table</span><span class="o">,</span> <span class="n">qUserId</span><span class="o">,</span> <span class="n">qNoteId</span><span class="o">,</span> <span class="n">newNote</span><span class="o">);</span>&#x000A;</code></pre><ol start="60">
+<li>Save the changes to the <input readonly class="copyable-inline-input" size="11" type="text" value="notesUpdate"> file.</li>
+</ol>
+<p>Now it is time to run the program and ensure it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="11" type="text" value="notesUpdate"> file.</p>
+<ol start="61">
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'notesUpdate.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom and verify that it finishes <strong>Recompiling</strong> before proceeding.</p>
+<ol start="62">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong>  Use <strong>Maven</strong> to run the code again to see how it responds when this value has already been updated:</li>
+</ol><pre class="highlight plaintext"><code>mvn -q exec:java -Dexec.mainClass="dev.labs.dynamodb.notesUpdate"&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">UPDATE#1: Printing item after adding the new attribute "Is_Incomplete" :<br>
+{<br>
+   "NoteId" : 5,<br>
+   "Is_Incomplete" : "Yes",<br>
+   "UserId" : "student",<br>
+   "Note" : "Maximum item size in DynamoDB is 400 KB"<br>
+}<br>
+</span></p>
+
+<p><span style="font-family:Courier;">UPDATE#2: Printing item after the conditional update for the item - "student" and "5"  - SUCCESS:<br>
+{<br>
+   "Is_Incomplete" : "No",<br>
+   "Note" : "Maximum item size in DynamoDB is 400 KB"<br>
+}<br>
+</span></p>
+
+<p><span style="font-family:Courier;">UPDATE#2 - REPEAT: Printing item after the conditional update for the item - "student" and "5"  - FAILURE:<br>
+UpdateItem failed on item due to unmatching condition!<br>
+The conditional request failed (Service: AmazonDynamoDBv2; Status Code: 400; Error Code: ConditionalCheckFailedException; Request ID: 1JGRVGHUOQ4OKVCS2QFF8AIU2BVV4KQ<br>
+NSO5AEMVJF66Q9ASUAAJG; Proxy: null)<br>
+</span></p>
+
+<p>You notice that first update call was successful as the condition matched and returned the updated attributes as expected. The second update call failed because a condition did not match.</p>
+
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-3-java/instructions/en_us/images/updated.png" alt="Lab 3 DynamoDB updated record"></p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You can now update specific attributes in your table. You have also verified that you can conditionally update items as well.</p>
+
+
+
+<p><a id="task6" target="_blank"></a></p>
+
+<h2 id="step10">Optional Challenge: Using the DynamoDBMapper class for CRUD operations</h2>
+
+<p>In this task, you are challenged to develop a new program to interact with DynamoDB service using the object persistence model.</p>
+
+<p>The AWS SDK for Java provides a DynamoDBMapper class, allowing you to map your client-side classes to Amazon DynamoDB tables. To use DynamoDBMapper, you define the relationship between items in a DynamoDB table and their corresponding object instances in your code. The DynamoDBMapper class enables you to access your tables; perform various create, read, update, and delete (CRUD) operations; and run queries.<br>
+You will use DynamoDBMapper class to access tables, perform various CRUD operations, and run queries.</p>
+
+<p>You will use <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.html" target="_blank">DynamoDB Mapper</a> classes and methods to define the table structure and schema.  </p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Define a  DynamoDB service client with basic configurations.</li>
+<li>Build DynamoDBMapper interface as a wrapper to the DynamoDB client.</li>
+<li>Define NotesItems class with annotations to map object fields to DynamoDB attribute names – UserId, NoteId, and Note.</li>
+<li>Instantiate the NotesItems class and use DynamoDBMapper methods to perform CRUD operations.</li>
+<li>Perform CRUD operations using methods – load(), save(), and delete().</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 6.1: Develop the script</h3>
+
+<p>In the <strong>Project</strong> pane, under <strong>java [Lab-DynamoDB] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>java</strong> &gt; <strong>dev</strong> &gt; <strong>labs</strong> &gt; <strong>dynamodb</strong> &gt; is a skeleton file named <input readonly class="copyable-inline-input" size="20" type="text" value="notesCRUDmapper.java">. It has been created to help you get started. Open this file.</p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   If you need assistance, you can find the full solution in the <strong>solutions</strong> folder in the file named <input readonly class="copyable-inline-input" size="29" type="text" value="notesCRUDmapper-solution.java"> in the <strong>Solutions</strong> folder.</p>
+<ol start="63">
+<li>Once you are satisfied with your code, the next step is to test it.</li>
+</ol>
+<h3>Task 6.2: Test your code</h3>
+
+<p>Now it is time to run the code to test the script and ensure it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="20" type="text" value="notesCRUDmapper.java"> file.</p>
+<ol start="64">
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'notesCRUDmapper.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom and verify that it finishes <strong>Recompiling</strong> before proceeding.</p>
+<ol start="65">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong>  Use <strong>Maven</strong> from the command line with the following command from the <strong>terminal</strong>:</li>
+</ol><pre class="highlight plaintext"><code>mvn -q exec:java -Dexec.mainClass="dev.labs.dynamodb.notesCRUDmapper"&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">Item retrieved:<br>
+Notes [User=testuser, Note Id=1, Note=This is my very first note]<br>
+Item updated:<br>
+Notes [User=testuser, Note Id=1, Note=updated notes]<br>
+Retrieved the previously updated item:<br>
+Notes [User=testuser, Note Id=1, Note=updated notes]<br>
+deleting the previously existing item:<br>
+Notes [User=testuser, Note Id=1, Note=updated notes]<br>
+Done - Sample item is deleted.<br>
+CRUD operations complete!<br>
+Item retrieved:<br>
+Notes [User=newbie, Note Id=1, Note=free swag registration code 1234]<br>
+Item updated with new notes:<br>
+Notes [User=newbie, Note Id=1, Note=free swag registration code 1299228534]<br>
+</span></p>
+
+
+
+<h3>Summary</h3>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations on completing the lab! For the <strong>Java</strong> version you can now:</p>
+<ul>
+<li>Interact with DynamoDB programmatically using low-level, document, and high-level APIs in your programs.</li>
+<li>Create a table using waiters with a primary key, sort key and desired provisioned throughput.</li>
+<li>Load a table by reading JSON objects from a file.</li>
+<li>Search items from a table based on key attributes, filters, expressions, and paginations.</li>
+<li>Update items by adding new attributes and changing data conditionally.</li>
+<li>Access DynamoDB data using PartiQL and object-persistence models where applicable.</li>
+</ul>
+<h2 id="step11">End Lab</h2>
+
+<p>Follow these steps to close the console, end your lab, and evaluate the experience.</p>
+<ol start="66">
+<li><p>Return to the AWS Management Console.</p></li>
+<li><p>On the navigation bar, choose <strong>awsstudent@&lt;AccountNumber&gt;</strong>, and then choose <strong>Sign Out</strong>.</p></li>
+<li><p>Choose <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-family:Google Sans;font-weight:bold;font-size:90%;color:#444;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">OK</span></p></li>
+<li><p>(Optional):</p></li>
+</ol><ul>
+<li>Select the applicable number of stars <i class="far fa-star"></i>
+</li>
+<li>Type a comment</li>
+<li>
+<p>Choose <strong>Submit</strong></p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+</li>
+</ul>
+<p>You may close the window if you don't want to provide feedback.</p>
+
+<p>For more information about AWS Training and Certification, see <a href="https://aws.amazon.com/training/" target="_blank"><em>https://aws.amazon.com/training/</em></a>.</p>
+
+<p><em>Your feedback is welcome and appreciated.</em></p>
+
+<p>If you would like to share any feedback, suggestions, or corrections, please provide the details in our <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification Contact Form</em></a>.</p>
+
+
+
+<h2 id="step12">Additional Resources</h2>
+
+<p><a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/JavaDocumentAPIItemCRUD.html#PutDocumentAPIJava" target="_blank">Learn about put-item method</a><br>
+<a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/QuerySpec.html" target="_blank">Learn about QuerySpec using withKeyConditionExpression</a><br>
+<a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/QuerySpec.html" target="_blank">Learn about QuerySpec</a><br>
+<a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/ScanSpec.html" target="_blank">Learn about ScanSpec using withFilterExpression here</a><br>
+<a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/enhanced/dynamodb/model/PageIterable.html" target="_blank">Learn about PageIterable</a><br>
+<a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/UpdateItemSpec.html" target="_blank">Learn about UpdateSpec using withUpdateExpression</a><br>
+<a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/document/spec/UpdateItemSpec.html" target="_blank">Learn about UpdateSpec using withConditionExpression</a><br>
+<a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/dynamodbv2/model/ConditionalCheckFailedException.html" target="_blank">Learn about UpdateSpec using ConditionalCheckFailedException</a><br>
+<a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.html" target="_blank">Learn about DynamoDB Mapper</a></p>
+
+<h2 id="step13">Code Challenge Solutions</h2>
+
+<p><a id="todo-1-solution" target="_blank"></a></p>
+
+<h3>TODO 1 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because the composite key is incomplete. <strong>Notes</strong> table use both primary and sort keys to identify an item. In a table that has a primary key and a sort key, it's possible for two items to have the same primary key value. However, those two items must have different sort key values.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong> When you’re are adding an item into a table, it needs primary key attributes.</p></li>
+</ul><pre class="highlight java"><code><span class="n">table</span><span class="o">.</span><span class="na">putItem</span><span class="o">(</span>&#x000A;               <span class="k">new</span> <span class="nf">Item</span><span class="o">()</span>&#x000A;               <span class="o">.</span><span class="na">withPrimaryKey</span><span class="o">(</span><span class="s">"UserId"</span><span class="o">,</span> <span class="n">userId</span><span class="o">,</span> <span class="s">"NoteId"</span><span class="o">,</span> <span class="n">noteId</span><span class="o">)</span>&#x000A;               <span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">"Note"</span><span class="o">,</span> <span class="n">note</span><span class="o">)</span>&#x000A;                <span class="o">);</span>&#x000A;</code></pre>
+<p><a href="#todo-1" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-2-solution" target="_blank"></a></p>
+
+<h3>TODO 2 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect. The QuerySpec used in this options returns only one item as both the primary key and sort key values.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong> Query returns all items with that primary key value. Optionally, you can provide a sort key attribute and use a comparison operator to refine the search results, similar to Choice A. In this case, by passing the noteId you will exclude the other notes belong to user – student.</p></li>
+</ul><pre class="highlight java"><code><span class="n">QuerySpec</span> <span class="n">spec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QuerySpec</span><span class="o">()</span>&#x000A;                <span class="o">.</span><span class="na">withProjectionExpression</span><span class="o">(</span><span class="s">"NoteId, Note"</span><span class="o">)</span>&#x000A;                <span class="o">.</span><span class="na">withKeyConditionExpression</span><span class="o">(</span><span class="s">"UserId = :v_Id"</span><span class="o">)</span>&#x000A;                <span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">()</span>&#x000A;                        <span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">":v_Id"</span><span class="o">,</span> <span class="n">userId</span><span class="o">));</span>&#x000A;</code></pre>
+<p><a href="#todo-2" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-3-solution" target="_blank"></a></p>
+
+<h3>TODO 3 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because query with DynamoDB client needs a low-level request and returns low-level response as QueryResult object.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong></p></li>
+</ul><pre class="highlight java"><code><span class="n">ItemCollection</span><span class="o">&lt;</span><span class="n">QueryOutcome</span><span class="o">&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="na">query</span><span class="o">(</span><span class="n">spec</span><span class="o">);</span>&#x000A;</code></pre>
+<p><a href="#todo-3" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-4-solution" target="_blank"></a></p>
+
+<h3>TODO 4 Solution</h3>
+<ul>
+<li><strong>Choice A is the correct code snippet.</strong></li>
+</ul><pre class="highlight java"><code><span class="n">ScanSpec</span> <span class="n">scanSpec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ScanSpec</span><span class="o">()</span>&#x000A;                <span class="o">.</span><span class="na">withFilterExpression</span><span class="o">(</span><span class="s">"contains (Note, :v_txt)"</span><span class="o">)</span>&#x000A;                <span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">().</span><span class="na">withString</span><span class="o">(</span><span class="s">":v_txt"</span><span class="o">,</span> <span class="n">searchText</span><span class="o">))</span>&#x000A;                <span class="o">.</span><span class="na">withProjectionExpression</span><span class="o">(</span><span class="s">"UserId, NoteId, Note"</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B is incorrect because it is using an incorrect filter expression function <strong>begins with</strong>. This will check the first few characters of the attribute value.</li>
+</ul>
+<p><a href="#todo-4" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-7-solution" target="_blank"></a></p>
+
+<h3>TODO 7 Solution</h3>
+<ul>
+<li><strong>Choice A is the correct code snippet.</strong></li>
+</ul><pre class="highlight java"><code><span class="n">UpdateItemSpec</span> <span class="n">updateItemSpec</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UpdateItemSpec</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">withPrimaryKey</span><span class="o">(</span><span class="s">"UserId"</span><span class="o">,</span> <span class="n">userId</span><span class="o">,</span> <span class="s">"NoteId"</span><span class="o">,</span> <span class="n">noteId</span><span class="o">)</span>&#x000A;<span class="o">.</span><span class="na">withUpdateExpression</span><span class="o">(</span><span class="s">"set #inc = :val1"</span><span class="o">)</span>&#x000A;<span class="o">.</span><span class="na">withNameMap</span><span class="o">(</span><span class="k">new</span> <span class="n">NameMap</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">with</span><span class="o">(</span><span class="s">"#inc"</span><span class="o">,</span> <span class="s">"Is_Incomplete"</span><span class="o">))</span>&#x000A;<span class="o">.</span><span class="na">withValueMap</span><span class="o">(</span><span class="k">new</span> <span class="n">ValueMap</span><span class="o">()</span>&#x000A;<span class="o">.</span><span class="na">withString</span><span class="o">(</span><span class="s">":val1"</span><span class="o">,</span> <span class="s">"Yes"</span><span class="o">))</span>&#x000A;<span class="o">.</span><span class="na">withReturnValues</span><span class="o">(</span><span class="n">ReturnValue</span><span class="o">.</span><span class="na">ALL_NEW</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B is incorrect because it returns only OLD values of the item after the update operation.</li>
+</ul>
+<p><a href="#todo-7" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-9-solution" target="_blank"></a></p>
+
+<h3>TODO 9 Solution</h3>
+<ul>
+<li><strong>Choice A is the correct code snippet.</strong></li>
+</ul><pre class="highlight java"><code><span class="k">catch</span> <span class="o">(</span><span class="n">ConditionalCheckFailedException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>&#x000A;            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"\nUPDATE#2 - REPEAT: Printing item after the conditional update for the item - \""</span> <span class="o">+</span> <span class="n">userId</span> <span class="o">+</span> <span class="s">"\" and \""</span> <span class="o">+</span> <span class="n">noteId</span> <span class="o">+</span> <span class="s">"\"  - FAILURE:"</span><span class="o">);</span>&#x000A;            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"UpdateItem failed on item due to unmatching condition!"</span><span class="o">);</span>&#x000A;            <span class="n">System</span><span class="o">.</span><span class="na">err</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="na">getMessage</span><span class="o">());</span>&#x000A;        <span class="o">}</span>&#x000A;</code></pre><ul>
+<li>Choice B is incorrect because TransactionConflictException exception is thrown when there is an ongoing transaction for the same item.</li>
+</ul>
+<p><a href="#todo-9" target="_self">Return to the instructions</a></p>
+
+
+
+<h2 id="step14">RDP Connection Options</h2>
+
+<p><a id="connect_guacamole" target="_blank"></a></p>
+
+<h3>Connect to Your Windows Dev Instance using Apache Guacamole</h3>
+<ol start="71">
+<li><p>In the <strong>Connection Details</strong> section, copy the <strong>GuacamoleLink</strong> and paste it into a browser.</p></li>
+<li><p>Go to the Apache Guacamole sign-in, in the browser and sign in using the following steps:</p></li>
+</ol><ul>
+<li>For <strong>Username</strong>, enter: <input readonly class="copyable-inline-input" size="7" type="text" value="student">
+</li>
+<li>For <strong>Password</strong>, use value for <strong>AdministratorPassword</strong> to the left of these instructions.</li>
+<li>Choose <strong>Log In</strong>.</li>
+</ul>
+<p>Your connection to your remote instance should start momentarily. Once you open a connection, you will see an image of the Dev instance desktop. You can interact with this image just as you would your normal desktop, or any remote desktop client.</p>
+
+<p>You are now connected to your Windows Dev instance in the browser using Guacamole.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+<ol start="73">
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  <strong><em>How to copy and paste when using Guacamole browser session?</em></strong>
+</li>
+</ol><ul>
+<li>Open the Clipboard editor by choosing <strong>Ctrl -&gt; Alt -&gt; Shift</strong> on Windows or <strong>command</strong> -&gt; <strong>control</strong> -&gt; <strong>shift</strong> on MacOS.</li>
+<li>Copy your text from lab instructions and paste it to the Clipboard editor of the session.</li>
+<li>Close the Clipboard editor by choosing <strong>Ctrl -&gt; Alt -&gt; Shift</strong> on Windows or <strong>command</strong> -&gt; <strong>control</strong> -&gt; <strong>shift</strong> on MacOs.</li>
+<li>Now, you can use regular paste commands in your session from Clipboard. You can also either edit or replace the Clipboard for the subsequent copies.</li>
+</ul><ol start="74">
+<li><a href="#connection-options" target="_self">Return to the instructions</a></li>
+</ol>
+
+
+<p><a id="connect_win_win" target="_blank"></a></p>
+
+<h3>Connect to Your Windows Dev Instance from a Windows Machine</h3>
+<ol start="75">
+<li><p>Copy the <strong>WindowsInstanceIP</strong> from the navigation pane to the left of these instructions.</p></li>
+<li><p>Open the Remote Desktop Connection application on your computer.</p></li>
+</ol><ul>
+<li>Choose the <strong>Start</strong> icon, and choose the <strong>Search</strong> icon. Type in <input readonly class="copyable-inline-input" size="25" type="text" value="Remote Desktop Connection">. Choose the application when it appears in the <strong>Programs</strong> list.</li>
+</ul><ol start="77">
+<li><p>For <strong>Computer</strong>, paste the <strong>IP</strong> of the Windows instance.</p></li>
+<li><p>Choose <strong>Connect</strong>.</p></li>
+<li><p>Remote Desktop Connection will prompt you with a Login dialog asking for your username and password. By default, the application will use your current Windows username and domain. To change this, choose <strong>Use another account</strong>.</p></li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  On Windows 10, select <strong>More Choices</strong> before choosing <strong>Use a different account</strong>.</p>
+<ol start="80">
+<li><p>From the navigation pane to the left of these instructions, copy the <strong>AdministratorPassword</strong>.</p></li>
+<li><p>For your login credentials, use the following values:</p></li>
+</ol><ul>
+<li>For <strong>User name</strong>, enter: <input readonly class="copyable-inline-input" size="14" type="text" value="\Administrator">
+</li>
+<li>For <strong>Password</strong>, paste the password from the clipboard.</li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  The <input readonly class="copyable-inline-input" size="1" type="text" value="\"> in the user name is important, as it tells Remote Desktop Connection that you are logging in as the local Administrator, and not as a domain user.</p>
+<ol start="82">
+<li>To connect to your instance, choose <strong>OK</strong>. If you receive a prompt that the certificate used to verify the connection was not a known, trusted root certificate, choose <strong>Yes</strong>.</li>
+</ol>
+<p><strong>Result</strong></p>
+
+<p>Your connection to your remote instance should start momentarily.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+
+<p><a href="#connection-options" target="_self">Return to the instructions</a></p>
+
+
+
+<p><a id="connect_win_mac" target="_blank"></a></p>
+
+<h3>Connect to the Windows Dev Instance from a macOS Machine</h3>
+
+<p>In this section, you connect to a Windows Amazon EC2 instance from your macOS machine.</p>
+<ol start="83">
+<li>Install Microsoft Remote Desktop if it is not already installed. To install, complete the following:</li>
+</ol><ul>
+<li>At the top of the screen, select the Apple icon.</li>
+<li>Select <strong>About This Mac</strong>.</li>
+<li>Take note of your macOS version.</li>
+<li>From the Dock, launch <strong>App store</strong>.</li>
+<li><p>Search for the following string: <input readonly class="copyable-inline-input" size="24" type="text" value="Microsoft Remote Desktop">.</p></li>
+<li><p>Choose <strong>Install</strong> or <strong>GET</strong> to install the appropriate version.</p></li>
+<li><p>At the time of this writing, the current macOS version is OSX 10.15.7 and you install Microsoft Remote Desktop Version 10.5.2. The connection instructions will be based on this version.</p></li>
+</ul><ol start="84">
+<li><p>To open <strong>Microsoft Remote Desktop</strong>, on the Dock, select <strong>Launchpad</strong>. Then, select <strong>Microsoft Remote Desktop</strong>.</p></li>
+<li><p>To create a new connection, from the top menu select <strong>Connections</strong> &gt; <strong>Add PC</strong> and fill in the following fields:</p></li>
+</ol><ul>
+<li>
+<strong>PC name:</strong> <em>Paste in the WindowsInstanceIP copied from the Lab Properties to the left of these instructions.</em>
+</li>
+<li>
+<strong>User account:</strong> <input readonly class="copyable-inline-input" size="13" type="text" value="Administrator">
+</li>
+<li>
+<strong>Friendly name:</strong> <input readonly class="copyable-inline-input" size="20" type="text" value="Windows Dev Instance">
+</li>
+<li>
+<i class="far fa-check-square" style="color:#0073bb;"></i> <strong>Reconnect if the connection is dropped:</strong> <em>Select this option if not already selected.</em>
+</li>
+<li>Choose <strong>Add</strong>.</li>
+</ul><ol start="86">
+<li><p>From the navigation panel to the left of these instructions, copy the <strong>WindowsPassword</strong> to the clipboard.</p></li>
+<li><p>Go back to your Microsoft Remote Desktop connection window, and open the context menu for the <strong>Windows Dev Instance</strong> connection and choose <strong>Open</strong>.</p></li>
+<li><p>It will show a message reading, <strong>You are connecting to the RDP host "IP.Address.Listed.Here". There certificate couldn't be verified back to a root certificate. Your connection may not be secure. Do you want to continue?</strong> Choose <strong>Continue</strong>.</p></li>
+<li><p>Once prompted for the password, enter the password that you copied to the clipboard and choose <strong>Continue</strong>.</p></li>
+</ol>
+<p><strong>Result</strong></p>
+
+<p>Your connection to your remote instance should start momentarily.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+
+<p><a href="#connection-options" target="_self">Return to the instructions</a></p>
+
+
+
+<p><a id="appendix" target="_blank"></a></p>
+
+<h2 id="step15">Appendix</h2>
+
+<h3>AWS Services Not Used in This Lab</h3>
+
+<p>AWS services that are not used in this lab are deactivated in the lab environment. In addition, the capabilities of the services used in this lab are limited to what the lab requires. Expect errors when accessing other services or performing actions beyond those provided in this lab guide.</p>
+
+<h3>Icon Key</h3>
+
+<p>Various icons are used throughout this lab to call attention to certain aspects of the guide. The following list explains the purpose for each one:</p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong>  Specifies the command you must run.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> Verify the output of a command or edited file.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Specifies important hints, tips, guidance, or advice.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Specifies where to find more information.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong>   Calls attention to information of special interest or importance. Failure to read the note does not result in physical harm to the equipment or data, but could result in the need to repeat certain steps.</li>
+<li>
+<i class="fas fa-user-shield" style="color:#00a1c9;"></i> <strong>Security:</strong>  Identifies opportunities to incorporate security best practices.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#d13212;"></i> <strong>WARNING:</strong>  Draws special attention to actions that are irreversible and could potentially impact the failure of a command or process. Includes warnings about configurations that cannot be changed after they are made.</li>
+<li>
+<i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong>  Suggests a moment to pause to consider how you might apply a concept in your own environment or to initiate a conversation about the topic at hand.</li>
+<li>
+<p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  In some cases, you may run a script or apply a file that has been pre-created for you. This icon signifies a code block that is used to display the contents of the script or file you interacted with.</p>
+<ul>
+<li>When you need to copy only a certain part of a code block, there will be numbered <strong>TODO</strong> comments in the code.</li>
+</ul>
+</li>
+<li><p><i class="far fa-compass" style="color:#dd6b10;"></i> <strong>Context:</strong>  When asked to open the <strong>Context Menu</strong> for an item, this is the same action as right-clicking for a mouse or the appropriate action for your particular pointing device.</p></li>
+<li><p><em><span style="background-color:#232f3e;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;"><i class="fas fa-search"></i> Search for services, features, marketplace products, and docs</span></em><br>
+The <strong>Unified Search</strong> allows you to easily search for services, features, AWS Documentation and discover information without leaving the AWS Management Console. You can access the search bar using a keyboard shortcut (alt-s or option-s), autocomplete by using the right arrow key, and navigate to the top search result by pressing the enter key.</p></li>
+</ul>
+<p><a href="#prerequisites" target="_self">Return to the instructions</a></p>
+
+</div>
+</div>
+
+
+<div class='lab-content__end-lab-button js-end-lab-button-container hidden'>
+<ql-lab-control-button class='js-end-lab-button' running></ql-lab-control-button>
+</div>
+<!-- / TODO: Move recommendations into the end lab modal -->
+</ql-drawer-content>
+<ql-drawer end id='outline-drawer' open slot='drawer' width='320'>
+<div aria-label='Sommario del lab' role='navigation'>
+<ul class='lab-content__outline js-lab-content-outline'>
+<li><a href='#step1'>Prerequisites</a></li><li><a href='#step2'>Overview</a></li><li><a href='#step3'>Start Lab</a></li><li><a href='#step4'>Task 0: Connect to your development environment and configure IntelliJ</a></li><li><a href='#step5'>Task 1: Create an Amazon DynamoDB table using the AWS CLI</a></li><li><a href='#step6'>Task 2: Load data into the table</a></li><li><a href='#step7'>Task 3: Query data using a primary key and projections</a></li><li><a href='#step8'>Task 4: Scan the table with a paginator</a></li><li><a href='#step9'>Task 5: Update an item in the Table</a></li><li><a href='#step10'>Optional Challenge: Using the DynamoDBMapper class for CRUD operations</a></li><li><a href='#step11'>End Lab</a></li><li><a href='#step12'>Additional Resources</a></li><li><a href='#step13'>Code Challenge Solutions</a></li><li><a href='#step14'>RDP Connection Options</a></li><li><a href='#step15'>Appendix</a></li>
+</ul>
+</div>
+</ql-drawer>
+</ql-drawer-container>
+</ql-drawer-content>
+</ql-drawer-container>
+
+
+
+</div>
+</main>
+
+<span class='hidden' id='flash-sibling-before'></span>
+<ql-snackbar></ql-snackbar>
+
+
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='modal-content mdl-shadow--24dp'>
+<div class='modal-body'>
+<p class='l-mbm'>
+In this lab, students will develop programs to create an Amazon DynamoDB table to store notes for the lab application and perform CRUD operation on the table.
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Durata:
+</strong>
+Configurazione in 12 m
+&middot;
+Accesso da 120 m
+&middot;
+Completamento in 120 m
+</p>
+<p class='small-label l-mbs'>
+<strong>Area geografica AWS:</strong>
+[us-west-2] <strong>US West (Oregon)</strong>
+</p>
+<p class='small-label l-mbs'>
+
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://it-flane.qwiklabs.com/catalog_lab/73982">https://it-flane.qwiklabs.com/catalog_lab/73982</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='button button--text' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<ql-dialog headline='Qual è il tuo livello di soddisfazione rispetto a questo lab?&lt;span aria-hidden=&quot;true&quot;&gt;*&lt;/span&gt;' id='lab-review-dialog'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div aria-labelledby='lab-review-dialog' aria-required='true' aria-valuemax='5' aria-valuemin='0' aria-valuenow='0' class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0' id='lab-review-rateit' role='slider' tabindex='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="14798" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="2083" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="73982" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="14566" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Commenti aggiuntivi</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</form><ql-button disabled id='submit' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+<ql-dialog headline='Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?' icon='error_outline' id='js-lab-are-you-sure-dialog'>
+<ql-button id='js-are-you-sure-button' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    ql.chat.init();
+  ql.jumpContent.init();
+  initLabContent();
+  ql.labOutline.links.init();
+  initLabReviewModal();
+  initLabReviewTranslations( {"star_amount_1":"1 stelle su 5","star_amount_2":"2 stelle su 5","star_amount_3":"3 stelle su 5","star_amount_4":"4 stelle su 5","star_amount_5":"5 stelle su 5"} )
+  ql.labAssessment.init();
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?","in_progress":"*In corso*","ending":"*Conclusione*","starting":"*Avvio… Attendi*","end_concurrent_labs":"È possibile eseguire un solo lab alla volta. Per avviare questo lab, conferma di voler terminare tutti i lab esistenti.","copied":"Copiato","no_resource":"Errore durante il recupero della risorsa.","no_support":"Non viene fornita assistenza","mac_press":"Premi ⌘-C per copiare","thanks_review":"Grazie per aver inserito una recensione per questo lab.","windows_press":"Premi Ctrl+C per copiare","days":"giorni"} );
+  ql.labRun.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+
+</body>
+</html>
+

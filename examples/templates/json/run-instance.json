@@ -1,0 +1,34 @@
+{
+    "BlockDeviceMappings": [
+        {
+            "DeviceName": "/dev/sdb",
+            "Ebs": {
+                "VolumeSize": 10
+            }
+        }
+    ],
+    "ImageId": "<YOUR_AMI_ID>",
+    "InstanceType": "t2.micro",
+    "Ipv6AddressCount": 0,
+    "KeyName": "<YOUR_KEY_NAME>",
+    "Monitoring": {
+        "Enabled": true
+    },
+    "Placement": {
+        "AvailabilityZone": "<YOUR_AZ_NAME>"
+    },
+    "SecurityGroupIds": [
+        "<YOUR_SECURITY_GROUP_ID>"
+    ],
+    "SubnetId": "<YOUR_SUBNET_ID>",
+    "InstanceInitiatedShutdownBehavior": "stop",
+    "NetworkInterfaces": [
+        {
+            "AssociatePublicIpAddress": true,
+            "DeleteOnTermination": true,
+            "DeviceIndex": 0,
+            "Ipv6AddressCount": 0,
+            "SubnetId": "<YOUR_SUBNET_ID>"
+        }
+    ]
+}  

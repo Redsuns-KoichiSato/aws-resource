@@ -1,0 +1,1252 @@
+
+<!DOCTYPE html>
+<html lang='it'>
+<head>
+<title>Developing on AWS - Lab 2 (Java) - Develop Solutions Using Amazon S3 | Qwiklabs</title>
+<script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Diego","lastname":"Brignoli","fullname":"Diego Brignoli","company":"Beta80","email":"diego.brignoli@beta80group.it","origin":"it-flane, direct","subscriptions":0,"id":"a61e1fd9f1a7d5ef061dbe892bae5f9f","qlCreatedAt":"2022-03-07 13:40:45 UTC","optIn":true,"current_organization_id":null,"current_organization_role":null};gon.segment=null;gon.deployment="it-flane";gon.content={"type":"Lab","id":73288,"name":"Developing on AWS - Lab 2 (Java) - Develop Solutions Using Amazon S3"};
+//]]>
+</script>
+<script>
+  dataLayer = [
+    {user: gon.current_user},
+    {content: gon.content}
+  ];
+</script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/polyfills/webcomponents-loader-60a166e60df2787cca5915e2ced8c317457f421a20f02601b937a72275ac441a.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-2beee108ba05276bc429223ee82ed81449d233c93d45af5da84add895e101218.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-b44c688caf0e24039ff5020ad65695458c8c0edbd37ac5431ce3efa6d80f07e0.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors__it-c5bb7dbc14336638421f7b3f9e4f32567ff92565d683255515ad93ae6d7e7992.js"></script>
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="UfIMSbMVeBvGMq6ZaVzwuqhF2ZOXlCJkSMzrgL5JX2b2P+Ya+uS2vw/U+9OquUt2Amwh0t+rZBMcQhc+OsuwFg==" />
+<meta content='width=device-width, initial-scale=1.0, user-scalable=yes' name='viewport'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<meta content='[{&quot;id&quot;:&quot;recaptcha_experiment&quot;,&quot;optimize_id&quot;:&quot;dpViOcLkT3qS4TvL2mRojA&quot;,&quot;title&quot;:&quot;No Recaptcha shown for trusted users&quot;,&quot;variant_index&quot;:1,&quot;variant&quot;:&quot;no_recaptcha&quot;}]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:14798}' name='help-api-product-data'>
+<meta content='In this lab, students will develop a portion of the application using Amazon S3 to store files and configure a static website.' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='Developing on AWS - Lab 2 (Java) - Develop Solutions Using Amazon S3 | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='In this lab, students will develop a portion of the application using Amazon S3 to store files and configure a static website.' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+
+
+
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+<link href='/favicon-32.png' rel='shortcut icon' type='image/x-icon'>
+
+
+
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+<link rel="stylesheet" media="screen" href="https://cdn.qwiklabs.com/stylesheets/application_old/locales/it.css" />
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-1c1adc018a83f53f78a5b6f624572a32bf4f3c935b02a026b7bf82afe02b4dae.css" />
+
+<style>
+  :root {
+    --primary-text-on-surface-color: #1A73E8;
+    --primary-text-on-surface-color-dark: #1568d6;
+    --primary-text-on-surface-color-darker: #135ec1;
+    --primary-text-on-surface-color-darkest: #1154ac;
+    --primary-surface-color: #1A73E8;
+    --primary-surface-color-rgb: 26,115,232;
+    --primary-surface-color-light: #d1e3fa;
+    --primary-surface-color-lightest: #e8f1fd;
+    --text-on-primary-color: #FFFFFF;
+    --accent-text-on-surface-color: #F29900;
+    --accent-surface-color: #F9AB00;
+    --accent-surface-color-rgb: 249,171,0;
+    --accent-surface-color-light: #ffefcc;
+    --text-on-accent-color: #202124;
+  }
+</style>
+
+
+
+</head>
+<body class='lab-show l-full no-nav application-new focuses focuses-show lab-show l-full no-nav '>
+<div class='header-container'>
+<div class='header'>
+<ql-toolbar jumpEnabled>
+<div class='header__title' slot='title'>
+<ql-icon-button label="Indietro" href="/classrooms/2083" id="cbe6ad74c2bfd714" target="_self" tip="Indietro">arrow_back</ql-icon-button>
+<h1 class='ql-headline-6'>Developing on AWS - Lab 2 (Java) - Develop Solutions Using Amazon S3</h1>
+</div>
+<div class='header__actions' slot='action'>
+<ql-icon-button id='control-panel-target' style='display: none;'>
+dashboard
+</ql-icon-button>
+<ql-menu for='control-panel-target' id='control-panel-menu'></ql-menu>
+<ql-icon-button class='mobile-hide' icon='help_outline' id='help-menu-button' label='Apri il menu Guida' tip='Guida'></ql-icon-button>
+<ql-menu for='help-menu-button' id='help-menu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='lab' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:14798},&quot;context&quot;:&quot;lab&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/contact_us' label='Email support' target='_blank'></ql-menu-item>
+<ql-menu-item label='Chat support' onClick='ql.chat.open()'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button class='mobile-hide' icon='language' id='language' label='Seleziona le preferenze relative alla lingua' tip='Lingua'></ql-icon-button>
+<ql-menu for='language'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/classrooms/2083/labs/14563?locale=ar' label='العربية‬‎' lang='ar'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/classrooms/2083/labs/14563?locale=de' label='Deutsch' lang='de'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/classrooms/2083/labs/14563?locale=en' label='English' lang='en'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/classrooms/2083/labs/14563?locale=es' label='español (Latinoamérica)' lang='es'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/classrooms/2083/labs/14563?locale=fr' label='français' lang='fr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/classrooms/2083/labs/14563?locale=fr_CA' label='français (Canada)' lang='fr-CA'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/classrooms/2083/labs/14563?locale=he' label='עברית' lang='he'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/classrooms/2083/labs/14563?locale=id' label='bahasa Indonesia' lang='id'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/classrooms/2083/labs/14563?locale=it' label='Italiano' lang='it'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/classrooms/2083/labs/14563?locale=ja' label='日本語' lang='ja'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/classrooms/2083/labs/14563?locale=ko' label='한국어' lang='ko'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/classrooms/2083/labs/14563?locale=pl' label='Polski' lang='pl'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/classrooms/2083/labs/14563?locale=pt_BR' label='português (Brasil)' lang='pt-BR'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/classrooms/2083/labs/14563?locale=pt_PT' label='português (Portugal)' lang='pt-PT'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/classrooms/2083/labs/14563?locale=ru' label='русский' lang='ru'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/classrooms/2083/labs/14563?locale=tr' label='Türkçe' lang='tr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/classrooms/2083/labs/14563?locale=zh' label='简体中文' lang='zh'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/classrooms/2083/labs/14563?locale=zh_TW' label='繁體中文' lang='zh-TW'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button id='my_account' label='Account personale' tip='Account personale'>
+<ql-avatar></ql-avatar>
+</ql-icon-button>
+<ql-menu for='my_account' id='my_account_menu' style='max-height: 640px'>
+<div class='my-account-menu'>
+<ql-avatar class='l-mtl l-mbl' size='120'></ql-avatar>
+<div class='my-account-menu__user-info l-mbl'>
+<h4 class='ql-subhead-1'>Diego Brignoli</h4>
+<p class='ql-body-2 text--light'>diego.brignoli@beta80group.it</p>
+<p class='ql-body-2 text--light'>
+</p>
+</div>
+<div class='buttons l-mbl'>
+<a class="button button--hairline" id="settings" href="/my_account/profile">Impostazioni</a>
+</div>
+<hr>
+<ql-button data-analytics-action='clicked_sign_out' href='/users/sign_out' method='delete'>
+Esci
+</ql-button>
+<div class='privacy l-mtl'>
+<a class="ql-caption text--light" href="/privacy_policy">Privacy</a>
+<span class='ql-caption text--light l-mls l-mrs'>&middot;</span>
+<a class="ql-caption text--light" href="/terms_of_service">Termini</a>
+</div>
+</div>
+</ql-menu>
+
+</div>
+</ql-toolbar>
+
+</div>
+</div>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class="custom-logo"><img alt="Qwiklabs" height="24" aria-label="Qwiklabs" src="https://cdn.qwiklabs.com/yjTIzMprll8xFSNHNul7y7IDev3CoxdLyHeDu9qmu2Q%3D" /></div>
+</div>
+<nav class='ql-sidenav'>
+<ql-sidenav-item href='/' icon='home' label='Home page'></ql-sidenav-item>
+
+<ql-sidenav-item href='/catalog' icon='school' label='Catalogo'></ql-sidenav-item>
+
+<ql-sidenav-item active href='/profile' icon='event_note' label='Profilo'></ql-sidenav-item>
+
+</nav>
+
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main' id='jump-content'>
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+<ql-drawer-container class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;Developing on AWS - Lab 2 (Java) - Develop Solutions Using Amazon S3&quot;,&quot;lab_name&quot;:&quot;Developing on AWS - Lab 2 (Java) - Develop Solutions Using Amazon S3&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;it-flane&quot;}' data-focus-id='14563' data-lab-billing-limit='0.0' data-lab-duration='7200' data-parent='classroom' id='lab-container'>
+<ql-drawer id='terminal-drawer' slot='drawer' style='width: calc(100% - 480px)'>
+<iframe allow='clipboard-read' class='terminal' id='embedded-resource'></iframe>
+</ql-drawer>
+<ql-drawer-content class='js-lab-wrapper' id='lab-content' slot='drawer-content'>
+<ql-drawer-container id='lab-content-container'>
+<ql-drawer id='control-panel-drawer' open slot='drawer' width='320'>
+<ql-lab-control-panel class='ql-lab-control-panel__max-height control-panel js-lab-control-panel' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labDetails='[]' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}' studentResources='[]'>
+</ql-lab-control-panel>
+</ql-drawer>
+<ql-drawer-content id='lab-instructions' slot='drawer-content'>
+<ql-snackbar id='alert-snackbar'></ql-snackbar>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message' role='alert'></p>
+<ql-icon-button class='alert__close js-alert-close' icon='clear'></ql-icon-button>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<div class='lab-content__renderable-instructions js-lab-content'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+Developing on AWS - Lab 2 (Java) - Develop Solutions Using Amazon S3
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>2 ore </span>
+<span>Gratis</span>
+<div class='lab__rating'>
+<a aria-label="Recensioni del lab" href="/focuses/14563/reviews?parent=classroom"><div class='rateit' data-rateit-readonly='true' data-rateit-value='4.6667'></div>
+
+</a><ql-button aria-label='Valuta lab' id='rate-lab-btn' label='Valuta lab' text></ql-button>
+</div>
+</div>
+</div>
+<div class='lab-outline-place-holder'></div>
+
+<div class='markdown-lab-instructions js-markdown-instructions no-select' id='markdown-lab-instructions'>
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/aws-logo.png" alt=""></p>
+
+
+
+<p>© 2022 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited. All trademarks are the property of their owners.</p>
+
+<p>Note: Do not include any personal, identifying, or confidential information into the lab environment. Information entered may be visible to others.</p>
+
+<p>Corrections, feedback, or other questions? Contact us at <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification</em></a>.</p>
+
+<p><strong>Duration</strong></p>
+
+<p>This lab will require approximately <strong>45 minutes</strong> to complete.</p>
+
+<p><a id="prerequisites" target="_blank"></a></p>
+
+<h2 id="step1">Prerequisites</h2>
+
+<p>This lab requires:</p>
+<ul>
+<li>Access to a Microsoft Windows or MacOS notebook computer with a Wi-Fi connection.</li>
+<li>An Internet browser such as Chrome, Firefox, or IE9+.
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Previous versions of Internet Explorer are not supported.</li>
+<li>A Microsoft Remote Desktop client to connect to your development Amazon Elastic Compute Cloud (Amazon EC2) instance.
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You can use an iPad or tablet device to access these directions in the lab console.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Review additional lab environment specific details in the <a href="#appendix" target="_self">Appendix.</a>
+</li>
+</ul>
+<h2 id="step2">Overview</h2>
+
+<p>Now that you are familiar with how the developer environment is set up, you will start developing a portion of the application that uses Amazon Simple Storage Service (Amazon S3) as a storage service and web hosting service. You will create an Amazon S3 bucket to store notes as objects used in your application. Acceptable formats for the application notes are: csv, json, and eventually mp3 audio files in later labs. You will learn how to process the data in your files and manage updates. Next, you will use Amazon S3 to host your static website. You will use the clues provided to complete the missing pieces of the code at TODO placeholders. Once the error free code is filled in, you will run the program and review the results.</p>
+
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-2-java/instructions/en_us/images/lab2-diagram.png" alt="Lab 2 Diagram of Amazon S3 bucket and example notes files"></p>
+
+<h3>Objectives</h3>
+
+<p>After completing this lab, you will be able to:</p>
+<ul>
+<li>Interact with Amazon S3 programmatically using AWS SDKs and the AWS CLI.</li>
+<li>Create a bucket using waiters and verify service exceptions codes.</li>
+<li>Build requests needed to upload an Amazon S3 object with metadata attached.</li>
+<li>Build requests to download an object from the bucket, process data, and upload the object back to bucket.</li>
+<li>Configure a bucket to host the website and sync the source files using the AWS CLI.</li>
+</ul>
+<h2 id="step3">Start Lab</h2>
+<ol start="1">
+<li>At the top of your screen, launch your lab by choosing <span style="background-color:#34A853;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#34A853;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Start Lab</span>
+</li>
+</ol>
+<p>This starts the process of provisioning your lab resources. An estimated amount of time to provision your lab resources is displayed. You must wait for your resources to be provisioned before continuing.</p>
+
+<p><i class="fas fa-info-circle"></i> If you are prompted for a token, use the one distributed to you (or credits you have purchased). </p>
+<ol start="2">
+<li>Open your lab by choosing <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span>
+</li>
+</ol>
+<p>This opens an AWS Management Console sign-in page.</p>
+<ol start="3">
+<li>On the sign-in page, configure:</li>
+</ol><ul>
+<li>
+<strong>IAM user name:</strong> <input readonly class="copyable-inline-input" size="10" type="text" value="awsstudent">
+</li>
+<li>
+<strong>Password:</strong> Paste the value of <strong>Password</strong> from the left side of the lab page</li>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Sign In</span>
+</li>
+</ul>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Do not change the Region unless instructed.</strong></p>
+
+
+
+<h3>Common Login Errors</h3>
+
+<p><strong>Error: You must first log out</strong></p>
+
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/logouterror.png" alt=""></p>
+
+<p>If you see the message, <strong>You must first log out before logging into a different AWS account:</strong> </p>
+<ul>
+<li>Choose <strong>here</strong>
+</li>
+<li>Close your browser tab to return to your initial lab window</li>
+<li>Choose <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span> again</li>
+</ul>
+
+
+<h2 id="step4">Task 0: Connect to your development environment</h2>
+
+<p>In this task, you will connect to your development environment.</p>
+
+<p><a id="connection-options" target="_blank"></a></p>
+<ol start="4">
+<li>Choose a method to connect to the development environment from the options below:</li>
+</ol><ul>
+<li><a href="#connect_guacamole" target="_self">Connect to Your Windows Dev Instance using Apache Guacamole</a></li>
+<li><a href="#connect_win_mac" target="_self">Connect to Your Windows Dev Instance from a MacOS Machine using RDP</a></li>
+<li><a href="#connect_win_win" target="_self">Connect to Your Windows Dev Instance from a Windows Machine using RDP</a></li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  When lab instructions in subsequent sections require you to issue commands, use the <strong>IntelliJ Terminal</strong>.</p>
+
+<p><i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong>  This lab is designed for both experienced and newer developers:</p>
+<ul>
+<li><p>For more experienced developers who enjoy a challenge, there are <strong>High-Level Instructions</strong> before each task that should provide you enough information to help you complete the task.</p></li>
+<li><p>Once you complete the updates test your code to ensure it works, troubleshoot if needed, and then move on to the next task.</p></li>
+<li><p>For newer developers, there are <strong>Detailed Instructions</strong> to guide you through each step of the lab.</p></li>
+</ul>
+
+
+<h3>Task 0.1 - Open and configure IntelliJ</h3>
+<ol start="5">
+<li>Open <strong>IntelliJ</strong> from the desktop icon.</li>
+</ol><ul>
+<li>From the <strong>LICENSE AGREEMENT</strong> window, select the check box that says, <i class="fas fa-check-square" style="color:#0073bb;"></i> <input readonly class="copyable-inline-input" size="70" type="text" value="I confirm that I have read and accept the terms of this User Agreement"> and then choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#000000;border-color:#0073bb;">Continue</span>
+</li>
+<li>From the <strong>DATA SHARING</strong> window, choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#000000;border-color:#0073bb;">Don't Send</span>
+</li>
+</ul><ol start="6">
+<li>From the <strong>Welcome</strong> screen, choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;"><i class="far fa-folder-open"></i></span> <strong>Open</strong> &gt; navigate to <input readonly class="copyable-inline-input" size="12" type="text" value="C:\code\java"> &gt; select <input readonly class="copyable-inline-input" size="7" type="text" value="pom.xml"> &gt; <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">OK</span> &gt; <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Open as Project</span> &gt; <i class="far fa-check-square" style="color:#0073bb;"></i> Trust projects in C:/code &gt; <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Trust Project</span>
+</li>
+</ol>
+<p><i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong>   Wait for the underlying processes to complete as they download plugins/dependencies and other tasks that can cause errors if you do not wait for those tasks to complete. You can observe this status at the bottom of the screen.</p>
+<ol start="7">
+<li><p>Close the <strong>Tip of the Day</strong> window.</p></li>
+<li><p>You will now assign the SDK to the project. Choose <strong>File</strong> &gt; <strong>Project Structure...</strong> &gt; <strong>Project SDK:</strong> <input readonly class="copyable-inline-input" size="34" type="text" value="11 Amazon Corretto version 11.0.11"> &gt; <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">OK</span></p></li>
+</ol>
+
+
+<h2 id="step5">Task 1: Create a new Amazon S3 bucket</h2>
+
+<p>In this task, you will use the developer environment and IDE. You will develop code to create a notes bucket. The bucket requires a unique name and for you to specify the appropriate region. You will check if the bucket already exists, and that the assumed role has the right permissions using Amazon S3 service exception codes. To help save time, we provide basic coding components for each script, and you will add the missing code.</p>
+
+<p><strong>Pseudocode:</strong> <em>createBucket.java</em></p>
+<ul>
+<li>
+<strong>GetInputs</strong> method initializes variables including bucket name and lab region based on the <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file.</li>
+<li>Creates an Amazon S3 client and closes an Amazon S3 client.</li>
+<li>
+<strong>bucketExisting</strong> method checks to see if an existing bucket name exists. It uses the head bucket operation and response codes to make this determination.</li>
+<li>
+<strong>createBucket</strong> method creates your Amazon S3 bucket. It builds create bucket request, runs createBucket operations, and defines Amazon S3 waiter to check if the bucket is ready for use.</li>
+</ul>
+<p>You need to complete all the <strong>TODO</strong> sections of the <input readonly class="copyable-inline-input" size="56" type="text" value="C:\code\java\src\main\java\dev.labs.s3\createBucket.java"> file with the proper code to successfully create the Amazon S3 bucket using AWS SDK for Java.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions:</span></p>
+<ul>
+<li>Open <input readonly class="copyable-inline-input" size="49" type="text" value="C:\code\java\src\main\resources\config.properties">. Update the variable <input readonly class="copyable-inline-input" size="10" type="text" value="lab_region"> with the region value shown to the left of these instructions and the <input readonly class="copyable-inline-input" size="11" type="text" value="bucket_name"> variable with a value consisting of <input readonly class="copyable-inline-input" size="18" type="text" value="lab2-notes-bucket-"> followed by your first and last initial and your zip code.</li>
+<li>Complete the <strong>TODO 1</strong> to create an Amazon S3 service client.</li>
+<li>Complete the <strong>TODO 2</strong> to verify if the generated bucket name is valid to use by creating a HeadBucket object.</li>
+<li>Complete the <strong>TODO 3</strong> to create an Amazon S3 waiter.</li>
+<li>Complete the <strong>TODO 4</strong> to create the build request to create the bucket.</li>
+<li>Test/build/run the script, and resolve any errors.</li>
+<li>Verify the bucket is created using <strong>Java</strong> or the <strong>aws cli</strong>.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions:</span></p>
+
+<h3>Task 1.1: Create an Amazon S3 service client</h3>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>   Review the <strong>Java</strong> <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3.html" target="_blank">documentation</a> for creating an Amazon S3 bucket to learn about the <strong>s3.Bucket</strong> class.</p>
+<ol start="9">
+<li><p>Open the <strong>crudOperations</strong> project. From the <strong>Project</strong> pane, expand listing under <strong>java [crudOperations] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>resources</strong> &gt; <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties">.</p></li>
+<li><p>Update the following variables and save the file when finished:</p></li>
+</ol><ul>
+<li>Variable for <strong>lab_region</strong> to the <strong>Region</strong> value to the left of these instructions.</li>
+</ul>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong></p>
+
+<p><span style="font-family:Courier;">lab_region=us-east-1</span></p>
+<ul>
+<li>Variable for <strong>bucket_name</strong> pre-pended with <input readonly class="copyable-inline-input" size="18" type="text" value="lab2-notes-bucket-">
+</li>
+<li>Then your <strong>first</strong> and <strong>last</strong> initials followed by your <strong>zip code</strong> (or any 5 numbers).</li>
+</ul>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong></p>
+
+<p><span style="font-family:Courier;">bucket_name=lab2-notes-bucket-mh75135</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  These variables will be referred to by additional files used throughout this lab. You can close this file as it will not be used again in this lab.</p>
+
+<p><a id="todo-1" target="_blank"></a></p>
+<ol start="11">
+<li><p>From the <strong>Project</strong> pane, open <strong>java [crudOperations] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>java</strong> &gt; <strong>dev.labs.s3</strong> &gt; <input readonly class="copyable-inline-input" size="12" type="text" value="createBucket"></p></li>
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Replace the code in <strong>TODO 1</strong> with the correct snippet below to create an Amazon S3 client.</p></li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code><span class="n">S3Client</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">S3Client</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;      <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code><span class="n">S3Client</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">S3Client</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;      <span class="o">.</span><span class="na">region</span><span class="o">(</span><span class="n">labRegion</span><span class="o">)</span>&#x000A;      <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-1-solution" target="_self">TODO 1 Solution</a> section at the bottom of these instructions.</p>
+
+<p><a id="todo-2" target="_blank"></a></p>
+
+<h3>Task 1.2: Create a HeadBucket object</h3>
+
+<p>Next, you need to determine if the bucket name you wish to create already exists. You can refer to the <a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/model/HeadBucketResponse.html" target="_blank">HeadBucketResponse Class documentation</a> to see how this should be constructed.</p>
+<ol start="13">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Replace the code in <strong>TODO 2</strong> with the correct snippet below:</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code>   <span class="n">HeadBucketRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="n">HeadBucketRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;         <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code>   <span class="n">HeadBucketRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="n">HeadBucketRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;         <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;         <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-2-solution" target="_self">TODO 2 Solution</a> section at the bottom of these instructions.</p>
+
+<p><a id="todo-3" target="_blank"></a></p>
+
+<h3>Task 1.3: Create an Amazon S3 waiter</h3>
+<ol start="14">
+<li><p>Update the next section of the script to create an <a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/waiters/S3Waiter.html" target="_blank">Amazon S3 Waiter</a>.</p></li>
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Replace the code in <strong>TODO 3</strong> with the correct snippet below:</p></li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code>   <span class="n">S3Waiter</span> <span class="n">s3Waiter</span> <span class="o">=</span> <span class="n">s3Client</span><span class="o">.</span><span class="na">waiter</span><span class="o">();</span> &#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code>   <span class="n">S3Waiter</span> <span class="n">s3Waiter</span> <span class="o">=</span> <span class="n">s3Resource</span><span class="o">.</span><span class="na">waiter</span><span class="o">();</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-3-solution" target="_self">TODO 3 Solution</a> section at the bottom of these instructions.</p>
+
+<p><a id="todo-4" target="_blank"></a></p>
+
+<h3>Task 1.4: Build a request to create bucket</h3>
+
+<p>The last step before running the code is to create a <a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/model/CreateBucketRequest.Builder.html" target="_blank">build request</a> to create the Amazon S3 bucket.</p>
+<ol start="16">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Replace the code in <strong>TODO 4</strong> with the correct snippet below and save your changes.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code><span class="n">CreateBucketRequest</span> <span class="n">bucketRequest</span> <span class="o">=</span> <span class="n">CreateBucketRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;      <span class="o">.</span><span class="na">build</span><span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code><span class="n">CreateBucketRequest</span> <span class="n">bucketRequest</span> <span class="o">=</span> <span class="n">CreateBucketRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;      <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;      <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-4-solution" target="_self">TODO 4 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 1.5: Test your code</h3>
+
+<p>Now it is time to run the code to test the script and ensure that it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="12" type="text" value="createBucket"> file.</p>
+<ol start="17">
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'createBucket.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom and verify that it finishes <strong>Recompiling</strong> before proceeding.</p>
+<ol start="18">
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Use <strong>Maven</strong> with the following command from the <strong>terminal</strong>:</li>
+</ol><pre class="highlight plaintext"><code>mvn -q exec:java -Dexec.mainClass="dev.labs.s3.createBucket"&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">C:\code\java&gt;mvn -q exec:java -Dexec.mainClass="dev.labs.s3.createBucket"<br>
+</span></p>
+
+<p><span style="font-family:Courier;">Head Bucket operation...<br>
+    No such bucket exists.<br>
+</span></p>
+
+<p><span style="font-family:Courier;">Creating bucket: lab2-notes-bucket-mh75135<br>
+</span></p>
+
+<p><span style="font-family:Courier;">Waiting on HeadBucketResponse()<br>
+    Bucket "lab2-notes-bucket-mh75135" is ready.<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  If you were to run it again, it would show that the bucket already exists and would not try to create a new one.</p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">C:\code\java&gt;mvn -q exec:java -Dexec.mainClass="dev.labs.s3.createBucket"<br>
+</span></p>
+
+<p><span style="font-family:Courier;">Head Bucket operation...<br>
+    This bucket already exists!<br>
+</span></p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully created a bucket for use in this lab.</p>
+
+
+
+<p><a id="task2" target="_blank"></a></p>
+
+<h2 id="step6">Task 2: Upload an object to Amazon S3</h2>
+
+<p>In this task, you will upload the <strong>notes.csv</strong> file to the <input readonly class="copyable-inline-input" size="20" type="text" value="lab2-notes-bucket-&lt;&gt;"> bucket that you created in the previous task. This file contains the sample notes that you will use in your application. The data is already stored in the project folder. You will add custom metadata before uploading the object to keep track of test files in your bucket. Next, you will use the file path, file name, and metadata parameters to build an API request to upload the file as an object. Finally, you will read the response and output the tag information to verify the upload is<br>
+successful.</p>
+
+<p><strong>Pseudocode:</strong> <em>uploadObject.java</em></p>
+<ul>
+<li>Create s3 client.</li>
+<li>
+<strong>getInput</strong> method initializes variables including bucket name and lab region based on the <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file.</li>
+<li>
+<strong>putS3Object</strong> function uploads a file to Amazon S3, sets metadata details on the object, and reads back the eTag.</li>
+<li>Close the Amazon S3 client</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions:</span></p>
+<ul>
+<li>Complete <strong>TODO 5</strong> to assign a custom <strong>metadata</strong> tag: <input readonly class="copyable-inline-input" size="19" type="text" value="lab2-testing-upload">.</li>
+<li>Complete <strong>TODO 6</strong> to build and run the request for <strong>putObject</strong> using file path, file name, metadata, and bucket name as parameters.</li>
+<li>Test/build/run the script, and resolve any errors. It will also read the <strong>eTag</strong> from the response body and display on the screen using catch for S3Exceptions for any errors while uploading.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions:</span></p>
+
+<h3>Task 2.1: Assign a metadata tag</h3>
+
+<p>In this task, you will assign custom metadata to the <input readonly class="copyable-inline-input" size="9" type="text" value="notes.csv"> object that you will upload to your bucket.</p>
+<ol start="19">
+<li>From the <strong>Project</strong> pane, expand the listing under <strong>java [crudOperations] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>java</strong> &gt; <strong>dev.labs.s3</strong> and open the <input readonly class="copyable-inline-input" size="12" type="text" value="uploadObject"> file.</li>
+</ol>
+<p><a id="todo-5" target="_blank"></a></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Applying custom user-supplied metadata to an Amazon S3 object is a standard practice. In your case, it allows you to verify all objects used in testing. Learn more about <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/model/ObjectMetadata.html" target="_blank">Class ObjectMetadata</a>.</p>
+<ol start="20">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Choose the correct snippet to replace the code in <strong>TODO 5</strong>:</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code>      <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">metadata</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>&#x000A;      <span class="n">metadata</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"x-amz-meta-myVal2"</span><span class="o">,</span> <span class="s">"lab2-testing-upload"</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code>      <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">metadata</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>&#x000A;      <span class="n">metadata</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"x-amz-meta-myVal2"</span><span class="o">,</span> <span class="s">"lab2-testing-upload"</span><span class="o">);</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-5-solution" target="_self">TODO 5 Solution</a> section at the bottom of these instructions.</p>
+
+<p><a id="todo-6" target="_blank"></a></p>
+
+<h3>Task 2.2: Build a PutObjectRequest</h3>
+
+<p>In this task, you will build the request for <input readonly class="copyable-inline-input" size="9" type="text" value="putObject"> using the file path, file name, metadata, and bucket name as parameters. You can reference the <a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/model/PutObjectRequest.html" target="_blank">Class PutObjectRequest</a> documentation to learn more.</p>
+<ol start="21">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Once you're familiar with the syntax, choose the correct snippet to replace the code in <strong>TODO 6</strong>, and save your changes.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code>   <span class="n">PutObjectRequest</span> <span class="n">putObject</span> <span class="o">=</span> <span class="n">PutObjectRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;         <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;         <span class="o">.</span><span class="na">metadata</span><span class="o">(</span><span class="n">metadata</span><span class="o">)</span>&#x000A;         <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code>   <span class="n">PutObjectRequest</span> <span class="n">putObject</span> <span class="o">=</span> <span class="n">PutObjectRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;         <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;         <span class="o">.</span><span class="na">key</span><span class="o">(</span><span class="n">objectKey</span><span class="o">)</span>&#x000A;         <span class="o">.</span><span class="na">metadata</span><span class="o">(</span><span class="n">metadata</span><span class="o">)</span>&#x000A;         <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-6-solution" target="_self">TODO 6 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 2.3: Test your code</h3>
+
+<p>Now it is time to run the code to test the script and ensure it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="12" type="text" value="uploadObject"> file.</p>
+<ol start="22">
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'uploadObject.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom to verify that it finishes <strong>Recompiling</strong> before proceeding.</p>
+<ol start="23">
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  From the terminal, use <strong>Maven</strong> with the following command to test your code:</li>
+</ol><pre class="highlight plaintext"><code>&#x000A;mvn -q exec:java -Dexec.mainClass="dev.labs.s3.uploadObject"&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">C:\code\java&gt;mvn -q exec:java -Dexec.mainClass="dev.labs.s3.uploadObject"<br>
+</span></p>
+
+<p><span style="font-family:Courier;">Uploading file from "C:\code\java\notes.csv"<br>
+</span></p>
+
+<p><span style="font-family:Courier;">Upload completed.<br>
+Tag: "0a451da7ae61a02b69453142735e256e"<br>
+</span></p>
+
+
+
+<h2 id="step7">Task 3: Process the data from an object stored in Amazon S3</h2>
+
+<p>In this task, you will develop a program to process the notes from the file <input readonly class="copyable-inline-input" size="9" type="text" value="notes.csv"> which you uploaded to your <input readonly class="copyable-inline-input" size="20" type="text" value="lab2-notes-bucket-&lt;&gt;"> bucket in the previous task. You will download the <input readonly class="copyable-inline-input" size="9" type="text" value="notes.csv"> object from the Amazon S3 bucket to your local folder. You will read the data from the file and convert it into JSON format so that this file can be used to load data into the database in the proceeding labs. Once converted, you will upload it back to the bucket. You will read the response and output the tag information to verify the upload is successful.</p>
+
+<p><strong>Pseudocode:</strong> <em>processObject.java</em></p>
+<ul>
+<li>
+<strong>getInput</strong> method initializes variables including bucket name and the lab region based on the <input readonly class="copyable-inline-input" size="17" type="text" value="config.properties"> file.
+<ul>
+<li>Update the <strong>convertS3Object</strong> method to do the following:</li>
+<li>Build the request using bucket name and key to download object</li>
+<li>Get response in bytes</li>
+<li>Write to a local file on your disk</li>
+<li>Convert the downloaded notes to JSON format, write to a new file, and catch exceptions</li>
+</ul>
+</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions:</span></p>
+<ul>
+<li>Complete <strong>TODO 7</strong> to build and run the request for <strong>getObject</strong> using <strong>object key name</strong> and <strong>bucket name</strong> as parameters.</li>
+<li>Complete <strong>TODO 8</strong> to build and run the request for <strong>putObject</strong> using file path, file name, metadata, and bucket name as parameters.</li>
+<li>Test/build/run the script, and resolve any errors. It will also read the <strong>eTag</strong> from the response body and display on the screen using catch for S3Exceptions for any errors while uploading.</li>
+<li>Download the <input readonly class="copyable-inline-input" size="10" type="text" value="notes.json"> file to confirm the contents have been converted from the <strong>CSV</strong> format to the <strong>JSON</strong> format.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions:</span></p>
+
+<p><a id="task3-1" target="_blank"></a></p>
+
+<h3>Task 3.1: Build a GetObjectRequest</h3>
+
+<p>You will now create a <strong>getObjectRequest</strong> to download the <input readonly class="copyable-inline-input" size="9" type="text" value="notes.csv"> file from your bucket.</p>
+<ol start="24">
+<li>From the <strong>Project</strong> pane, expand listing under <strong>java [crudOperations] C:\code\java</strong> &gt; <strong>src</strong> &gt; <strong>main</strong> &gt; <strong>java</strong> &gt; <strong>dev.labs.s3</strong> and open the <input readonly class="copyable-inline-input" size="13" type="text" value="processObject"> file.</li>
+</ol>
+<p><a id="todo-7" target="_blank"></a></p>
+<ol start="25">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Once you have reviewed the documentation, you should be able to choose the correct code snippet to replace the code in <strong>TODO 7</strong>.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code>            <span class="n">GetObjectMetadataRequest</span> <span class="n">getObjectMetadata</span> <span class="o">=</span>&#x000A;<span class="n">GetObjectMetadataRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;                  <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;                  <span class="o">.</span><span class="na">key</span><span class="o">(</span><span class="n">objectKey</span><span class="o">)</span>&#x000A;                  <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code>            <span class="n">GetObjectRequest</span> <span class="n">getObjectRequest</span> <span class="o">=</span> <span class="n">GetObjectRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;                    <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;                    <span class="o">.</span><span class="na">key</span><span class="o">(</span><span class="n">objectKey</span><span class="o">)</span>&#x000A;                    <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-7-solution" target="_self">TODO 7 Solution</a> section at the bottom of these instructions.</p>
+
+<p><a id="todo-8" target="_blank"></a></p>
+
+<h3>Task 3.2: Build a PutObjectRequest</h3>
+
+<p>In this task, you will build the request to upload the <input readonly class="copyable-inline-input" size="10" type="text" value="notes.json"> file that was just converted from the <strong>CSV</strong> format to the <strong>JSON</strong> format.</p>
+<ol start="26">
+<li>Continue editing the <input readonly class="copyable-inline-input" size="26" type="text" value="C:\code\java\processObject"> file.</li>
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Review the code snippets below and choose the correct one to replace the code in the <strong>TODO 8</strong> section and save the changes.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code>                <span class="n">s3</span><span class="o">.</span><span class="na">getObject</span><span class="o">(</span><span class="n">putObject</span><span class="o">,</span>&#x000A;                        <span class="n">RequestBody</span><span class="o">.</span><span class="na">fromFile</span><span class="o">(</span><span class="n">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">objectNewKey</span><span class="o">)));</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code>                <span class="n">s3</span><span class="o">.</span><span class="na">putObject</span><span class="o">(</span><span class="n">putObject</span><span class="o">,</span>&#x000A;                        <span class="n">RequestBody</span><span class="o">.</span><span class="na">fromFile</span><span class="o">(</span><span class="n">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">objectNewKey</span><span class="o">)));</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>   You can find the solution to this step in the <a href="#todo-8-solution" target="_self">TODO 8 Solution</a> section at the bottom of these instructions.</p>
+
+<h3>Task 3.3: Test your code</h3>
+
+<p>Now it is time to run the code to test the script and ensure it functions as expected. Make sure there are no syntax errors and that you have saved the changes to the <input readonly class="copyable-inline-input" size="13" type="text" value="processObject"> file.</p>
+<ol start="28">
+<li>Choose <strong>Build</strong> &gt; <strong>Recompile 'processObject.java</strong>'</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Review the status bar at the bottom and verify that it finishes <strong>Recompiling</strong> before proceeding.</p>
+<ol start="29">
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Use <strong>Maven</strong> from the command line with the following command from the <strong>terminal</strong>:</li>
+</ol><pre class="highlight plaintext"><code>&#x000A;mvn -q exec:java -Dexec.mainClass="dev.labs.s3.processObject"&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">C:\code\java&gt;mvn -q exec:java -Dexec.mainClass="dev.labs.s3.processObject"</span></p>
+
+<p><span style="font-family:Courier;">Retrieving notes.csv from bucket...<br>
+    Object downloaded from Amazon S3 is written to: C:\code\java\localFile.csv</span></p>
+
+<p><span style="font-family:Courier;">Converting notes.csv to json format...<br>
+    Converted file is written to: C:\code\java\notes.json</span></p>
+
+<p><span style="font-family:Courier;">Uploading notes.json file to Amazon S3...<br>
+    Object uploaded. Tag information:"82e4c6abab63ec87157f6a2372a99bcd"</span></p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully created and object in the Amazon S3 bucket.</p>
+
+
+
+<h2 id="step8">Task 4: Configure static website hosting on an Amazon S3 bucket</h2>
+
+<p>In this task, you will use AWS CLI commands to configure your <input readonly class="copyable-inline-input" size="20" type="text" value="lab2-notes-bucket-&lt;&gt;"> bucket to host the website for your application. You will use the provided index and error documents provided to you to configure the website. You will set the bucket policy so that web pages can be accessed over the internet. You will upload index and error files to Amazon S3 prior to accessing the site.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions:</span></p>
+<ul>
+<li>Static files needed for your website are provided in the <strong>html</strong> folder.</li>
+<li>Run <strong>s3api put-bucket-website</strong> with bucket name and website.json (index, error, and routing http/https) as parameters.</li>
+<li>Run <strong>s3api put-bucket-policy</strong> with bucket name and policy.json as parameters to grant access permissions for your objects.</li>
+<li>Run <strong>s3 sync</strong> with the bucket name and folder as parameters to copy your HTML files.</li>
+<li>Identify the Amazon S3 website link for your bucket and open it in your browser to review files.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions:</span></p>
+
+<h3>Task 4.1: Configure website hosting</h3>
+
+<p>You will now review the <strong>website.json</strong> file and apply this configuration file to setup your Amazon S3 static website.</p>
+<ol start="30">
+<li>Open the <input readonly class="copyable-inline-input" size="30" type="text" value="C:\code\java\html\website.json"> file.</li>
+</ol>
+<p>This file specifies the values to be used for the <input readonly class="copyable-inline-input" size="13" type="text" value="IndexDocument"> and the <input readonly class="copyable-inline-input" size="13" type="text" value="ErrorDocument">.</p>
+<ol start="31">
+<li><p>Verify the files <input readonly class="copyable-inline-input" size="10" type="text" value="index.html"> and <input readonly class="copyable-inline-input" size="10" type="text" value="error.html"> exist in the <input readonly class="copyable-inline-input" size="4" type="text" value="html"> directory.</p></li>
+<li><p><i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Run the following command to change to the <input readonly class="copyable-inline-input" size="12" type="text" value="C:\code\java"> directory:</p></li>
+</ol><pre class="highlight plaintext"><code>cd C:\code\java&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+<ol start="33">
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Run the command below to get the value to be able to set the <strong>myBucket</strong> variable to your <input readonly class="copyable-inline-input" size="20" type="text" value="lab2-notes-bucket-&lt;&gt;"> name, which will be used in the next command:</li>
+</ol><pre class="highlight plaintext"><code>aws s3api list-buckets --output text --query "Buckets[?contains(Name, `lab2-notes-bucket-`) == `true`] | [0].Name"&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">lab2-notes-bucket-&lt;initialsAndZipCode&gt;</span></p>
+<ol start="34">
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Copy the value for the <strong>bucket name</strong> from the previous command and add it to run the command below to set the <strong>myBucket</strong> variable:</li>
+</ol><pre class="highlight plaintext"><code>set myBucket=&lt;bucketName&gt;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong></p>
+
+<p><span style="font-family:Courier;">set myBucket=lab2-notes-bucket-mh75135<br>
+</span></p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+<ol start="35">
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Run the command below to configure the website. The documentation for <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/put-bucket-website.html" target="_blank">put bucket website</a> specifies the configuration of the Amazon S3 website for your bucket.</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  The <strong>myBucket</strong> variable will be used for this command to specify your bucket name automatically.</p>
+<pre class="highlight plaintext"><code>aws s3api put-bucket-website --bucket "%myBucket%" --website-configuration file://html/website.json&#x000A;</code></pre>
+<p><a id="task4-2" target="_blank"></a></p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.</span></p>
+
+<h3>Task 4.2: Update and add a bucket policy</h3>
+
+<p>The bucket policy has already been created on your behalf. This policy grants the permission to read the objects in your bucket. Your only task is to update the <strong>bucket name</strong>.</p>
+<ol start="36">
+<li>From IntelliJ, open <input readonly class="copyable-inline-input" size="29" type="text" value="C:\code\java\html\policy.json"> and update the value for <input readonly class="copyable-inline-input" size="11" type="text" value="&lt;my-bucket&gt;"> to your bucket's name and save the changes to the file.</li>
+</ol>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong></p>
+
+<p><span style="font-family:Courier;">"arn:aws:s3:::lab2-notes-bucket-mh75135/*"<br>
+</span></p>
+<ol start="37">
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Using the same <strong>Terminal</strong> session, run the following command to <a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/put-bucket-policy.html" target="_blank">put the bucket policy</a>:</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  The <strong>myBucket</strong> variable will be used again for this command to specify your bucket name automatically.</p>
+<pre class="highlight plaintext"><code>&#x000A;aws s3api put-bucket-policy --bucket "%myBucket%" --policy file://html/policy.json&#x000A;&#x000A;</code></pre>
+<p><a id="task4-sync" target="_blank"></a></p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.</span></p>
+<ol start="38">
+<li>Run the command below to change directories into the <strong>html</strong> directory:</li>
+</ol><pre class="highlight plaintext"><code>&#x000A;cd C:\code\java\html&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+<ol start="39">
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Run the command below to sync the files in the <strong>html</strong> folder with your bucket. This includes the <input readonly class="copyable-inline-input" size="10" type="text" value="index.html"> and <input readonly class="copyable-inline-input" size="10" type="text" value="error.html"> files along with any images used in those webpages.</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  The <strong>myBucket</strong> variable will be used again for this command to specify your bucket name automatically.</p>
+<pre class="highlight plaintext"><code>&#x000A;aws s3 sync . s3://"%myBucket%"&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">C:\code\java\html&gt;aws s3 sync . s3://lab2-notes-bucket-mh75135</span></p>
+
+<p><span style="font-family:Courier;">upload: .\error.html to s3://lab2-notes-bucket-mh75135/error.html</span></p>
+
+<p><span style="font-family:Courier;">upload: .\index.html to s3://lab2-notes-bucket-mh75135/index.html</span></p>
+
+<p><span style="font-family:Courier;">upload: .\policy.json to s3://lab2-notes-bucket-mh75135/policy.json</span></p>
+
+<p><span style="font-family:Courier;">upload: .\website_redirect.json to s3://lab2-notes-bucket-mh75135/website_redirect.json</span></p>
+
+<p><span style="font-family:Courier;">upload: .\website.json to s3://lab2-notes-bucket-mh75135/website.json</span></p>
+
+<h3>Task 4.3: Test your website</h3>
+
+<p>Now it is time to verify that you can access your Amazon S3-based website.</p>
+<ol start="40">
+<li>Run the command below to create the <strong>region</strong> variable after setting the <strong>LabRegion value</strong> to the value the left of these instructions:</li>
+</ol><pre class="highlight plaintext"><code>&#x000A;set region=&lt;LabRegion&gt;&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+<ol start="41">
+<li>Review the <a href="https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints" target="_blank">Amazon S3 Website Endpoints</a> documentation to determine which of the two commands below to run to generate the URL to access your website based on your <strong>region</strong> value to the left of these instructions:</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Depending on the endpoint, the URL with contain <strong>s3-website-</strong> or <strong>s3-website.</strong> in the URL.</p>
+<ul>
+<li><strong>Choice A:</strong></li>
+</ul><pre class="highlight plaintext"><code>&#x000A;echo. &amp;&amp; echo You can now access the website using the following URL... &amp;&amp; echo. &amp;&amp; echo http://%mybucket%.s3-website-%region%.amazonaws.com&#x000A;&#x000A;</code></pre><ul>
+<li><strong>Choice B:</strong></li>
+</ul><pre class="highlight plaintext"><code>&#x000A;echo. &amp;&amp; echo You can now access the website using the following URL... &amp;&amp; echo. &amp;&amp; echo http://%mybucket%.s3-website.%region%.amazonaws.com&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">You can now access the website using the following URL..</span><br><br>
+<span style="font-family:Courier;">h<span>tt</span>p://notes-bucket-iii-00000.s3-website-us-west-2.amazonaws.com</span></p>
+
+<p>Or...</p>
+
+<p><span style="font-family:Courier;">You can now access the website using the following URL..</span><br><br>
+<span style="font-family:Courier;">h<span>tt</span>p://notes-bucket-iii-00000.s3-website.us-west-2.amazonaws.com</span></p>
+<ol start="42">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  Copy the URL returned at the end of the command, open a new browser tab, paste the URL, and press <strong>ENTER</strong>.</li>
+</ol><ul>
+<li>You should see the following for your <strong>index.html</strong> page:</li>
+</ul>
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-2-java/instructions/en_us/images/website.png" alt="Lab 2 index.html image"></p>
+<ul>
+<li>You should see the following for your <strong>error.html</strong> page:</li>
+</ul>
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-2-java/instructions/en_us/images/404.png" alt="Lab 2 error.html image"></p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully configured Amazon S3 to function as a static web server.</p>
+
+
+
+<h2 id="step9">Optional Challenge: Configure static website hosting on an Amazon S3 bucket using the AWS SDK for Java</h2>
+
+<p>In this task you will develop a program to configure your bucket to host the website for your application. You will use the index and error documents provided to configure the website. You will set the bucket policy so web pages can be accessed over the internet. You will upload index and error files to Amazon S3 prior to accessing the site.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions:</span></p>
+<ul>
+<li>Assign your bucket name, index, and error pages names.<br>
+</li>
+<li>Create and open a Amazon S3 service client.</li>
+<li>Build the request for WebsiteConfiguration using index and error pages as parameters.</li>
+<li>Build and run the request for putBucketWebsiteRequest using bucket name and website configuration as parameters.</li>
+<li>Build the request GetBucketWebsiteRequest and run getBucketWebsite to read bucket configuration. Catch any S3Exceptions while uploading.</li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  If you need help along the way, you can refer to the solution file named <input readonly class="copyable-inline-input" size="27" type="text" value="hostS3Website_solution.java"> in the <strong>solutions</strong> folder.</p>
+
+
+
+<h2 id="step10">Summary</h2>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations on completing the lab! For the <strong>Java</strong> version you can now:</p>
+<ul>
+<li>Interact with Amazon S3 programmatically using AWS SDKs and the AWS CLI.</li>
+<li>Create a bucket using waiters and verify service exceptions codes.</li>
+<li>Build requests needed to upload an Amazon S3 object with metadata attached.</li>
+<li>Build requests to download an object from the bucket, process data, and upload the object back to bucket.</li>
+<li>Configure a bucket to host the website and sync the source files using the AWS CLI.</li>
+</ul>
+<p><a id="end" target="_blank"></a></p>
+
+<h2 id="step11">End Lab</h2>
+
+<p>Follow these steps to close the console, end your lab, and evaluate the experience.</p>
+<ol start="43">
+<li><p>Return to the AWS Management Console.</p></li>
+<li><p>On the navigation bar, choose <strong>awsstudent@&lt;AccountNumber&gt;</strong>, and then choose <strong>Sign Out</strong>.</p></li>
+<li><p>Choose <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-family:Google Sans;font-weight:bold;font-size:90%;color:#444;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">OK</span></p></li>
+<li><p>(Optional):</p></li>
+</ol><ul>
+<li>Select the applicable number of stars <i class="far fa-star"></i>
+</li>
+<li>Type a comment</li>
+<li>
+<p>Choose <strong>Submit</strong></p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+</li>
+</ul>
+<p>You may close the window if you don't want to provide feedback.<br>
+For more information about AWS Training and Certification, see <a href="https://aws.amazon.com/training/" target="_blank"><em>https://aws.amazon.com/training/</em></a>.</p>
+
+<p><em>Your feedback is welcome and appreciated.</em></p>
+
+<p>If you would like to share any feedback, suggestions, or corrections, please provide the details in our <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification Contact Form</em></a>.</p>
+
+
+
+<h2 id="step12">Additional Resources</h2>
+
+<p><a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3.html" target="_blank">AWSJavaSDK Documentation</a><br>
+<a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/model/HeadBucketResponse.html" target="_blank">HeadBucketResponse Class documentation</a><br>
+<a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/waiters/S3Waiter.html" target="_blank">Amazon S3 Waiter</a><br>
+<a href="https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/model/CreateBucketRequest.Builder.html" target="_blank">Build Request</a><br>
+<a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/model/ObjectMetadata.html" target="_blank">Class ObjectMetadata</a><br>
+<a href="https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/model/PutObjectRequest.html" target="_blank">Class PutObjectRequest</a><br>
+<a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/put-bucket-website.html" target="_blank">Put Bucket Website</a><br>
+<a href="https://awscli.amazonaws.com/v2/documentation/api/latest/reference/s3api/put-bucket-policy.html" target="_blank">Put Bucket Policy</a></p>
+
+<h2 id="step13">Code Challenge Solutions</h2>
+
+<p><a id="todo-1-solution" target="_blank"></a></p>
+
+<h3>TODO 1 Solution</h3>
+<ul>
+<li><p>Choice A is not correct because it is missing the <strong>region</strong> property.</p></li>
+<li><p><strong>Choice B</strong> is the correct code snippet.</p></li>
+</ul><pre class="highlight java"><code><span class="n">S3Client</span> <span class="n">s3</span> <span class="o">=</span> <span class="n">S3Client</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;      <span class="o">.</span><span class="na">region</span><span class="o">(</span><span class="n">labRegion</span><span class="o">)</span>&#x000A;      <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre>
+<p><a href="#todo-1" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-2-solution" target="_blank"></a></p>
+
+<h3>TODO 2 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because the <strong>build</strong> parameter is missing.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong></p></li>
+</ul><pre class="highlight java"><code><span class="n">HeadBucketRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="n">HeadBucketRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;                    <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;                    <span class="o">.</span><span class="na">build</span><span class="o">();</span> &#x000A;</code></pre>
+<p><a href="#todo-2" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-3-solution" target="_blank"></a></p>
+
+<h3>TODO 3 Solution</h3>
+<ul>
+<li><strong>Choice A is the correct code snippet.</strong></li>
+</ul><pre class="highlight java"><code>   <span class="n">S3Waiter</span> <span class="n">s3Waiter</span> <span class="o">=</span> <span class="n">s3Client</span><span class="o">.</span><span class="na">waiter</span><span class="o">();</span> &#x000A;</code></pre><ul>
+<li>Choice B is incorrect because the syntax specifies an <strong>S3Resource.waiter</strong> which does not exist.</li>
+</ul>
+<p><a href="#todo-3" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-4-solution" target="_blank"></a></p>
+
+<h3>TODO 4 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because the syntax is incorrect.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong></p></li>
+</ul><pre class="highlight java"><code><span class="n">CreateBucketRequest</span> <span class="n">bucketRequest</span> <span class="o">=</span> <span class="n">CreateBucketRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;      <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;      <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre>
+<p><a href="#todo-4" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-5-solution" target="_blank"></a></p>
+
+<h3>TODO 5 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because it is using <input readonly class="copyable-inline-input" size="12" type="text" value="metadata.get"> when it should be calling <input readonly class="copyable-inline-input" size="12" type="text" value="metadata.put">.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong></p></li>
+</ul><pre class="highlight java"><code>      <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">metadata</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;();</span>&#x000A;      <span class="n">metadata</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"x-amz-meta-myVal2"</span><span class="o">,</span> <span class="s">"lab2-testing-upload"</span><span class="o">);</span>&#x000A;</code></pre>
+<p><a href="#todo-5" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-6-solution" target="_blank"></a></p>
+
+<h3>TODO 6 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because it is missing the <strong>.key(objectKey)</strong> property.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong></p></li>
+</ul><pre class="highlight java"><code>      <span class="n">PutObjectRequest</span> <span class="n">putObject</span> <span class="o">=</span> <span class="n">PutObjectRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;            <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;            <span class="o">.</span><span class="na">key</span><span class="o">(</span><span class="n">objectKey</span><span class="o">)</span>&#x000A;            <span class="o">.</span><span class="na">metadata</span><span class="o">(</span><span class="n">metadata</span><span class="o">)</span>&#x000A;            <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;&#x000A;</code></pre>
+<p><a href="#todo-6" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-7-solution" target="_blank"></a></p>
+
+<h3>TODO 7 Solution</h3>
+<ul>
+<li>Choice A is incorrect because it gets the metadata for the specified Amazon S3 object without actually fetching the object itself.</li>
+<li><strong>Choice B is the correct code snippet.</strong></li>
+</ul><pre class="highlight java"><code>            <span class="n">GetObjectRequest</span> <span class="n">getObjectRequest</span> <span class="o">=</span> <span class="n">GetObjectRequest</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>&#x000A;                    <span class="o">.</span><span class="na">bucket</span><span class="o">(</span><span class="n">bucketName</span><span class="o">)</span>&#x000A;                    <span class="o">.</span><span class="na">key</span><span class="o">(</span><span class="n">objectKey</span><span class="o">)</span>&#x000A;                    <span class="o">.</span><span class="na">build</span><span class="o">();</span>&#x000A;</code></pre>
+<p><a href="#todo-7" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-8-solution" target="_blank"></a></p>
+
+<h3>TODO 8 Solution</h3>
+<ul>
+<li>Choice A is incorrect because <strong>s3.getObject</strong> is the wrong action.</li>
+<li><strong>Choice B is the correct code snippet.</strong></li>
+</ul><pre class="highlight java"><code>                <span class="n">s3</span><span class="o">.</span><span class="na">putObject</span><span class="o">(</span><span class="n">putObject</span><span class="o">,</span>&#x000A;                        <span class="n">RequestBody</span><span class="o">.</span><span class="na">fromFile</span><span class="o">(</span><span class="n">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">objectNewKey</span><span class="o">)));</span>&#x000A;</code></pre>
+<p><a href="#todo-8" target="_self">Return to Instructions</a></p>
+
+
+
+<h2 id="step14">RDP Connection Options</h2>
+
+<p><a id="connect_guacamole" target="_blank"></a></p>
+
+<h3>Connect to Your Windows Dev Instance using Apache Guacamole</h3>
+<ol start="48">
+<li><p>In the <strong>Connection Details</strong> section, copy the <strong>GuacamoleLink</strong> and paste it into a browser.</p></li>
+<li><p>Go to the Apache Guacamole sign-in, in the browser and sign in using the following steps:</p></li>
+</ol><ul>
+<li>For <strong>Username</strong>, enter: <input readonly class="copyable-inline-input" size="7" type="text" value="student">
+</li>
+<li>For <strong>Password</strong>, use value for <strong>AdministratorPassword</strong> to the left of these instructions.</li>
+<li>Choose <strong>Log In</strong>.</li>
+</ul>
+<p>The connection to your remote instance should start momentarily. Once you open a connection, you will see an image of the Dev instance desktop. You can interact with this image just as you would your normal desktop or any remote desktop client.</p>
+
+<p>You are now connected to your Windows Dev instance in the browser using Guacamole.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+<ol start="50">
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  <strong><em>How to copy and paste when using Guacamole browser session?</em></strong>
+</li>
+</ol><ul>
+<li>Open the Clipboard editor by choosing <strong>Ctrl -&gt; Alt -&gt; Shift</strong> on Windows or <strong>command</strong> -&gt; <strong>control</strong> -&gt; <strong>shift</strong> on MacOS.</li>
+<li>Copy your text from lab instructions and paste it to the Clipboard editor of the session.</li>
+<li>Close the Clipboard editor by choosing <strong>Ctrl -&gt; Alt -&gt; Shift</strong> on Windows or <strong>command</strong> -&gt; <strong>control</strong> -&gt; <strong>shift</strong> on MacOS.</li>
+<li>Now, you can use regular paste commands in your session from Clipboard. You can also either edit or replace the clipboard for the subsequent copies.</li>
+</ul><ol start="51">
+<li><a href="#connection-options" target="_self">Return to the instructions</a></li>
+</ol>
+
+
+<p><a id="connect_win_mac" target="_blank"></a></p>
+
+<h3>Connect to the Windows Dev Instance from a MacOS Machine</h3>
+
+<p>In this section, you connect to a Windows Amazon EC2 instance from your MacOS machine.</p>
+<ol start="52">
+<li>Install Microsoft Remote Desktop if it is not already installed. To install, complete the following:</li>
+</ol><ul>
+<li>At the top of the screen select the Apple icon.</li>
+<li>Select <strong>About This Mac</strong>.</li>
+<li>Take note of your MacOS version.</li>
+<li>From the Dock launch <strong>App store</strong>.</li>
+<li><p>Search for the following string: <input readonly class="copyable-inline-input" size="24" type="text" value="Microsoft Remote Desktop">.</p></li>
+<li><p>Choose <strong>Install</strong> or <strong>GET</strong> to install the appropriate version.</p></li>
+<li><p>At the time of this writing, the current MacOS version is OSX 10.15.7 and you install Microsoft Remote Desktop Version 10.5.2. The connection instructions will be based on this version.</p></li>
+</ul><ol start="53">
+<li><p>To open <strong>Microsoft Remote Desktop</strong> on the Dock select <strong>Launchpad</strong>, then select <strong>Microsoft Remote Desktop</strong>.</p></li>
+<li><p>To create a new connection, from the top menu select <strong>Connections</strong> &gt; <strong>Add PC</strong> and fill in the following fields:</p></li>
+</ol><ul>
+<li>
+<strong>PC name:</strong> <em>Paste in the WindowsInstanceIP copied from the Lab Properties to the left of these instructions.</em>
+</li>
+<li>
+<strong>User account:</strong> <input readonly class="copyable-inline-input" size="13" type="text" value="Administrator">
+</li>
+<li>
+<strong>Friendly name:</strong> <input readonly class="copyable-inline-input" size="20" type="text" value="Windows Dev Instance">
+</li>
+<li>
+<i class="far fa-check-square" style="color:#0073bb;"></i> <strong>Reconnect if the connection is dropped:</strong> <em>Select this option if not already selected.</em>
+</li>
+<li>Choose <strong>Add</strong>.</li>
+</ul><ol start="55">
+<li><p>From the navigation panel to the left of these instructions, copy the <strong>WindowsPassword</strong> to the clipboard.</p></li>
+<li><p>Go back to your Microsoft Remote Desktop connection window, and open the context menu for the <strong>Windows Dev Instance</strong> connection and choose <strong>Open</strong>.</p></li>
+<li><p>You will see the following message, <strong>You are connecting to the RDP host "IP.Address.Listed.Here". There certificate couldn't be verified back to a root certificate. Your connection may not be secure. Do you want to continue?</strong> Choose <strong>Continue</strong>.</p></li>
+<li><p>Once prompted for the password, enter the password that you copied to the clipboard and choose <strong>Continue</strong>.</p></li>
+</ol>
+<p><strong>Result</strong></p>
+
+<p>Your connection to your remote instance should start momentarily. When lab instructions in subsequent sections require a command window, open or use a PowerShell window.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+
+<p><a href="#connection-options" target="_self">Return to the instructions</a></p>
+
+
+
+<p><a id="connect_win_win" target="_blank"></a></p>
+
+<h3>Connect to Your Windows Dev Instance from a Windows Machine</h3>
+<ol start="59">
+<li><p>Copy the <strong>WindowsInstanceIP</strong> from the navigation pane to the left of these instructions.</p></li>
+<li><p>Open the Remote Desktop Connection application on your computer.</p></li>
+</ol><ul>
+<li>Choose the <strong>Start</strong> icon, and choose the <strong>Search</strong> icon. Type in <input readonly class="copyable-inline-input" size="25" type="text" value="Remote Desktop Connection">. Choose the application when it appears in the <strong>Programs</strong> list.</li>
+</ul><ol start="61">
+<li><p>For <strong>Computer</strong>, paste the <strong>IP</strong> of the Windows instance.</p></li>
+<li><p>Choose <strong>Connect</strong>.</p></li>
+<li><p>Remote Desktop Connection will prompt you with a login dialog asking for your username and password. By default, the application will use your current Windows username and domain. To change this, choose <strong>Use another account</strong>.</p></li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  On Windows 10, select <strong>More Choices</strong> before choosing <strong>Use a different account</strong>.</p>
+<ol start="64">
+<li><p>From the navigation pane to the left of these instructions, copy the <strong>AdministratorPassword</strong>.</p></li>
+<li><p>For your login credentials, use the following values:</p></li>
+</ol><ul>
+<li>For <strong>User name</strong>, enter: <input readonly class="copyable-inline-input" size="14" type="text" value="\Administrator">
+</li>
+<li>For <strong>Password</strong>, paste the password from the clipboard.</li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  The <input readonly class="copyable-inline-input" size="1" type="text" value="\"> in the user name is important because it tells Remote Desktop Connection that you are logging in as the local Administrator and not as a domain user.</p>
+<ol start="66">
+<li>To connect to your instance, choose <strong>OK</strong>. If you receive a prompt that the certificate used to verify the connection was not a known, trusted root certificate, choose <strong>Yes</strong>.</li>
+</ol>
+<p><strong>Result</strong></p>
+
+<p>Your connection to your remote instance should start momentarily. When lab instructions in subsequent sections require a command window, open or use a Powershell window.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  You will be prompted with a Networks pop-up window asking: <strong>Do you want to allow your PC to be discoverable by other PCs and devices on this network?</strong> Choose <strong>No</strong>.</p>
+
+<p><a href="#connection-options" target="_self">Return to the instructions</a></p>
+
+
+
+<p><a id="appendix" target="_blank"></a></p>
+
+<h2 id="step15">Appendix</h2>
+
+<h3>AWS Services Not Used in This Lab</h3>
+
+<p>AWS services that are not used in this lab are deactivated in the lab environment. In addition, the capabilities of the services used in this lab are limited to what the lab requires. Expect errors when accessing other services or performing actions beyond those provided in this lab guide.</p>
+
+<h3>Icon Key</h3>
+
+<p>Various icons are used throughout this lab to call attention to certain aspects of the guide. The following list explains the purpose for each one:</p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i>  <strong>Command:</strong>  Specifies the command you must run.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> Verifies the output of a command or edited file.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong>  Specifies important hints, tips, guidance, or advice.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Specifies where to find more information.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong>   Calls attention to information of special interest or importance. Failure to read the note does not result in physical harm to the equipment or data, but could result in the need to repeat certain steps.</li>
+<li>
+<i class="fas fa-user-shield" style="color:#00a1c9;"></i> <strong>Security:</strong>  Identifies opportunities to incorporate security best practices.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#d13212;"></i> <strong>WARNING:</strong>  Draws special attention to actions that are irreversible and could potentially impact the failure of a command or process. Includes warnings about configurations that cannot be changed after they are made.</li>
+<li>
+<i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong>  Suggests a moment to pause to consider how you might apply a concept in your own environment or to initiate a conversation about the topic at hand.</li>
+<li>
+<p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong>  In some cases, you may run a script or apply a file that has been pre-created for you. This icon signifies a code block that is used to display the contents of the script or file you interacted with.</p>
+<ul>
+<li>When you need to copy only a certain part of a code block, there will be numbered <strong>TODO</strong> comments in the code.</li>
+</ul>
+</li>
+<li><p><i class="far fa-compass" style="color:#dd6b10;"></i> <strong>Context:</strong>  When asked to open the <strong>Context Menu</strong> for an item, this is the same action as right-clicking for a mouse or the appropriate action for your particular pointing device.</p></li>
+<li><p><em><span style="background-color:#232f3e;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;"><i class="fas fa-search"></i> Search for services, features, marketplace products, and docs</span></em><br>
+The <strong>Unified Search</strong> allows you to easily search for services, features, AWS Documentation and discover information without leaving the AWS Management Console. You can access the search bar using a keyboard shortcut (alt-s or option-s), autocomplete by using the right arrow key, and navigate to the top search result by pressing the enter key.</p></li>
+</ul>
+<p><a href="#prerequisites" target="_self">Return to the instructions</a></p>
+
+</div>
+</div>
+
+
+<div class='lab-content__end-lab-button js-end-lab-button-container hidden'>
+<ql-lab-control-button class='js-end-lab-button' running></ql-lab-control-button>
+</div>
+<!-- / TODO: Move recommendations into the end lab modal -->
+</ql-drawer-content>
+<ql-drawer end id='outline-drawer' open slot='drawer' width='320'>
+<div aria-label='Sommario del lab' role='navigation'>
+<ul class='lab-content__outline js-lab-content-outline'>
+<li><a href='#step1'>Prerequisites</a></li><li><a href='#step2'>Overview</a></li><li><a href='#step3'>Start Lab</a></li><li><a href='#step4'>Task 0: Connect to your development environment</a></li><li><a href='#step5'>Task 1: Create a new Amazon S3 bucket</a></li><li><a href='#step6'>Task 2: Upload an object to Amazon S3</a></li><li><a href='#step7'>Task 3: Process the data from an object stored in Amazon S3</a></li><li><a href='#step8'>Task 4: Configure static website hosting on an Amazon S3 bucket</a></li><li><a href='#step9'>Optional Challenge: Configure static website hosting on an Amazon S3 bucket using the AWS SDK for Java</a></li><li><a href='#step10'>Summary</a></li><li><a href='#step11'>End Lab</a></li><li><a href='#step12'>Additional Resources</a></li><li><a href='#step13'>Code Challenge Solutions</a></li><li><a href='#step14'>RDP Connection Options</a></li><li><a href='#step15'>Appendix</a></li>
+</ul>
+</div>
+</ql-drawer>
+</ql-drawer-container>
+</ql-drawer-content>
+</ql-drawer-container>
+
+
+
+</div>
+</main>
+
+<span class='hidden' id='flash-sibling-before'></span>
+<ql-snackbar></ql-snackbar>
+
+
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='modal-content mdl-shadow--24dp'>
+<div class='modal-body'>
+<p class='l-mbm'>
+In this lab, students will develop a portion of the application using Amazon S3 to store files and configure a static website.
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Durata:
+</strong>
+Configurazione in 13 m
+&middot;
+Accesso da 120 m
+&middot;
+Completamento in 120 m
+</p>
+<p class='small-label l-mbs'>
+<strong>Area geografica AWS:</strong>
+[us-west-2] <strong>US West (Oregon)</strong>
+</p>
+<p class='small-label l-mbs'>
+
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://it-flane.qwiklabs.com/catalog_lab/73288">https://it-flane.qwiklabs.com/catalog_lab/73288</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='button button--text' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<ql-dialog headline='Qual è il tuo livello di soddisfazione rispetto a questo lab?&lt;span aria-hidden=&quot;true&quot;&gt;*&lt;/span&gt;' id='lab-review-dialog'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div aria-labelledby='lab-review-dialog' aria-required='true' aria-valuemax='5' aria-valuemin='0' aria-valuenow='0' class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0' id='lab-review-rateit' role='slider' tabindex='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="14798" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="2083" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="73288" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="14563" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Commenti aggiuntivi</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</form><ql-button disabled id='submit' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+<ql-dialog headline='Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?' icon='error_outline' id='js-lab-are-you-sure-dialog'>
+<ql-button id='js-are-you-sure-button' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    ql.chat.init();
+  ql.jumpContent.init();
+  initLabContent();
+  ql.labOutline.links.init();
+  initLabReviewModal();
+  initLabReviewTranslations( {"star_amount_1":"1 stelle su 5","star_amount_2":"2 stelle su 5","star_amount_3":"3 stelle su 5","star_amount_4":"4 stelle su 5","star_amount_5":"5 stelle su 5"} )
+  ql.labAssessment.init();
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?","in_progress":"*In corso*","ending":"*Conclusione*","starting":"*Avvio… Attendi*","end_concurrent_labs":"È possibile eseguire un solo lab alla volta. Per avviare questo lab, conferma di voler terminare tutti i lab esistenti.","copied":"Copiato","no_resource":"Errore durante il recupero della risorsa.","no_support":"Non viene fornita assistenza","mac_press":"Premi ⌘-C per copiare","thanks_review":"Grazie per aver inserito una recensione per questo lab.","windows_press":"Premi Ctrl+C per copiare","days":"giorni"} );
+  ql.labRun.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+
+</body>
+</html>
+

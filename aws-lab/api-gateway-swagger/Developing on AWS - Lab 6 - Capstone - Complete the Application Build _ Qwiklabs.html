@@ -1,0 +1,1126 @@
+
+<!DOCTYPE html>
+<html lang='it'>
+<head>
+<title>Developing on AWS - Lab 6 - Capstone - Complete the Application Build | Qwiklabs</title>
+<script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Diego","lastname":"Brignoli","fullname":"Diego Brignoli","company":"Beta80","email":"diego.brignoli@beta80group.it","origin":"it-flane, direct","subscriptions":0,"id":"a61e1fd9f1a7d5ef061dbe892bae5f9f","qlCreatedAt":"2022-03-07 13:40:45 UTC","optIn":true,"current_organization_id":null,"current_organization_role":null};gon.segment=null;gon.deployment="it-flane";gon.content={"type":"Lab","id":73987,"name":"Developing on AWS - Lab 6 - Capstone - Complete the Application Build"};
+//]]>
+</script>
+<script>
+  dataLayer = [
+    {user: gon.current_user},
+    {content: gon.content}
+  ];
+</script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/polyfills/webcomponents-loader-60a166e60df2787cca5915e2ced8c317457f421a20f02601b937a72275ac441a.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-2beee108ba05276bc429223ee82ed81449d233c93d45af5da84add895e101218.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-b44c688caf0e24039ff5020ad65695458c8c0edbd37ac5431ce3efa6d80f07e0.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors__it-c5bb7dbc14336638421f7b3f9e4f32567ff92565d683255515ad93ae6d7e7992.js"></script>
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="xyh3M6W4Z8CZ3rpEEm2J4PtKxpiuq+dzK1gBjWpPEiFg5Z1g7EmpZFA47w7RiDIsUWM+2eaUoQR/1v0z7s39UQ==" />
+<meta content='width=device-width, initial-scale=1.0, user-scalable=yes' name='viewport'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<meta content='[{&quot;id&quot;:&quot;recaptcha_experiment&quot;,&quot;optimize_id&quot;:&quot;dpViOcLkT3qS4TvL2mRojA&quot;,&quot;title&quot;:&quot;No Recaptcha shown for trusted users&quot;,&quot;variant_index&quot;:1,&quot;variant&quot;:&quot;no_recaptcha&quot;}]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:14798}' name='help-api-product-data'>
+<meta content='In this lab, you will learn how to set up Amazon Cognito to authenticate and authorize users to use your API. ' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='Developing on AWS - Lab 6 - Capstone - Complete the Application Build | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='In this lab, you will learn how to set up Amazon Cognito to authenticate and authorize users to use your API. ' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+
+
+
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+<link href='/favicon-32.png' rel='shortcut icon' type='image/x-icon'>
+
+
+
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+<link rel="stylesheet" media="screen" href="https://cdn.qwiklabs.com/stylesheets/application_old/locales/it.css" />
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-1c1adc018a83f53f78a5b6f624572a32bf4f3c935b02a026b7bf82afe02b4dae.css" />
+
+<style>
+  :root {
+    --primary-text-on-surface-color: #1A73E8;
+    --primary-text-on-surface-color-dark: #1568d6;
+    --primary-text-on-surface-color-darker: #135ec1;
+    --primary-text-on-surface-color-darkest: #1154ac;
+    --primary-surface-color: #1A73E8;
+    --primary-surface-color-rgb: 26,115,232;
+    --primary-surface-color-light: #d1e3fa;
+    --primary-surface-color-lightest: #e8f1fd;
+    --text-on-primary-color: #FFFFFF;
+    --accent-text-on-surface-color: #F29900;
+    --accent-surface-color: #F9AB00;
+    --accent-surface-color-rgb: 249,171,0;
+    --accent-surface-color-light: #ffefcc;
+    --text-on-accent-color: #202124;
+  }
+</style>
+
+
+
+</head>
+<body class='lab-show l-full no-nav application-new focuses focuses-show lab-show l-full no-nav '>
+<div class='header-container'>
+<div class='header'>
+<ql-toolbar jumpEnabled>
+<div class='header__title' slot='title'>
+<ql-icon-button label="Indietro" href="/classrooms/2083" id="1b2173957fc55e9a" target="_self" tip="Indietro">arrow_back</ql-icon-button>
+<h1 class='ql-headline-6'>Developing on AWS - Lab 6 - Capstone - Complete the Application Build</h1>
+</div>
+<div class='header__actions' slot='action'>
+<ql-icon-button id='control-panel-target' style='display: none;'>
+dashboard
+</ql-icon-button>
+<ql-menu for='control-panel-target' id='control-panel-menu'></ql-menu>
+<ql-icon-button class='mobile-hide' icon='help_outline' id='help-menu-button' label='Apri il menu Guida' tip='Guida'></ql-icon-button>
+<ql-menu for='help-menu-button' id='help-menu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='lab' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:14798},&quot;context&quot;:&quot;lab&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/contact_us' label='Email support' target='_blank'></ql-menu-item>
+<ql-menu-item label='Chat support' onClick='ql.chat.open()'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button class='mobile-hide' icon='language' id='language' label='Seleziona le preferenze relative alla lingua' tip='Lingua'></ql-icon-button>
+<ql-menu for='language'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/classrooms/2083/labs/14571?locale=ar' label='العربية‬‎' lang='ar'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/classrooms/2083/labs/14571?locale=de' label='Deutsch' lang='de'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/classrooms/2083/labs/14571?locale=en' label='English' lang='en'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/classrooms/2083/labs/14571?locale=es' label='español (Latinoamérica)' lang='es'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/classrooms/2083/labs/14571?locale=fr' label='français' lang='fr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/classrooms/2083/labs/14571?locale=fr_CA' label='français (Canada)' lang='fr-CA'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/classrooms/2083/labs/14571?locale=he' label='עברית' lang='he'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/classrooms/2083/labs/14571?locale=id' label='bahasa Indonesia' lang='id'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/classrooms/2083/labs/14571?locale=it' label='Italiano' lang='it'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/classrooms/2083/labs/14571?locale=ja' label='日本語' lang='ja'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/classrooms/2083/labs/14571?locale=ko' label='한국어' lang='ko'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/classrooms/2083/labs/14571?locale=pl' label='Polski' lang='pl'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/classrooms/2083/labs/14571?locale=pt_BR' label='português (Brasil)' lang='pt-BR'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/classrooms/2083/labs/14571?locale=pt_PT' label='português (Portugal)' lang='pt-PT'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/classrooms/2083/labs/14571?locale=ru' label='русский' lang='ru'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/classrooms/2083/labs/14571?locale=tr' label='Türkçe' lang='tr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/classrooms/2083/labs/14571?locale=zh' label='简体中文' lang='zh'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/classrooms/2083/labs/14571?locale=zh_TW' label='繁體中文' lang='zh-TW'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button id='my_account' label='Account personale' tip='Account personale'>
+<ql-avatar></ql-avatar>
+</ql-icon-button>
+<ql-menu for='my_account' id='my_account_menu' style='max-height: 640px'>
+<div class='my-account-menu'>
+<ql-avatar class='l-mtl l-mbl' size='120'></ql-avatar>
+<div class='my-account-menu__user-info l-mbl'>
+<h4 class='ql-subhead-1'>Diego Brignoli</h4>
+<p class='ql-body-2 text--light'>diego.brignoli@beta80group.it</p>
+<p class='ql-body-2 text--light'>
+</p>
+</div>
+<div class='buttons l-mbl'>
+<a class="button button--hairline" id="settings" href="/my_account/profile">Impostazioni</a>
+</div>
+<hr>
+<ql-button data-analytics-action='clicked_sign_out' href='/users/sign_out' method='delete'>
+Esci
+</ql-button>
+<div class='privacy l-mtl'>
+<a class="ql-caption text--light" href="/privacy_policy">Privacy</a>
+<span class='ql-caption text--light l-mls l-mrs'>&middot;</span>
+<a class="ql-caption text--light" href="/terms_of_service">Termini</a>
+</div>
+</div>
+</ql-menu>
+
+</div>
+</ql-toolbar>
+
+</div>
+</div>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class="custom-logo"><img alt="Qwiklabs" height="24" aria-label="Qwiklabs" src="https://cdn.qwiklabs.com/yjTIzMprll8xFSNHNul7y7IDev3CoxdLyHeDu9qmu2Q%3D" /></div>
+</div>
+<nav class='ql-sidenav'>
+<ql-sidenav-item href='/' icon='home' label='Home page'></ql-sidenav-item>
+
+<ql-sidenav-item href='/catalog' icon='school' label='Catalogo'></ql-sidenav-item>
+
+<ql-sidenav-item active href='/profile' icon='event_note' label='Profilo'></ql-sidenav-item>
+
+</nav>
+
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main' id='jump-content'>
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+<ql-drawer-container class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;Developing on AWS - Lab 6 - Capstone - Complete the Application Build&quot;,&quot;lab_name&quot;:&quot;Developing on AWS - Lab 6 - Capstone - Complete the Application Build&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;it-flane&quot;}' data-focus-id='14571' data-lab-billing-limit='0.0' data-lab-duration='7200' data-parent='classroom' id='lab-container'>
+<ql-drawer id='terminal-drawer' slot='drawer' style='width: calc(100% - 480px)'>
+<iframe allow='clipboard-read' class='terminal' id='embedded-resource'></iframe>
+</ql-drawer>
+<ql-drawer-content class='js-lab-wrapper' id='lab-content' slot='drawer-content'>
+<ql-drawer-container id='lab-content-container'>
+<ql-drawer id='control-panel-drawer' open slot='drawer' width='320'>
+<ql-lab-control-panel class='ql-lab-control-panel__max-height control-panel js-lab-control-panel' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labDetails='[]' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}' studentResources='[]'>
+</ql-lab-control-panel>
+</ql-drawer>
+<ql-drawer-content id='lab-instructions' slot='drawer-content'>
+<ql-snackbar id='alert-snackbar'></ql-snackbar>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message' role='alert'></p>
+<ql-icon-button class='alert__close js-alert-close' icon='clear'></ql-icon-button>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<div class='lab-content__renderable-instructions js-lab-content'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+Developing on AWS - Lab 6 - Capstone - Complete the Application Build
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>2 ore </span>
+<span>Gratis</span>
+<div class='lab__rating'>
+<a aria-label="Recensioni del lab" href="/focuses/14571/reviews?parent=classroom"><div class='rateit' data-rateit-readonly='true' data-rateit-value='0'></div>
+
+</a></div>
+</div>
+</div>
+<div class='lab-outline-place-holder'></div>
+
+<div class='markdown-lab-instructions js-markdown-instructions no-select' id='markdown-lab-instructions'>
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/aws-logo.png" alt=""></p>
+
+
+
+<p>© 2022 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited. All trademarks are the property of their owners.</p>
+
+<p>Note: Do not include any personal, identifying, or confidential information into the lab environment. Information entered may be visible to others.</p>
+
+<p>Corrections, feedback, or other questions? Contact us at <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification</em></a>.</p>
+
+<p><strong>Duration</strong></p>
+
+<p>This lab will require <strong>60 minutes</strong> to complete.</p>
+
+<p><a id="prerequisites" target="_blank"></a></p>
+
+<h2 id="step1">Prerequisites</h2>
+
+<p>This lab requires:</p>
+<ul>
+<li>Access to a Microsoft Windows or MacOS notebook computer with a Wi-Fi connection.</li>
+<li>An Internet browser such as Chrome, Firefox, or IE9+.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Previous versions of Internet Explorer are not supported.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You can use an iPad or tablet device to access these directions in the lab console.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Review additional lab environment specific details in the <a href="#appendix" target="_self">Appendix.</a>
+</li>
+</ul>
+<h2 id="step2">Overview</h2>
+
+<p>You have all of the components created for your application and have learned how to allow access to them from the web. Before adding any more API methods for the remaining functions you need to be able to secure access. In this lab, you will learn how to set up Amazon Cognito to authenticate and authorize users to use your API. With that in place, you will then configure the front-end web application to complete your fully functional application.</p>
+
+<p>Once you have completed the lab, your deployment will look like following diagram:</p>
+
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-6/instructions/en_us/images/lab-6-diagram.png" alt="End of lab diagram"></p>
+
+<h3>Objectives</h3>
+
+<p>After completing this lab, you will be able to:</p>
+<ul>
+<li>Create a user pool and an app client for your web application using Amazon Cognito.</li>
+<li>Add new users and confirm their ability to sign-in using the Amazon Cognito CLI.</li>
+<li>Configure API Gateway methods to use Amazon Cognito as an authorizer.</li>
+<li>Verify JWT authentication tokens are generated during API calls.</li>
+<li>Develop API Gateway resources rapidly using Swagger importing strategy.</li>
+<li>Set up your web application frontend to use Amazon Cognito and API Gateway configurations and verify the entire application functionality.</li>
+</ul>
+
+
+<h2 id="step3">Start Lab</h2>
+<ol start="1">
+<li>At the top of your screen, launch your lab by choosing <span style="background-color:#34A853;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#34A853;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Start Lab</span>
+</li>
+</ol>
+<p>This starts the process of provisioning your lab resources. An estimated amount of time to provision your lab resources is displayed. You must wait for your resources to be provisioned before continuing.</p>
+
+<p><i class="fas fa-info-circle"></i> If you are prompted for a token, use the one distributed to you (or credits you have purchased). </p>
+<ol start="2">
+<li>Open your lab by choosing <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span>
+</li>
+</ol>
+<p>This opens an AWS Management Console sign-in page.</p>
+<ol start="3">
+<li>On the sign-in page, configure:</li>
+</ol><ul>
+<li>
+<strong>IAM user name:</strong> <input readonly class="copyable-inline-input" size="10" type="text" value="awsstudent">
+</li>
+<li>
+<strong>Password:</strong> Paste the value of <strong>Password</strong> from the left side of the lab page</li>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Sign In</span>
+</li>
+</ul>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Do not change the Region unless instructed.</strong></p>
+
+
+
+<h3>Common Login Errors</h3>
+
+<p><strong>Error: You must first log out</strong></p>
+
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/logouterror.png" alt=""></p>
+
+<p>If you see the message, <strong>You must first log out before logging into a different AWS account:</strong> </p>
+<ul>
+<li>Choose <strong>here</strong>
+</li>
+<li>Close your browser tab to return to your initial lab window</li>
+<li>Choose <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span> again</li>
+</ul>
+
+
+<h2 id="step4">Task 1: Configure Amazon Cognito</h2>
+
+<p>Amazon Cognito provides authentication, authorization, and user management for your web and mobile apps. You will use Amazon Cognito to manage a directory of users and grant access to your API. In this task you will create a user pool, user, and confirm that the user can successfully authenticate.</p>
+
+<p><i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong> This lab is designed for both experienced and newer developers:</p>
+<ul>
+<li><p>For more experienced developers who enjoy a challenge, there are <strong>High-Level Instructions</strong> before each task that should provide you enough information to help you complete the task.</p></li>
+<li><p>Once you complete the updates test your code to ensure it works, troubleshoot if needed, and then move on to the next task.</p></li>
+<li><p>For newer developers, there are <strong>Detailed Instructions</strong> to guide you through each step of the lab.</p></li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Create an Amazon Cognito user pool named <input readonly class="copyable-inline-input" size="14" type="text" value="PollyNotesPool"> with only a username attribute and minimal password requirements for testing purpose.</li>
+<li>Create an Amazon Cognito application client for your application without a secret key.</li>
+<li>In the AWS Cloud9 terminal, add a new user named <input readonly class="copyable-inline-input" size="7" type="text" value="student"> and approve it in the user pool using the cognito-idp CLI commands sign-up and admin-confirm-sign-up.</li>
+<li>Test authentication using the URL from the <strong>testLoginWebsite</strong> output to the left of these instructions.</li>
+<li>Review JWT token created by your application using .getIdToken().getJwtToken() methods.</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 1.1: Create an Amazon Cognito user pool with an app client</h3>
+
+<p>A user pool is a user directory in Amazon Cognito. With a user pool, your users can sign in to your web or mobile app through Amazon Cognito. Your users can also sign in through social identity providers like Google, Facebook, Login withAmazon, or Apple, and through Security Assertion Markup Language (SAML) 2.0 identity providers. Whether your users sign in directly or through a third party, all members of the user pool have a directory profile that you can access through a Software Development Kit (SDK).</p>
+<ol start="4">
+<li><p>From a browser window opened to the <strong>AWS Management Console</strong> use the <strong>unified search bar</strong> to search for and choose <input readonly class="copyable-inline-input" size="7" type="text" value="Cognito"></p></li>
+<li><p>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Manage User Pools</span></p></li>
+<li><p>Choose <span style="background-color:#329AD6;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Create a user pool</span></p></li>
+<li><p>For <strong>Pool name</strong>, enter <input readonly class="copyable-inline-input" size="14" type="text" value="PollyNotesPool"></p></li>
+<li><p>For <strong>How do you want to create your user pool?</strong>, choose <span style="color:#0073bb;"><strong>Step through settings</strong></span></p></li>
+<li><p>Go to the <strong>Which standard attributes do you want to require?</strong> section.</p></li>
+</ol>
+<p><i class="fas fa-exclamation-triangle" style="color:#d13212;"></i> <strong>WARNING:</strong> This step can't be modified once the User Pool is created. To correct this, you would need to delete the current User Pool and create a new one.</p>
+<ol start="10">
+<li><p>Unselect the checkbox next to <i class="far fa-square"></i> <strong>email</strong> and choose <span style="background-color:#329AD6;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">Next step</span></p></li>
+<li><p>In the <strong>What password strength do you want to require?</strong> section, you set the specifics required for the password. The password used is for testing purposes and you will be entering it many times so it has limited security settings.</p></li>
+</ol>
+<p>Choose the following configuration:</p>
+<ul>
+<li>
+<strong>Minimum length</strong> <input readonly class="copyable-inline-input" size="1" type="text" value="6">
+</li>
+</ul>
+<p>Unselect the following options:</p>
+<ul>
+<li>
+<i class="far fa-square"></i> <strong>Require numbers</strong>
+</li>
+<li>
+<i class="far fa-square"></i> <strong>Require special character</strong>
+</li>
+<li>
+<i class="far fa-square"></i> <strong>Require uppercase letters</strong>
+</li>
+<li>
+<i class="far fa-square"></i> <strong>Require lowercase letters</strong>
+</li>
+</ul><ol start="12">
+<li>Choose <span style="background-color:#329AD6;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">Next step</span>
+</li>
+</ol>
+<p>In the navigation menu on the left, you will find a list of all of the main steps for the creation of the Amazon Cognito User Pool. Since many use the default settings, you will skip to the ones that need to be modified.</p>
+
+<p>An app is an entity within a user pool that has permission to call unauthenticated API operations (operations that do not have an authenticated user). Unauthenticated API operation examples include operations to register, sign in, and handle forgotten passwords. To call these API operations, you need an app client ID and an optional client secret. It is your responsibility to secure any app client IDs or secrets so that only authorized client apps can call these unauthenticated operations.</p>
+<ol start="13">
+<li><p>Choose <strong>App clients</strong> from the navigation menu on the left.</p></li>
+<li><p>Choose <span style="color:#0073bb;">Add an app client</span></p></li>
+</ol>
+<p><i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong> Make sure that you follow the next steps exactly as this configuration can't be undone. To correct, you would have to delete the current App client and create a new one.</p>
+<ul>
+<li>
+<strong>App client name:</strong>  <input readonly class="copyable-inline-input" size="13" type="text" value="PollyNotesWeb">
+</li>
+<li>Unselect <i class="far fa-square"></i> <strong>Generate client secret</strong>.</li>
+</ul>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> The App Client secret would be used in situations where there isn't a username and password used, like machine to machine communication. This secret isn't supported or needed in the AWS Javascript SDK.</p>
+<ol start="15">
+<li>Choose <span style="background-color:#329AD6;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">Create app client</span>
+</li>
+<li>In the navigation menu on the left, choose <strong>Review</strong> and review all of the settings.</li>
+<li>Choose <span style="background-color:#329AD6;font-weight:bold;font-size:90%;color:white;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">Create pool</span>
+</li>
+<li>Save the <strong>Pool Id</strong> and the <strong>Pool ARN</strong> from your Amazon Cognito Pool information into a separate file for use later in this lab.</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Make sure to note that it is for <strong>Amazon Cognito Pool Id</strong> and <strong>Amazon Cognito Pool ARN</strong> as well.</p>
+
+<p>For example, in the Oregon region, the <strong>Pool Id</strong> would look like <strong>us-west-2_XXXXXXXXX</strong> and the <strong>Pool ARN</strong> would look like <strong>arn:aws:cognito-idp:us-west-2:012345678901:userpool/us-west-2_XXXXXXXXX</strong>.</p>
+<ol start="19">
+<li><p>In the navigation pane on the left, under <strong>General settings</strong>, choose <strong>App clients</strong>.</p></li>
+<li><p>Save the <strong>App client id</strong> in the form of xxxxxxxxxxxxxxxxxxxxxxxxxx information into the same file. Make sure to note that it is for the <strong>Amazon Cognito App client id</strong>.</p></li>
+</ol>
+<h3>Task 1.2: Add a new user to the user pool</h3>
+
+<p>After you create your user pool, you can create users using the AWS Management Console, the AWS Command Line Interface (CLI), or the Amazon Cognito API. In a production environment, you usually create a profile for a new user in a user pool manually or with sign-up functionality built into the application. A welcome message with confirmation instructions would then be sent to the user via SMS or email.</p>
+
+<p>For this lab, you will create and confirm the user with the AWS CLI instead of requiring SMS or email. Confirming the user as an administrator cannot be done with the AWS Management Console.  To access the AWS CLI and the lab code, you will use AWS Cloud9.</p>
+<ol start="21">
+<li><p>From a browser window opened to the <strong>AWS Management Console</strong> use the <strong>unified search bar</strong> to search for and choose <input readonly class="copyable-inline-input" size="6" type="text" value="Cloud9"></p></li>
+<li><p>Choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Open IDE <i class="fas fa-external-link-alt"></i></span></p></li>
+<li><p>In the terminal window, create two variables to use in later commands.</p></li>
+</ol><ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Replace <strong><em>[Cognito Pool Id]</em></strong> with information from Amazon Cognito and run the command below:</li>
+</ul><pre class="highlight shell"><code><span class="nv">CognitoPoolId</span><span class="o">=</span><span class="s1">'[Cognito Pool Id]'</span>&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong></p>
+
+<p><span style="font-family:Courier;">CognitoPoolId='us-west-2_HtiTqUaLg'<br>
+</span></p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Replace <strong><em>[App Client Id]</em></strong> with information from Amazon Cognito and run the command below:</li>
+</ul><pre class="highlight shell"><code><span class="nv">AppClientId</span><span class="o">=</span><span class="s1">'[App Client Id]'</span>&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong></p>
+
+<p><span style="font-family:Courier;">AppClientId='7obbqbpsbu606efniqma1qceng'<br>
+</span></p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+<ol start="24">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Create a new Amazon Cognito user named <strong>student</strong> with the command below:</li>
+</ol><pre class="highlight shell"><code>aws cognito-idp sign-up --client-id <span class="nv">$AppClientId</span> --username student --password student&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">{<br>
+    "UserConfirmed": false,<br>
+    "UserSub": "d946bb86-1691-4620-9690-65940fb033af"<br>
+}<br>
+</span></p>
+
+<p>You have now created a user in Amazon Cognito with the username <input readonly class="copyable-inline-input" size="7" type="text" value="student"> and a password of <input readonly class="copyable-inline-input" size="7" type="text" value="student">. Even though this isn't secure, you are using a simple username and password for simplicity during testing.</p>
+<ol start="25">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Next, confirm the user that you created with the command below:</li>
+</ol><pre class="highlight shell"><code>aws cognito-idp admin-confirm-sign-up --user-pool-id <span class="nv">$CognitoPoolId</span> --username student&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+<ol start="26">
+<li><p>In the <strong>"Your environments"</strong> web browser tab, use the <strong>unified search bar</strong> to search for and choose <input readonly class="copyable-inline-input" size="7" type="text" value="Cognito"></p></li>
+<li><p>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Manage User Pools</span></p></li>
+<li><p>Under <span style="color:#0073bb;">Your User Pools</span> choose <span style="color:#0073bb;">PollyNotesPool</span>.</p></li>
+<li><p>Under <strong>General settings</strong>, choose <strong>Users and groups</strong>.</p></li>
+</ol>
+<p>You should see the username <span style="color:#0073bb;">student</span> and the status is <strong>CONFIRMED</strong>. If you do not see it, choose <i class="fas fa-sync" style="color:#0073bb;"></i> to refresh the browser.</p>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully created an Amazon Cognito User Pool, manually added a user, and confirmed the user.</p>
+
+<h3>Task 1.3: Test the user authentication in a simple web page</h3>
+
+<p>A test login page has been created for you to confirm the Amazon Cognito user and pool.</p>
+<ol start="30">
+<li>To the left of these instructions, copy the <strong>testLoginWebsite</strong> value, open that URL in a new web browser tab.</li>
+</ol>
+<p>This page, takes the values that you copied earlier and the username and password <strong>Student</strong>. As an example of how the login process works, there is JavaScript code on the right, which uses the Amazon Cognito JavaScript SDK. As you enter values in the login form, you will see where those values are used in this sample code.</p>
+<ol start="31">
+<li>Enter, the <strong>Pool Id</strong> and <strong>App Client Id</strong> in the first two boxes.<br>
+</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> This information is used to created the <strong>poolData</strong> variable.</p>
+<ol start="32">
+<li>Enter <input readonly class="copyable-inline-input" size="7" type="text" value="student"> in both the username and password boxes.</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> These values are used in the <strong>CognitoUser</strong> and <strong>AuthenticationDetails</strong> objects.</p>
+<ol start="33">
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Login</span>
+</li>
+</ol>
+<p>Using the <strong>.getIdToken().getJwtToken()</strong> methods on the return of successful authentication, a <strong>JSON Web Token</strong> or <strong>JwtToken</strong> is retrieved. JSON Web Tokens are an open, industry standard RFC 7519 method for representing claims securely between two parties.  You can decode the token at <a href="https://jwt.io" target="_blank">JWT.IO</a> if you would like to verify the claim.  </p>
+
+<p>When you make API calls that require authentication you have to pass this Authorization token in a header with the request.</p>
+<ol start="34">
+<li>Leave this window open, you will use this token in the next step for a test.</li>
+</ol>
+<h2 id="step5">Task 2: Configure Amazon API Gateway to use Amazon Cognito as an authorizer</h2>
+
+<p>Now that you have created your Amazon Cognito user pool, you can configure an Amazon API Gateway authorizer to secure your methods with. After the API is deployed, the client must first sign the user in to the user pool, obtain an identity or access token for the user. The client then calls the API method with one of the tokens, which are typically set to the request's Authorization header. The API call succeeds only if the required token is supplied and the supplied token is valid.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Create an Amazon API Gateway authorizer <input readonly class="copyable-inline-input" size="14" type="text" value="PollyNotesPool"> for your existing API <strong>PollyNotesAPI</strong> that expects <input readonly class="copyable-inline-input" size="13" type="text" value="Authorization"> as the token source</li>
+<li>Configure the existing <strong>/notes</strong> GET AND POST methods to use the new Authorizer</li>
+<li>Update the mapping templates to transform the request using the Amazon Cognito username (<input readonly class="copyable-inline-input" size="48" type="text" value="&quot;$context.authorizer.claims['cognito:username']&quot;">) as the UserId</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 2.1: Create an Amazon API Gateway authorizer for the PollyNotesAPI using the console</h3>
+
+<p>In this task, you create the Amazon Cognito authorizer. The authorizer will allow you to control access to the API with the Amazon Cognito User Pool you created in the last task.</p>
+<ol start="35">
+<li>From a browser window opened to the <strong>AWS Management Console</strong> use the <strong>unified search bar</strong> to search for and choose <input readonly class="copyable-inline-input" size="11" type="text" value="API Gateway">
+</li>
+<li>Choose the name for <span style="color:#0073bb;"><strong>PollyNotesAPI</strong></span>.</li>
+<li>In the left navigation menu, choose <strong>Authorizers</strong>.</li>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;"><strong>+ Create New Authorizer</strong></span>
+</li>
+<li>
+<p>Enter the following information:</p>
+<ul>
+<li>
+<strong>Name</strong>: <input readonly class="copyable-inline-input" size="14" type="text" value="PollyNotesPool">
+</li>
+<li>
+<strong>Type</strong>: <input readonly class="copyable-inline-input" size="7" type="text" value="Cognito">
+</li>
+<li>
+<strong>Cognito User Pool</strong>: <input readonly class="copyable-inline-input" size="14" type="text" value="PollyNotesPool">
+</li>
+<li>
+<strong>Token Source</strong>: <input readonly class="copyable-inline-input" size="13" type="text" value="Authorization">
+</li>
+<li>
+<strong>Token Validation</strong>: Leave empty</li>
+</ul>
+</li>
+<li><p>Choose <span style="color:#0073bb;"><strong>Create</strong></span>.</p></li>
+<li><p>Choose <span style="color:#0073bb;"><strong>Test</strong></span>.</p></li>
+<li><p>Paste the <strong>Authorization Token</strong> generated in the last task to the value of <strong>Authorization (header)</strong>.</p></li>
+<li><p>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Test</span></p></li>
+</ol>
+<p>The Response contains the claim information that was returned from Amazon Cognito that you can use in your application.  You will be using the <strong>cognito:username</strong> value in future steps.</p>
+<ol start="44">
+<li>Choose <span style="color:#0073bb;"><strong>Close</strong></span>.</li>
+</ol>
+<h3>Task 2.2: Configure the existing methods to use the new Authorizer</h3>
+
+<p>The next few procedures walk you through the steps to secure the two existing API methods with the authorizer. You will also replace the static UserId mapping template with dynamic information from the authorization claim.</p>
+<ol start="45">
+<li><p>In the left navigation menu, choose <strong>Resources</strong>.</p></li>
+<li><p><i class="fas fa-sync"></i> Refresh your browser to refresh the list of authorizers for the next set of steps.</p></li>
+<li><p>In the <strong>Resources</strong> column, under <span style="color:#0073bb;"><strong>/notes</strong></span>, choose <span style="color:#0073bb;"><strong>GET</strong></span>.</p></li>
+<li><p>Choose <span style="color:#0073bb;"><strong>Method Request</strong></span>.</p></li>
+<li><p>For <strong>Authorization</strong>, choose <i class="fas fa-pencil-alt"></i> (edit).</p></li>
+<li><p>Under <strong>Cognito user pool authorizers</strong>, choose <strong>PollyNotesPool</strong>.</p></li>
+</ol>
+<p><i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong> If you don't see <strong>PollyNotesPool</strong>, refresh your browser window.</p>
+<ol start="51">
+<li><p>Choose <i class="fas fa-check-circle"></i> (check mark tick).</p></li>
+<li><p>Choose <strong><span style="color:#0073bb;"><i class="fas fa-arrow-left"></i> Method Execution</span></strong> above the setting section.</p></li>
+<li><p>Choose <strong><span style="color:#0073bb;">Integration Request</span></strong>.</p></li>
+<li><p>Scroll to the bottom and expand <strong>Mapping Templates</strong>, and choose <strong><span style="color:#0073bb;">application/json</span></strong>.</p></li>
+</ol>
+<p>This mapping template was previously hard coded with the UserId <strong>student</strong> to work with the Lambda functions. Now that the users will be authenticated you can pull this dynamically from the request.</p>
+<ol start="55">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> Copy and paste the code below.</li>
+</ol><pre class="highlight json"><code><span class="p">{</span><span class="w">&#x000A;    </span><span class="s2">"UserId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$context.authorizer.claims['cognito:username']"</span><span class="w">&#x000A;</span><span class="p">}</span><span class="w">&#x000A;</span></code></pre><ol start="56">
+<li>Choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Save</span>
+</li>
+</ol>
+<p>Add the authorizer to the POST method as well.</p>
+<ol start="57">
+<li><p>In the <strong>Resources</strong> column, under <span style="color:#0073bb;"><strong>/notes</strong></span>, choose <span style="color:#629300;"><strong>POST</strong></span>.</p></li>
+<li><p>Choose <span style="color:#0073bb;"><strong>Method Request</strong></span>.</p></li>
+<li><p>For <strong>Authorization</strong>, choose <i class="fas fa-pencil-alt"></i> (edit).</p></li>
+<li><p>Under <strong>Cognito user pool authorizers</strong>, choose <strong>PollyNotesPool</strong>.</p></li>
+<li><p>Choose <i class="fas fa-check-circle"></i> (check mark tick).</p></li>
+<li><p>Choose the <strong><span style="color:#0073bb;"><i class="fas fa-arrow-left"></i> Method Execution</span></strong> breadcrumb above the setting section.</p></li>
+<li><p>Choose <strong><span style="color:#0073bb;">Integration Request</span></strong>.</p></li>
+<li><p>Scroll to the bottom and expand <i class="fas fa-caret-right"></i> <strong>Mapping Templates</strong>, and choose <strong><span style="color:#0073bb;">application/json</span></strong>.</p></li>
+</ol>
+<p>Change the mapping template to pull dynamically from the request. Notice that the NoteId and note is also passed to the Lambda function for this method.</p>
+<ol start="65">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> Copy and paste the code below to replace the existing text.</li>
+</ol><pre class="highlight json"><code><span class="p">{</span><span class="w">&#x000A;    </span><span class="s2">"UserId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$context.authorizer.claims['cognito:username']"</span><span class="p">,</span><span class="w">&#x000A;    </span><span class="s2">"NoteId"</span><span class="p">:</span><span class="w"> </span><span class="err">$input.json('$.NoteId')</span><span class="p">,</span><span class="w">&#x000A;    </span><span class="s2">"Note"</span><span class="p">:</span><span class="w"> </span><span class="err">$input.json('$.Note')</span><span class="w">&#x000A;</span><span class="p">}</span><span class="w">&#x000A;</span></code></pre><ol start="66">
+<li>Choose <span style="background-color:#DEDEDE;font-weight:bold;font-size:90%;color:#444;border-radius:5px;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Save</span>
+</li>
+</ol>
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i>  Congratulations! The API is now be secured. You will deploy this configuration in the next task.</p>
+
+<h2 id="step6">Task 3: Create the remaining API resources using a Swagger file</h2>
+
+<p>In this task, you will create all the remaining resources and methods for the application. Your Lambda functions were already created in previous labs and the code will not need to be modified.</p>
+
+<p>API gateway allows you to use the Swagger specification to export and import configuration information.  This is a much quicker method than using the AWS Management Console.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Review the Swagger file.
+<input readonly class="copyable-inline-input" size="44" type="text" value="~/environment/api/PollyNotesAPI-swagger.yaml">
+It includes all the remaining API resource definitions needed for your application</li>
+<li>Replace the placeholders in the Swagger file to customize it for your lab</li>
+<li>Merge the Swagger file to create Amazon API Gateway resources</li>
+<li>Update the AWS Lambda function permissions for the newly created API resources</li>
+<li>Verify that the resources imported are correct using the Amazon API Gateway console</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 3.1: Customize the Swagger file for your lab</h3>
+
+<p>Before you can use this file you have to replace three placeholders to customize it. The three variables are below.</p>
+<ul>
+<li>[Cognito_Pool_Arn]</li>
+<li>[AWS_Region]</li>
+<li>[AWS_AccountId]</li>
+</ul>
+<p>Instead of replacing them manually you can use a script to do it.  This is useful if you want to deploy your API in multiple regions or AWS accounts.</p>
+<ol start="67">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> In the <strong>"AWS Cloud9"</strong> web browser tab, run the commands below in the terminal to replace the variables for your lab:</li>
+</ol><pre class="highlight shell"><code><span class="nv">region</span><span class="o">=</span><span class="k">$(</span>curl http://169.254.169.254/latest/meta-data/placement/region -s<span class="k">)</span>&#x000A;&#x000A;<span class="nv">acct</span><span class="o">=</span><span class="k">$(</span>aws sts get-caller-identity --output text --query <span class="s2">"Account"</span><span class="k">)</span>&#x000A;&#x000A;<span class="nv">poolId</span><span class="o">=</span><span class="k">$(</span>aws cognito-idp list-user-pools --max-results 1 --output text --query <span class="s2">"UserPools[].Id"</span><span class="k">)</span>&#x000A;&#x000A;<span class="nv">poolArn</span><span class="o">=</span><span class="s2">"arn:aws:cognito-idp:</span><span class="nv">$region</span><span class="s2">:</span><span class="nv">$acct</span><span class="s2">:userpool/</span><span class="nv">$poolId</span><span class="s2">"</span>&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+<ol start="68">
+<li>Run the commands below to update the swagger file place holders with the variables you just created:</li>
+</ol><pre class="highlight shell"><code>&#x000A;sed -i <span class="s2">"s~</span><span class="se">\[</span><span class="s2">Cognito_Pool_ARN</span><span class="se">\]</span><span class="s2">~</span><span class="nv">$poolArn</span><span class="s2">~g"</span> ~/environment/api/PollyNotesAPI-swagger.yaml&#x000A;&#x000A;sed -i <span class="s2">"s~</span><span class="se">\[</span><span class="s2">AWS_Region</span><span class="se">\]</span><span class="s2">~</span><span class="nv">$region</span><span class="s2">~g"</span> ~/environment/api/PollyNotesAPI-swagger.yaml&#x000A;&#x000A;sed -i <span class="s2">"s~</span><span class="se">\[</span><span class="s2">AWS_AccountId</span><span class="se">\]</span><span class="s2">~</span><span class="nv">$acct</span><span class="s2">~g"</span> ~/environment/api/PollyNotesAPI-swagger.yaml&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None unless there are errors.<br>
+</span></p>
+
+<p>Now that the Swagger file has been customized to work with your lab, explore the contents.</p>
+<ol start="69">
+<li>Expand the api folder and open <strong>PollyNotesAPI-swagger.yaml</strong>.</li>
+</ol>
+<p>Swagger allows you to describe the structure of your APIs. This file is readable by both humans and machines, so it is used as a way to document your API as well as a way to back up your configuration. The file that you will use has all of the remaining resources and methods defined that your application needs.</p>
+<ul>
+<li>/notes/search
+<ul>
+<li>GET</li>
+<li>OPTIONS</li>
+</ul>
+</li>
+<li>/notes/{id}
+<ul>
+<li>POST</li>
+<li>DELETE</li>
+<li>OPTIONS</li>
+</ul>
+</li>
+</ul>
+<p>The Swagger file also has the Amazon Cognito authorizer defined so that it can be referenced to define the security of these methods.</p>
+
+<p>Notice the sections that start with <strong>x-amazon-apigateway-</strong>; these are API Gateway extensions that allow you to add Amazon specific configuration.  In this case, you are specifying the Lambda function uri along with request templates and response configuration.</p>
+
+<h3>Task 3.2: Merge the Swagger file to the existing API</h3>
+
+<p>You can merge the Swagger file to your API with the console or AWS CLI. Use the AWS CLI for this lab. You have to put the new resources and then create a new deployment to make them available. Notice how the mode "merge" is used. This mode will not remove any resources that are not in the Swagger file. This leaves the existing <strong>/note</strong> methods in place while adding the new ones. The authorizer which is existing and defined in the Swagger file will be updated if there are any differences.</p>
+<ol start="70">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below change directories into <input readonly class="copyable-inline-input" size="27" type="text" value="~/environment/api directory">:</li>
+</ol><pre class="highlight shell"><code><span class="nb">cd</span> ~/environment/api&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+<ol start="71">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to set the <strong>apiId</strong> variable to the PollyNotesAPI ID:</li>
+</ol><pre class="highlight shell"><code><span class="nv">apiId</span><span class="o">=</span><span class="k">$(</span>aws apigateway get-rest-apis --query <span class="s2">"items[?name == 'PollyNotesAPI'].id"</span> --output text<span class="k">)</span>&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+<ol start="72">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to import the new resources to API Gateway:</li>
+</ol><pre class="highlight shell"><code>aws apigateway put-rest-api --rest-api-id <span class="nv">$apiId</span> --mode merge --body <span class="s1">'file://PollyNotesAPI-swagger.yaml'</span>&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">{<br>
+       "apiKeySource": "HEADER",<br>
+        "name": "PollyNotesAPI",<br>
+        "tags": {<br>
+                "aws:cloudformation:stack-name": "qls-179829-fdc73a45f41dc51e",<br>
+                "LabName": "77323",<br>
+                "aws:cloudformation:logical-id": "pollyNotesAPI",<br>
+                "aws:cloudformation:stack-id": "arn:aws:cloudformation:us-west-2:123456789101:stack/qls-179829-fdc73a45f41dc51e/29fed560-27a0-11ec-b709-02778aa47ed3",<br>
+                "CustomerName": "awsstaging"<br>
+        },<br>
+        "endpointConfiguration": {<br>
+                "types": [<br>
+                      "REGIONAL"<br>
+                ]<br>
+        },<br>
+        "createdDate": 1633632946,<br>
+        "disableExecuteApiEndpoint": false,<br>
+        "id": "k0dkhx44g7"<br>
+}<br>
+</span></p>
+<ol start="73">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to deploy the new resources to API Gateway:</li>
+</ol><pre class="highlight shell"><code>aws apigateway create-deployment --rest-api-id <span class="nv">$apiId</span> --stage-name Prod&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">{<br>
+       "id": "03dre4",<br>
+       "createdDate": 1633637769<br>
+}<br>
+</span></p>
+
+<p>If you were to add a method manually in the console, as you did in the last lab, the Lambda permissions would be configured for you.  Since you added the functions by importing a Swagger file, you now need to grant the API Gateway service access to invoke the three Lambda functions you imported methods for.</p>
+<ol start="74">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the commands below to <strong>add Lambda permissions</strong> to the functions:</li>
+</ol><pre class="highlight shell"><code>aws lambda add-permission --function-name delete-function --statement-id apiInvoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com&#x000A;&#x000A;aws lambda add-permission --function-name dictate-function --statement-id apiInvoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com&#x000A;&#x000A;aws lambda add-permission --function-name search-function --statement-id apiInvoke --action lambda:InvokeFunction --principal apigateway.amazonaws.com&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">{<br>
+        "Statement": "{\"Sid\":\"apiInvoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-west-2:654871987029:function:delete-function\"}"<br>
+}<br>
+</span></p>
+
+<p><span style="font-family:Courier;">{<br>
+       "Statement": "{\"Sid\":\"apiInvoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-west-2:654871987029:function:dictate-function\"}"<br>
+}<br>
+</span></p>
+
+<p><span style="font-family:Courier;">{<br>
+       "Statement": "{\"Sid\":\"apiInvoke\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:us-west-2:654871987029:function:search-function\"}"<br>
+}<br>
+</span></p>
+<ol start="75">
+<li>In the <strong>"API Gateway"</strong> web browser tab, in the left navigation pane, choose resources.</li>
+</ol>
+<p>Explore the new resources created by the Swagger import. Everything is available and configured to use the authorizer if appropriate. Using Swagger files is a great way to back up and document your configuration. Regularly exporting the Swagger file will allow you to have a consistent point in time snapshot of your configuration. If you need to expand your deployment to another AWS Region or Account, you can easily import the latest wagger file in those locations. Regularly import the latest file to maintain consistency between deployments. Just be aware that you will need to update the three unique values (AWS_Region, AWS_AccountId, and Cognito_Pool_ARN) that you did here to localize the file.</p>
+
+<h2 id="step7">Task 4: Configure the frontend web application</h2>
+
+<p>Now that the API has been configured and secured, you can deploy the web front end. This web application is serverless and hosted on Amazon S3. All processing is performed by the client's web browser.  The framework that it was written in requires you to build the application to optimize it for web distribution. Before you build and deploy, you need to customize the configuration to use your API.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Update your application <input readonly class="copyable-inline-input" size="17" type="text" value="web/src/Config.js"> file to refer to the Amazon Cognito user pool and API.</li>
+<li>Build the web application and download dependencies with npm.</li>
+<li>Update the Amazon S3 website bucket with the latest application files.</li>
+</ul><pre class="highlight shell"><code><span class="nv">webBucket</span><span class="o">=</span><span class="k">$(</span>aws s3api list-buckets --output text --query <span class="s1">'Buckets[?contains(Name, `pollynotesweb`) == `true`].Name'</span><span class="k">)</span>&#x000A;</code></pre>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 4.1: Configure the web application for your lab</h3>
+
+<p>For portability, all of the configuration settings that you need to modify are located in the <strong>Config.js</strong> file. After you update the configuration, you will copy the files to Amazon S3. The Amazon S3 bucket has already been configured to host your website.</p>
+<ol start="76">
+<li><p>In the <strong>"AWS Cloud9"</strong> web browser tab, expand <strong>web/src</strong> and open <strong>Config.js</strong>.</p></li>
+<li><p>Replace the <strong>[UserPoolId]</strong> and <strong>[AppClientId]</strong> placeholders with the values you copied earlier in this lab.</p></li>
+<li><p>Replace <strong>[ApiURL]</strong> with the <strong>apiURL</strong> output to the left of these instructions.</p></li>
+<li><p>Save and close the <strong>Config.js</strong>.</p></li>
+<li><p><i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to install change into the <input readonly class="copyable-inline-input" size="17" type="text" value="~/environment/web"> directory:</p></li>
+</ol><pre class="highlight shell"><code><span class="nb">cd</span> ~/environment/web&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+<ol start="81">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to install dependencies:</li>
+</ol><pre class="highlight shell"><code>npm install&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">added 1993 packages, and audited 1994 packages in 2m<br>
+</span></p>
+
+<p><span style="font-family:Courier;">138 packages are looking for funding<br>
+  run <input readonly class="copyable-inline-input" size="8" type="text" value="npm fund"> for details<br>
+</span></p>
+
+<p><span style="font-family:Courier;">61 vulnerabilities (19 moderate, 40 high, 2 critical)<br>
+</span></p>
+
+<p><span style="font-family:Courier;">To address issues that do not require attention, run:<br>
+  npm audit fix<br>
+</span></p>
+
+<p><span style="font-family:Courier;">To address all issues (including breaking changes), run:<br>
+  npm audit fix --force<br>
+</span></p>
+
+<p><span style="font-family:Courier;">Run <input readonly class="copyable-inline-input" size="9" type="text" value="npm audit"> for details.<br>
+npm notice<br>
+npm notice New major version of npm available! 7.24.0 -&gt; 8.0.0<br>
+npm notice Changelog: <a href="https://github.com/npm/cli/releases/tag/v8.0.0" target="_blank">https://github.com/npm/cli/releases/tag/v8.0.0</a><br>
+npm notice Run npm install -g <a href="mailto:npm@8.0.0" target="_blank">npm@8.0.0</a> to update!<br>
+</span></p>
+<ol start="82">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to build the web application. While it is building scroll down to read more about these steps.</li>
+</ol><pre class="highlight shell"><code>npm run <span class="nb">test</span>+build&#x000A;&#x000A;</code></pre>
+<p>The <input readonly class="copyable-inline-input" size="11" type="text" value="npm install"> command downloaded any dependencies that the web application needs for build or production.</p>
+
+<p>The <input readonly class="copyable-inline-input" size="18" type="text" value="npm run test+build"> command runs unit tests to make sure the application builds correctly. If the tests are successful, it runs scripts that optimizes the web application for distribution and places the files for deployment into the build folder.</p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">&gt; <a href="mailto:react-web@0.1.0" target="_blank">react-web@0.1.0</a> test+build</span><br><br>
+<span style="font-family:Courier;">&gt; CI=true npm test &amp;&amp; npm run build</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">&gt; <a href="mailto:react-web@0.1.0" target="_blank">react-web@0.1.0</a> test</span><br><br>
+<span style="font-family:Courier;">&gt; react-scripts test</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">PASS src/App.test.js</span><br><br>
+<span style="font-family:Courier;">  ✓ renders App component (129 ms)</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">  console.log</span><br><br>
+<span style="font-family:Courier;">    undefined</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">      at src/Routes/Notes.js:33:21</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">  console.log</span><br><br>
+<span style="font-family:Courier;">    redirecting to login</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">     at src/Routes/Notes.js:34:21</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">Test Suites: 1 passed, 1 total</span><br><br>
+<span style="font-family:Courier;">Tests:       1 passed, 1 total</span><br><br>
+<span style="font-family:Courier;">Snapshots:   0 total</span><br><br>
+<span style="font-family:Courier;">Time:        2.65 s, estimated 4 s</span><br><br>
+<span style="font-family:Courier;">Ran all test suites.</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">&gt; <a href="mailto:react-web@0.1.0" target="_blank">react-web@0.1.0</a> build</span><br><br>
+<span style="font-family:Courier;">&gt; react-scripts build</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">Creating an optimized production build...</span><br><br>
+<span style="font-family:Courier;">Compiled successfully.</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">File sizes after gzip:</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">  88.26 KB (-335 B)  build/static/js/2.71fbeef8.chunk.js</span><br><br>
+<span style="font-family:Courier;">  23.25 KB           build/static/css/2.4c97ca4f.chunk.css</span><br><br>
+<span style="font-family:Courier;">  4.21 KB (-390 B)   build/static/js/main.6316367b.chunk.js</span><br><br>
+<span style="font-family:Courier;">  775 B              build/static/js/runtime-main.7e0376b9.js</span><br><br>
+<span style="font-family:Courier;">  277 B              build/static/css/main.c56fd950.chunk.css</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">The project was built assuming it is hosted at /.</span><br><br>
+<span style="font-family:Courier;">You can control this with the homepage field in your package.json.</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">The build folder is ready to be deployed.</span><br><br>
+<span style="font-family:Courier;">You may serve it with a static server:</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">  npm install -g serve</span><br><br>
+<span style="font-family:Courier;">  serve -s build</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">Find out more about deployment here:</span><br><br>
+<span style="font-family:Courier;"></span><br><br>
+<span style="font-family:Courier;">  <a href="https://cra.link/deployment" target="_blank">https://cra.link/deployment</a></span><br></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> If you did not replace the variables in the Config.js file, you will see and error that states <strong>Invalid UserPoolId format.</strong> and the test will fail. If the test does not pass the application will not be built.</p>
+<ol start="83">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to create a variable that contains your website bucket name: and then copy the files to Amazon S3 for hosting</li>
+</ol><pre class="highlight shell"><code><span class="nv">webBucket</span><span class="o">=</span><span class="k">$(</span>aws s3api list-buckets --output text --query <span class="s1">'Buckets[?contains(Name, `pollynotesweb`) == `true`].Name'</span><span class="k">)</span>&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p>None, unless there is an error.</p>
+<ol start="84">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to copy the files to Amazon S3 for hosting:</li>
+</ol><pre class="highlight shell"><code>&#x000A;aws s3 sync --delete build/. s3://<span class="nv">$webBucket</span>&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">upload: build/robots.txt to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/robots.txt<br>
+upload: build/static/css/main.c56fd950.chunk.css.map to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/css/main.c56fd950.chunk.css.map<br>
+upload: build/index.html to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/index.html<br>
+upload: build/asset-manifest.json to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/asset-manifest.json<br>
+upload: build/favicon.ico to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/favicon.ico<br>
+upload: build/static/js/runtime-main.7e0376b9.js to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/js/runtime-main.7e0376b9.js<br>
+upload: build/manifest.json to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/manifest.json<br>
+upload: build/static/js/2.16e7aa1e.chunk.js.LICENSE.txt to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/js/2.16e7aa1e.chunk.js.LICENSE.txt<br>
+upload: build/static/js/main.c2260cde.chunk.js to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/js/main.c2260cde.chunk.js<br>
+upload: build/static/js/runtime-main.7e0376b9.js.map to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/js/runtime-main.7e0376b9.js.map<br>
+upload: build/static/js/main.c2260cde.chunk.js.map to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/js/main.c2260cde.chunk.js.map<br>
+upload: build/static/css/main.c56fd950.chunk.css to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/css/main.c56fd950.chunk.css<br>
+upload: build/static/css/2.4c97ca4f.chunk.css to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/css/2.4c97ca4f.chunk.css<br>
+upload: build/static/js/2.16e7aa1e.chunk.js.map to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/js/2.16e7aa1e.chunk.js.map<br>
+upload: build/static/css/2.4c97ca4f.chunk.css.map to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/css/2.4c97ca4f.chunk.css.map<br>
+upload: build/static/js/2.16e7aa1e.chunk.js to s3://qls-179829-fdc73a45f41dc51e-pollynotesweb-g0zzbosbl7vw/static/js/2.16e7aa1e.chunk.js<br>
+</span></p>
+
+<p>The <input readonly class="copyable-inline-input" size="20" type="text" value="aws s3 sync --delete"> command was used here to recursively update files from the source build directory the Amazon S3 bucket and remove any files that are no longer in the source directory.  A local file will require uploading if the size of the local file is different than the size of the s3 object, the last modified time of the local file is newer than the last modified time of the s3 object, or the local file does not exist under the specified bucket and prefix.</p>
+
+<h2 id="step8">Task 5: Test the web application functionality</h2>
+
+<p>Now that your application has been fully deployed, it's time to test it.</p>
+<ol start="85">
+<li><p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> Paste the <strong>PollyNotesWebsite</strong> URL, from the left of these instructions, to a new web browser tab and test the deployed website.</p></li>
+<li><p>For <strong>Username</strong> and <strong>Password</strong>, enter <input readonly class="copyable-inline-input" size="7" type="text" value="student"></p></li>
+<li><p>In the <strong>Note</strong> text box, enter a new note and choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#007bff;border-color:#007bff;">Add</span></p></li>
+<li><p>Choose the <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;border-color:#17a2b8;"><i class="fas fa-pencil-alt"></i></span> edit button beside one of the notes.</p></li>
+<li><p>In the Note text box, edit the note text and choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#007bff;border-color:#007bff;">Update</span></p></li>
+<li><p>Enter text into the <strong>Search Notes</strong> box to confirm search functionality.</p></li>
+<li><p>Press the  <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#17a2b8;border-color:#17a2b8;"><i class="fas fa-bullhorn"></i></span> speak button to convert the note to speech and listen to the notes.</p></li>
+<li><p>Choose the <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#17a2b8;border-color:#17a2b8;"><i class="far fa-trash-alt"></i></span> delete button to delete the note.</p></li>
+</ol>
+<h2 id="step9">Summary</h2>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! You have successfully deployed a serverless application using Amazon S3, Amazon API Gateway, Amazon Cognito, AWS Lambda, and Amazon DynamoDB.</p>
+
+<p>You can now:</p>
+<ul>
+<li>Create a user pool and an app client for your web application using Amazon Cognito.</li>
+<li>Add new users and confirm their ability to sign-in using the Amazon Cognito CLI.</li>
+<li>Configure API Gateway methods to use Amazon Cognito as an authorizer.</li>
+<li>Verify JWT authentication tokens are generated during API calls.</li>
+<li>Develop API Gateway resources rapidly using Swagger importing strategy.</li>
+<li>Set up your web application frontend to use Amazon Cognito and API Gateway configurations and verify the entire application functionality.</li>
+</ul>
+<h2 id="step10">End Lab</h2>
+
+<p>Follow these steps to close the console, end your lab, and evaluate the experience.</p>
+<ol start="93">
+<li><p>Return to the AWS Management Console.</p></li>
+<li><p>On the navigation bar, choose <strong>awsstudent@&lt;AccountNumber&gt;</strong>, and then choose <strong>Sign Out</strong>.</p></li>
+<li><p>Choose <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-family:Google Sans;font-weight:bold;font-size:90%;color:#444;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">OK</span></p></li>
+<li><p>(Optional):</p></li>
+</ol><ul>
+<li>Select the applicable number of stars <i class="far fa-star"></i>
+</li>
+<li>Type a comment</li>
+<li>
+<p>Choose <strong>Submit</strong></p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+</li>
+</ul>
+<p>You may close the window if you don't want to provide feedback.<br>
+For more information about AWS Training and Certification, see <a href="https://aws.amazon.com/training/" target="_blank"><em>https://aws.amazon.com/training/</em></a>.</p>
+
+<p><em>Your feedback is welcome and appreciated.</em></p>
+
+<p>If you would like to share any feedback, suggestions, or corrections, please provide the details in our <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification Contact Form</em></a>.</p>
+
+<h2 id="step11">Additional Resources</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-integrate-with-cognito.html" target="_blank">Control access to a REST API using Amazon Cognito user pools as authorizer</a></li>
+</ul>
+
+
+<p><a id="appendix" target="_blank"></a></p>
+
+<h2 id="step12">Appendix</h2>
+
+<h3>AWS Services Not Used in This Lab</h3>
+
+<p>AWS services that are not used in this lab are deactivated in the lab environment. In addition, the capabilities of the services used in this lab are limited to what the lab requires. Expect errors when accessing other services or performing actions beyond those provided in this lab guide.</p>
+
+<h3>Icon Key</h3>
+
+<p>Various icons are used throughout this lab to call attention to certain aspects of the guide. The following list explains the purpose for each one:</p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Specifies the command you must run.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong> See an example.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong> Verify the output of a command or edited file.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Specifies important hints, tips, guidance, or advice.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Specifies where to find more information.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong> Calls attention to information of special interest or importance. Failure to read the note does not result in physical harm to the equipment or data, but could result in the need to repeat certain steps.</li>
+<li>
+<i class="fas fa-user-shield" style="color:#00a1c9;"></i> <strong>Security:</strong> Identifies opportunities to incorporate security best practices.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#d13212;"></i> <strong>WARNING:</strong> Draws special attention to actions that are irreversible and could potentially impact the failure of a command or process. Includes warnings about configurations that cannot be changed after they are made.</li>
+<li>
+<i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong> Suggests a moment to pause to consider how you might apply a concept in your own environment or to initiate a conversation about the topic at hand.</li>
+<li>
+<p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In some cases, you may execute a script or apply a file that has been pre-created for you. This icon signifies a code block that is used to display the contents of the script or file you interacted with.</p>
+<ul>
+<li>When you need to copy only a certain part of a code block, there will be numbered <strong>TODO</strong> comments in the code.<span><br><br></span>
+</li>
+</ul>
+</li>
+<li><p><i class="far fa-compass" style="color:#dd6b10;"></i> <strong>Context:</strong> When asked to open the <strong>Context Menu</strong> for an item, this is the same action as right-clicking for a mouse or the appropriate action for your particular pointing device.</p></li>
+</ul>
+<p><a href="#prerequisites" target="_self">Return to the instructions</a></p>
+
+</div>
+</div>
+
+
+<div class='lab-content__end-lab-button js-end-lab-button-container hidden'>
+<ql-lab-control-button class='js-end-lab-button' running></ql-lab-control-button>
+</div>
+<!-- / TODO: Move recommendations into the end lab modal -->
+</ql-drawer-content>
+<ql-drawer end id='outline-drawer' open slot='drawer' width='320'>
+<div aria-label='Sommario del lab' role='navigation'>
+<ul class='lab-content__outline js-lab-content-outline'>
+<li><a href='#step1'>Prerequisites</a></li><li><a href='#step2'>Overview</a></li><li><a href='#step3'>Start Lab</a></li><li><a href='#step4'>Task 1: Configure Amazon Cognito</a></li><li><a href='#step5'>Task 2: Configure Amazon API Gateway to use Amazon Cognito as an authorizer</a></li><li><a href='#step6'>Task 3: Create the remaining API resources using a Swagger file</a></li><li><a href='#step7'>Task 4: Configure the frontend web application</a></li><li><a href='#step8'>Task 5: Test the web application functionality</a></li><li><a href='#step9'>Summary</a></li><li><a href='#step10'>End Lab</a></li><li><a href='#step11'>Additional Resources</a></li><li><a href='#step12'>Appendix</a></li>
+</ul>
+</div>
+</ql-drawer>
+</ql-drawer-container>
+</ql-drawer-content>
+</ql-drawer-container>
+
+
+
+</div>
+</main>
+
+<span class='hidden' id='flash-sibling-before'></span>
+<ql-snackbar></ql-snackbar>
+
+
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='modal-content mdl-shadow--24dp'>
+<div class='modal-body'>
+<p class='l-mbm'>
+In this lab, you will learn how to set up Amazon Cognito to authenticate and authorize users to use your API. 
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Durata:
+</strong>
+Configurazione in 2 m
+&middot;
+Accesso da 120 m
+&middot;
+Completamento in 120 m
+</p>
+<p class='small-label l-mbs'>
+<strong>Area geografica AWS:</strong>
+[us-west-2] <strong>US West (Oregon)</strong>
+</p>
+<p class='small-label l-mbs'>
+
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://it-flane.qwiklabs.com/catalog_lab/73987">https://it-flane.qwiklabs.com/catalog_lab/73987</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='button button--text' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<ql-dialog headline='Qual è il tuo livello di soddisfazione rispetto a questo lab?&lt;span aria-hidden=&quot;true&quot;&gt;*&lt;/span&gt;' id='lab-review-dialog'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div aria-labelledby='lab-review-dialog' aria-required='true' aria-valuemax='5' aria-valuemin='0' aria-valuenow='0' class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0' id='lab-review-rateit' role='slider' tabindex='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="14798" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="2083" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="73987" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="14571" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Commenti aggiuntivi</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</form><ql-button disabled id='submit' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+<ql-dialog headline='Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?' icon='error_outline' id='js-lab-are-you-sure-dialog'>
+<ql-button id='js-are-you-sure-button' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    ql.chat.init();
+  ql.jumpContent.init();
+  initLabContent();
+  ql.labOutline.links.init();
+  initLabReviewModal();
+  initLabReviewTranslations( {"star_amount_1":"1 stelle su 5","star_amount_2":"2 stelle su 5","star_amount_3":"3 stelle su 5","star_amount_4":"4 stelle su 5","star_amount_5":"5 stelle su 5"} )
+  ql.labAssessment.init();
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?","in_progress":"*In corso*","ending":"*Conclusione*","starting":"*Avvio… Attendi*","end_concurrent_labs":"È possibile eseguire un solo lab alla volta. Per avviare questo lab, conferma di voler terminare tutti i lab esistenti.","copied":"Copiato","no_resource":"Errore durante il recupero della risorsa.","no_support":"Non viene fornita assistenza","mac_press":"Premi ⌘-C per copiare","thanks_review":"Grazie per aver inserito una recensione per questo lab.","windows_press":"Premi Ctrl+C per copiare","days":"giorni"} );
+  ql.labRun.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+
+</body>
+</html>
+
