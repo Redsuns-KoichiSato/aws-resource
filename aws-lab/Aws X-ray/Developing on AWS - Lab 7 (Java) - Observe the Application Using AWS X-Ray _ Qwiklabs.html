@@ -1,0 +1,1020 @@
+
+<!DOCTYPE html>
+<html lang='it'>
+<head>
+<title>Developing on AWS - Lab 7 (Java) - Observe the Application Using AWS X-Ray | Qwiklabs</title>
+<script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Diego","lastname":"Brignoli","fullname":"Diego Brignoli","company":"Beta80","email":"diego.brignoli@beta80group.it","origin":"it-flane, direct","subscriptions":0,"id":"a61e1fd9f1a7d5ef061dbe892bae5f9f","qlCreatedAt":"2022-03-07 13:40:45 UTC","optIn":true,"current_organization_id":null,"current_organization_role":null};gon.segment=null;gon.deployment="it-flane";gon.content={"type":"Lab","id":73990,"name":"Developing on AWS - Lab 7 (Java) - Observe the Application Using AWS X-Ray"};
+//]]>
+</script>
+<script>
+  dataLayer = [
+    {user: gon.current_user},
+    {content: gon.content}
+  ];
+</script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/polyfills/webcomponents-loader-60a166e60df2787cca5915e2ced8c317457f421a20f02601b937a72275ac441a.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-2beee108ba05276bc429223ee82ed81449d233c93d45af5da84add895e101218.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-b44c688caf0e24039ff5020ad65695458c8c0edbd37ac5431ce3efa6d80f07e0.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors__it-c5bb7dbc14336638421f7b3f9e4f32567ff92565d683255515ad93ae6d7e7992.js"></script>
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="XcV0D95WqcIzy4tHkKD1ycp72wZ1RUei2pMl44KPrs/6CJ5cl6dnZvot3g1TRU4FYFIjRz16AdWOHdldBg1Bvw==" />
+<meta content='width=device-width, initial-scale=1.0, user-scalable=yes' name='viewport'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<meta content='[{&quot;id&quot;:&quot;recaptcha_experiment&quot;,&quot;optimize_id&quot;:&quot;dpViOcLkT3qS4TvL2mRojA&quot;,&quot;title&quot;:&quot;No Recaptcha shown for trusted users&quot;,&quot;variant_index&quot;:1,&quot;variant&quot;:&quot;no_recaptcha&quot;}]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:14798}' name='help-api-product-data'>
+<meta content='The application that you have built in previous labs has been re-deployed with AWS SAM. You will instrument the application code with AWS X-Ray to observe the operational state of the application.' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='Developing on AWS - Lab 7 (Java) - Observe the Application Using AWS X-Ray | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='The application that you have built in previous labs has been re-deployed with AWS SAM. You will instrument the application code with AWS X-Ray to observe the operational state of the application.' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+
+
+
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+<link href='/favicon-32.png' rel='shortcut icon' type='image/x-icon'>
+
+
+
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+<link rel="stylesheet" media="screen" href="https://cdn.qwiklabs.com/stylesheets/application_old/locales/it.css" />
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-1c1adc018a83f53f78a5b6f624572a32bf4f3c935b02a026b7bf82afe02b4dae.css" />
+
+<style>
+  :root {
+    --primary-text-on-surface-color: #1A73E8;
+    --primary-text-on-surface-color-dark: #1568d6;
+    --primary-text-on-surface-color-darker: #135ec1;
+    --primary-text-on-surface-color-darkest: #1154ac;
+    --primary-surface-color: #1A73E8;
+    --primary-surface-color-rgb: 26,115,232;
+    --primary-surface-color-light: #d1e3fa;
+    --primary-surface-color-lightest: #e8f1fd;
+    --text-on-primary-color: #FFFFFF;
+    --accent-text-on-surface-color: #F29900;
+    --accent-surface-color: #F9AB00;
+    --accent-surface-color-rgb: 249,171,0;
+    --accent-surface-color-light: #ffefcc;
+    --text-on-accent-color: #202124;
+  }
+</style>
+
+
+
+</head>
+<body class='lab-show l-full no-nav application-new focuses focuses-show lab-show l-full no-nav '>
+<div class='header-container'>
+<div class='header'>
+<ql-toolbar jumpEnabled>
+<div class='header__title' slot='title'>
+<ql-icon-button label="Indietro" href="/classrooms/2083" id="3ec203c81f981c6a" target="_self" tip="Indietro">arrow_back</ql-icon-button>
+<h1 class='ql-headline-6'>Developing on AWS - Lab 7 (Java) - Observe the Application Using AWS X-Ray</h1>
+</div>
+<div class='header__actions' slot='action'>
+<ql-icon-button id='control-panel-target' style='display: none;'>
+dashboard
+</ql-icon-button>
+<ql-menu for='control-panel-target' id='control-panel-menu'></ql-menu>
+<ql-icon-button class='mobile-hide' icon='help_outline' id='help-menu-button' label='Apri il menu Guida' tip='Guida'></ql-icon-button>
+<ql-menu for='help-menu-button' id='help-menu'>
+<ql-menu-item data-analytics-action='opened_help' data-analytics-label='lab' label='Help Center' onclick='hallofmirrors.helpService.startHelp({&quot;productData&quot;:{&quot;userId&quot;:14798},&quot;context&quot;:&quot;lab&quot;})'></ql-menu-item>
+<ql-menu-item href='https://support.google.com/qwiklabs/contact/contact_us' label='Email support' target='_blank'></ql-menu-item>
+<ql-menu-item label='Chat support' onClick='ql.chat.open()'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button class='mobile-hide' icon='language' id='language' label='Seleziona le preferenze relative alla lingua' tip='Lingua'></ql-icon-button>
+<ql-menu for='language'>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ar' href='/classrooms/2083/labs/14574?locale=ar' label='العربية‬‎' lang='ar'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='de' href='/classrooms/2083/labs/14574?locale=de' label='Deutsch' lang='de'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='en' href='/classrooms/2083/labs/14574?locale=en' label='English' lang='en'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='es' href='/classrooms/2083/labs/14574?locale=es' label='español (Latinoamérica)' lang='es'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr' href='/classrooms/2083/labs/14574?locale=fr' label='français' lang='fr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='fr_CA' href='/classrooms/2083/labs/14574?locale=fr_CA' label='français (Canada)' lang='fr-CA'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='he' href='/classrooms/2083/labs/14574?locale=he' label='עברית' lang='he'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='id' href='/classrooms/2083/labs/14574?locale=id' label='bahasa Indonesia' lang='id'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='it' href='/classrooms/2083/labs/14574?locale=it' label='Italiano' lang='it'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ja' href='/classrooms/2083/labs/14574?locale=ja' label='日本語' lang='ja'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ko' href='/classrooms/2083/labs/14574?locale=ko' label='한국어' lang='ko'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pl' href='/classrooms/2083/labs/14574?locale=pl' label='Polski' lang='pl'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_BR' href='/classrooms/2083/labs/14574?locale=pt_BR' label='português (Brasil)' lang='pt-BR'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='pt_PT' href='/classrooms/2083/labs/14574?locale=pt_PT' label='português (Portugal)' lang='pt-PT'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='ru' href='/classrooms/2083/labs/14574?locale=ru' label='русский' lang='ru'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='tr' href='/classrooms/2083/labs/14574?locale=tr' label='Türkçe' lang='tr'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh' href='/classrooms/2083/labs/14574?locale=zh' label='简体中文' lang='zh'></ql-menu-item>
+<ql-menu-item data-analytics-action='changed_locale' data-analytics-label='zh_TW' href='/classrooms/2083/labs/14574?locale=zh_TW' label='繁體中文' lang='zh-TW'></ql-menu-item>
+</ql-menu>
+
+<ql-icon-button id='my_account' label='Account personale' tip='Account personale'>
+<ql-avatar></ql-avatar>
+</ql-icon-button>
+<ql-menu for='my_account' id='my_account_menu' style='max-height: 640px'>
+<div class='my-account-menu'>
+<ql-avatar class='l-mtl l-mbl' size='120'></ql-avatar>
+<div class='my-account-menu__user-info l-mbl'>
+<h4 class='ql-subhead-1'>Diego Brignoli</h4>
+<p class='ql-body-2 text--light'>diego.brignoli@beta80group.it</p>
+<p class='ql-body-2 text--light'>
+</p>
+</div>
+<div class='buttons l-mbl'>
+<a class="button button--hairline" id="settings" href="/my_account/profile">Impostazioni</a>
+</div>
+<hr>
+<ql-button data-analytics-action='clicked_sign_out' href='/users/sign_out' method='delete'>
+Esci
+</ql-button>
+<div class='privacy l-mtl'>
+<a class="ql-caption text--light" href="/privacy_policy">Privacy</a>
+<span class='ql-caption text--light l-mls l-mrs'>&middot;</span>
+<a class="ql-caption text--light" href="/terms_of_service">Termini</a>
+</div>
+</div>
+</ql-menu>
+
+</div>
+</ql-toolbar>
+
+</div>
+</div>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class="custom-logo"><img alt="Qwiklabs" height="24" aria-label="Qwiklabs" src="https://cdn.qwiklabs.com/yjTIzMprll8xFSNHNul7y7IDev3CoxdLyHeDu9qmu2Q%3D" /></div>
+</div>
+<nav class='ql-sidenav'>
+<ql-sidenav-item href='/' icon='home' label='Home page'></ql-sidenav-item>
+
+<ql-sidenav-item href='/catalog' icon='school' label='Catalogo'></ql-sidenav-item>
+
+<ql-sidenav-item active href='/profile' icon='event_note' label='Profilo'></ql-sidenav-item>
+
+</nav>
+
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main' id='jump-content'>
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+<ql-drawer-container class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;Developing on AWS - Lab 7 (Java) - Observe the Application Using AWS X-Ray&quot;,&quot;lab_name&quot;:&quot;Developing on AWS - Lab 7 (Java) - Observe the Application Using AWS X-Ray&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;it-flane&quot;}' data-focus-id='14574' data-lab-billing-limit='0.0' data-lab-duration='7200' data-parent='classroom' id='lab-container'>
+<ql-drawer id='terminal-drawer' slot='drawer' style='width: calc(100% - 480px)'>
+<iframe allow='clipboard-read' class='terminal' id='embedded-resource'></iframe>
+</ql-drawer>
+<ql-drawer-content class='js-lab-wrapper' id='lab-content' slot='drawer-content'>
+<ql-drawer-container id='lab-content-container'>
+<ql-drawer id='control-panel-drawer' open slot='drawer' width='320'>
+<ql-lab-control-panel class='ql-lab-control-panel__max-height control-panel js-lab-control-panel' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labDetails='[]' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}' studentResources='[]'>
+</ql-lab-control-panel>
+</ql-drawer>
+<ql-drawer-content id='lab-instructions' slot='drawer-content'>
+<ql-snackbar id='alert-snackbar'></ql-snackbar>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message' role='alert'></p>
+<ql-icon-button class='alert__close js-alert-close' icon='clear'></ql-icon-button>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<div class='lab-content__renderable-instructions js-lab-content'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+Developing on AWS - Lab 7 (Java) - Observe the Application Using AWS X-Ray
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>2 ore </span>
+<span>Gratis</span>
+<div class='lab__rating'>
+<a aria-label="Recensioni del lab" href="/focuses/14574/reviews?parent=classroom"><div class='rateit' data-rateit-readonly='true' data-rateit-value='0'></div>
+
+</a></div>
+</div>
+</div>
+<div class='lab-outline-place-holder'></div>
+
+<div class='markdown-lab-instructions js-markdown-instructions no-select' id='markdown-lab-instructions'>
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/aws-logo.png" alt=""></p>
+
+
+
+<p>© 2022 Amazon Web Services, Inc. and its affiliates. All rights reserved. This work may not be reproduced or redistributed, in whole or in part, without prior written permission from Amazon Web Services, Inc. Commercial copying, lending, or selling is prohibited. All trademarks are the property of their owners.</p>
+
+<p>Note: Do not include any personal, identifying, or confidential information into the lab environment. Information entered may be visible to others.</p>
+
+<p>Corrections, feedback, or other questions? Contact us at <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification</em></a>.</p>
+
+<p><strong>Duration</strong></p>
+
+<p>This lab will require <strong>60 minutes</strong> to complete.</p>
+
+<p><a id="prerequisites" target="_blank"></a></p>
+
+<h2 id="step1">Prerequisites</h2>
+
+<p>This lab requires:</p>
+<ul>
+<li>Access to a Microsoft Windows or MacOS notebook computer with a Wi-Fi connection.</li>
+<li>An Internet browser such as Chrome, Firefox, or IE9+.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Previous versions of Internet Explorer are not supported.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You can use an iPad or tablet device to access these directions in the lab console.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Review additional lab environment specific details in the <a href="#appendix" target="_self">Appendix.</a>
+</li>
+</ul>
+<h2 id="step2">Overview</h2>
+
+<p>The application that you have built in previous labs has been re-deployed with AWS SAM. AWS SAM is an open-source framework for building serverless applications. It provides shorthand syntax to express functions, APIs, databases, and event source mappings. You will instrument the application code with AWS X-Ray to observe the operational state of the application.</p>
+
+<p>The entire application is displayed in the diagram below:</p>
+
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-7-java/instructions/en_us/images/lab-7-diagram.png" alt="Polly Notes Application Diagram"></p>
+
+<h3>Objectives</h3>
+
+<p>After completing this lab, you will be able to:</p>
+<ul>
+<li>Instrument your application code to use AWS X-Ray capabilities.</li>
+<li>Enable your application deployment package to generate logs.</li>
+<li>Understand the key components of AWS SAM template and deploy your application.</li>
+<li>Create X-Ray service maps to observe end-to-end processing behavior of your application.</li>
+<li>Analyze and debug application issues using X-Ray traces and annotations.</li>
+</ul>
+
+
+<h2 id="step3">Start Lab</h2>
+<ol start="1">
+<li>At the top of your screen, launch your lab by choosing <span style="background-color:#34A853;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#34A853;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Start Lab</span>
+</li>
+</ol>
+<p>This starts the process of provisioning your lab resources. An estimated amount of time to provision your lab resources is displayed. You must wait for your resources to be provisioned before continuing.</p>
+
+<p><i class="fas fa-info-circle"></i> If you are prompted for a token, use the one distributed to you (or credits you have purchased). </p>
+<ol start="2">
+<li>Open your lab by choosing <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span>
+</li>
+</ol>
+<p>This opens an AWS Management Console sign-in page.</p>
+<ol start="3">
+<li>On the sign-in page, configure:</li>
+</ol><ul>
+<li>
+<strong>IAM user name:</strong> <input readonly class="copyable-inline-input" size="10" type="text" value="awsstudent">
+</li>
+<li>
+<strong>Password:</strong> Paste the value of <strong>Password</strong> from the left side of the lab page</li>
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Sign In</span>
+</li>
+</ul>
+<p><i class="fas fa-exclamation-triangle"></i> <strong>Do not change the Region unless instructed.</strong></p>
+
+
+
+<h3>Common Login Errors</h3>
+
+<p><strong>Error: You must first log out</strong></p>
+
+<p><img src="https://s3-us-west-2.amazonaws.com/us-west-2-aws-training/awsu-spl/sts-sign-in-images/media/logouterror.png" alt=""></p>
+
+<p>If you see the message, <strong>You must first log out before logging into a different AWS account:</strong> </p>
+<ul>
+<li>Choose <strong>here</strong>
+</li>
+<li>Close your browser tab to return to your initial lab window</li>
+<li>Choose <span style="background-color:white;font-family:Google Sans;font-weight:bold;font-size:90%;color:#1a73e8;border-color:#dadce0;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">Open Console</span> again</li>
+</ul>
+
+
+<h2 id="step4">Task 1: Configure AWS X-Ray capabilities in your code</h2>
+
+<p>The X-Ray SDK for Java is a set of libraries for Java web applications that provide classes and methods for generating and sending trace data to the X-Ray daemon. Trace data includes information about incoming HTTP requests served by the application, and calls that the application makes to downstream services using the AWS SDK, HTTP clients, or an SQL database connector. You can also create segments manually and add debug information in annotations and metadata.</p>
+
+<p>X-Ray uses service integration to receive trace data from supported services such as Lambda, DynamoDB and API Gateway. The AWS X-Ray SDK for Java is used to send trace data from your code.</p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> All code is managed and deployed with AWS SAM. You have access to this code in your AWS Cloud9 environment.</p>
+
+<p><i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong> This lab is designed for both experienced and newer developers:</p>
+<ul>
+<li><p>For more experienced developers who enjoy a challenge, there are <strong>High-Level Instructions</strong> before each task that should provide you enough information to help you complete the task.</p></li>
+<li><p>Once you complete the updates test your code to ensure it works, troubleshoot if needed, and then move on to the next task.</p></li>
+<li><p>For newer developers, there are <strong>Detailed Instructions</strong> to guide you through each step of the lab.</p></li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Add dependencies aws-xray-recorder-sdk-bom with version 2.9.0 to maven build configuration and verify.</li>
+<li>Import libraries needed for AWS X-Ray to the delete-note function code</li>
+<li>Inject AWS X-Ray annotations with the userId and noteId from the delete-function code</li>
+<li>Enable AWS X-Ray logging for all service call requests made though the AWS SDK for Java client</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 1.1: Enable logging in your functions</h3>
+
+<p>For this lab, you will use the AWS X-Ray submodules from <strong>aws-xray-recorder-sdk-bom</strong>, which is used to instrument calls to AWS services from the AWS SDK for Java.</p>
+
+<p>Your build configuration file already has the below dependencies needed for X-Ray SDK.</p>
+<pre class="highlight xml"><code><span class="nt">&lt;dependency&gt;</span>&#x000A;    <span class="nt">&lt;groupId&gt;</span>com.amazonaws<span class="nt">&lt;/groupId&gt;</span>&#x000A;    <span class="nt">&lt;artifactId&gt;</span>aws-xray-recorder-sdk-bom<span class="nt">&lt;/artifactId&gt;</span>&#x000A;    <span class="nt">&lt;version&gt;</span>2.9.0<span class="nt">&lt;/version&gt;</span>&#x000A;    <span class="nt">&lt;type&gt;</span>pom<span class="nt">&lt;/type&gt;</span>&#x000A;    <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span>&#x000A;<span class="nt">&lt;/dependency&gt;</span>&#x000A;</code></pre>
+<p>You code is already supplemented with initial X-Ray libraries. You will use the default sampling rule that traces the first request each second, and five percent of any additional requests across all services sending traces to X-Ray.</p>
+
+<p>First, add the <strong>aws-xray-recorder-sdk</strong> as a dependency to the project build configuration for the <strong>delete-note</strong> Lambda function</p>
+
+<p>Connect to your AWS Cloud9 development environment to view the code.</p>
+<ol start="4">
+<li><p>On the navigation bar, in the unified search bar, search for and choose <input readonly class="copyable-inline-input" size="6" type="text" value="Cloud9"></p></li>
+<li><p>Choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Open IDE <i class="fas fa-external-link-alt"></i></span></p></li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> You will have to wait for the client to clone the <strong>api</strong> and <strong>web</strong> repositories on first launch.</p>
+
+<p>The SDK is included for installation with your Lambda function. When you build the SAM package the dependencies will be downloaded and packaged for use.  Import the required libraries and enable X-Ray logging in <strong>Handler.java</strong> in the next steps.</p>
+<ol start="6">
+<li>Open <strong>/api/deleteFunction/src/main/java/delete/Handler.java</strong>.</li>
+</ol>
+<p>This function should look familiar from prior labs, with two differences. The Amazon API Gateway is now using Lambda Proxy Integration. With Lambda Proxy Integration, the function receives the entire request and the client receives the exact response from the Lambda function. This gives you, the developer, more access to the request information and control over the responses.</p>
+<ol start="7">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In the <strong>Handler.java</strong> file, you will need to add the library to instrument DynamoDb client in <strong>TODO 1</strong>.</li>
+</ol><pre class="highlight java"><code><span class="kn">import</span> <span class="nn">com.amazonaws.xray.interceptors.TracingInterceptor</span><span class="o">;</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Using the <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java.html" target="_blank">AWS X-Ray Developer Guide</a>, choose the correct code snippet for the following step.</p>
+
+<p>To enable generating trace data from API calls made by the AWS SDK for Java service clients you’ll need your application to be configured to trace incoming requests.</p>
+
+<p><a id="todo-2" target="_blank"></a></p>
+<ol start="8">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> For <strong>TODO 2</strong>, pick right code to instrument DynamoDB clients by configuring a <strong>TracingInterceptor</strong>.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code><span class="o">.</span><span class="na">addExecutionInterceptor</span><span class="o">(</span><span class="k">new</span> <span class="n">TracingInterceptor</span><span class="o">())</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code><span class="o">.</span><span class="na">addExecutionInterceptor</span><span class="o">(</span><span class="k">new</span> <span class="n">TracingHandler</span> <span class="o">())</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> You can find the solution to this step in the <a href="#todo-2-solution" target="_self">TODO 2 Solution</a> section at the bottom of these instructions.</p>
+
+<p>AWS X-Ray lets you add annotations to data emitted from specific components or services in your application. You can use this data to append business-specific metadata that help you better diagnose issues. You can also view and filter data for traces by properties such as annotation value, average latencies, HTTP response status, timestamp, database table used, and more.</p>
+
+<p><a id="todo-3" target="_blank"></a></p>
+<ol start="9">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> Choose the correct snippet for adding annotations to your code and paste it in the <strong>TODO 3</strong> section.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight java"><code><span class="n">Subsegment</span> <span class="n">currentSubsegment</span> <span class="o">=</span> <span class="n">AWSXRay</span><span class="o">.</span><span class="na">getCurrentSubsegment</span><span class="o">();</span>&#x000A;<span class="n">currentSubsegment</span><span class="o">.</span><span class="na">putAnnotation</span><span class="o">(</span><span class="s">"UserId"</span><span class="o">,</span> <span class="n">UserId</span><span class="o">);</span>&#x000A;<span class="n">currentSubsegment</span><span class="o">.</span><span class="na">putAnnotation</span><span class="o">(</span><span class="s">"NoteId"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight java"><code><span class="n">Subsegment</span> <span class="n">currentSubsegment</span> <span class="o">=</span> <span class="n">AWSXRay</span><span class="o">.</span><span class="na">getCurrentSubsegment</span><span class="o">();</span>&#x000A;<span class="n">currentSubsegment</span><span class="o">.</span><span class="na">addAnnotation</span><span class="o">(</span><span class="s">"UserId"</span><span class="o">,</span> <span class="n">UserId</span><span class="o">);</span>&#x000A;<span class="n">currentSubsegment</span><span class="o">.</span><span class="na">addAnnotation</span><span class="o">(</span><span class="s">"NoteId"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>&#x000A;</code></pre>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> You can find the solution to this step in the <a href="#todo-3-solution" target="_self">TODO 3 Solution</a> section at the bottom of these instructions.</p>
+<ol start="10">
+<li>Save and close <strong>Handler.java</strong>.</li>
+</ol>
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! Once you deploy this new code later it will send trace data to X-Ray. All other functions already have X-Ray logging enabled, you can explore that code if you have time.</p>
+
+<h2 id="step5">Task 2: Configure logging capabilities in your deployment</h2>
+
+<p>You need to enable the AWS X-Ray service integration. Since the application was deployed with AWS SAM, you need to make changes to it with AWS SAM. In this task, you will learn more about an AWS SAM template and make changes to that template to enable tracing.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Review the anatomy of the AWS SAM template</li>
+<li>Globally enable AWS X-Ray Tracing for the application API Gateway and Lambda functions</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 2.1: Customize the AWS SAM template and identify the components</h3>
+
+<p>AWS SAM templates are an extension of AWS CloudFormation templates, with some additional components that make them easier to work with.</p>
+<ol start="11">
+<li>Open <strong>api/template.yml</strong> to view the AWS SAM template.</li>
+</ol>
+<p>A SAM template starts off with a Transform declaration, <strong>Transform: AWS::Serverless-2016-10-31</strong>. This declaration identifies an AWS CloudFormation template file as an AWS SAM template.</p>
+
+<p>The <strong>Globals</strong> section is unique to AWS SAM. It defines properties that are common to all your serverless functions and APIs. All CloudFormation resources of the type <strong>AWS::Serverless</strong> inherit the properties that are defined in the <strong>Globals</strong> section. In this template, logging was enabled for the API Gateway resources.</p>
+
+<p>In AWS SAM templates, the Resources section can contain a combination of AWS CloudFormation resources and AWS SAM resources. This template defines the serverless resources first.</p>
+
+<p>The <strong>pollyNotesAPI</strong> resource defines the API Gateway resource that your application will use. Here a Prod stage is established, CORS are enabled, the Regional deployment type is specified, and an Authorizer is specified for use.  CORS are enabled for the OPTIONS method or any others that you may create which do not use the Lambda proxy integration.</p>
+
+<p>Five AWS Lambda functions are defined using the <strong>AWS::Serverless::Function</strong> resource. Each resource specifies the location of the code relative to the template. The resource then defines the handler function, runtime, AWS Identity and Access Management (IAM) role, and event trigger. These functions refer to a common libraries packaged as a layer. The layer is defined using <strong>AWS::Serverless::LayerVersion</strong> and the common dependencies built using makefile.</p>
+
+<p>The <strong>Events</strong> section of the resource specifies the events that trigger the AWS::Serverless::Function. Events consist of a type and a set of properties that depend on the type. In this template it creates a method on the API Gateway resource that will route requests to the function.  By specifying an Authorizer, only authenticated requests are allowed to access this method. Because of the Lambda Proxy Integration, your function code for API configuration is much simpler than in previous labs.</p>
+
+<p>After the functions, <strong>pollyNotesTable</strong>, is the table that holds data for your application. This template uses a normal <strong>AWS::DynamoDB::Table</strong> resource since a sort key was required. Notice how you specify the partition key <em>userId</em> as a HASH, and the <em>noteId</em> sort key is a RANGE in a CloudFormation Template. The <strong>BillingMode</strong> is set to <strong>PAY_PER_REQUEST</strong>, which is the <strong>On-Demand</strong> billing mode. After you have better idea of how much traffic the application will use, you can change this to Provisioned mode, if it makes sense.</p>
+
+<p>The next four resources configure Amazon Cognito for your application to handle authentication.</p>
+
+<p>Finally, the <strong>Outputs</strong> section makes the values available that you need to configure your web application to use this API.</p>
+
+<h3>Task 2.2: Enable AWS X-Ray Tracing</h3>
+
+<p>You want to enable AWS X-Ray tracing on all functions and the API gateway. You could enable this per resource, but with AWS SAM you can do that globally.</p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Using <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-template-anatomy-globals.html" target="_blank">Globals section of the AWS SAM template</a>, choose the correct Globals section that has existing configuration plus tracing enabled for Functions and APIs.</p>
+
+<p><a id="todo-4" target="_blank"></a></p>
+<ol start="12">
+<li>
+<i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> Replace the code in <strong>TODO 4</strong> of the template file with the correct snippet below.</li>
+</ol><ul>
+<li>Choice A</li>
+</ul><pre class="highlight yaml"><code><span class="na">Globals</span><span class="pi">:</span>&#x000A;  <span class="na">TracingEnabled</span><span class="pi">:</span> <span class="s">true</span>&#x000A;  <span class="na">Api</span><span class="pi">:</span>&#x000A;    <span class="na">MethodSettings</span><span class="pi">:</span>&#x000A;      <span class="pi">-</span> <span class="na">LoggingLevel</span><span class="pi">:</span> <span class="s">INFO</span>&#x000A;        <span class="na">ResourcePath</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/*'</span>&#x000A;        <span class="na">HttpMethod</span><span class="pi">:</span> <span class="s1">'</span><span class="s">*'</span>&#x000A;</code></pre><ul>
+<li>Choice B</li>
+</ul><pre class="highlight yaml"><code><span class="na">Globals</span><span class="pi">:</span>&#x000A;  <span class="na">Function</span><span class="pi">:</span>&#x000A;    <span class="na">Tracing</span><span class="pi">:</span> <span class="s">Active</span>&#x000A;  <span class="na">Api</span><span class="pi">:</span>&#x000A;    <span class="na">TracingEnabled</span><span class="pi">:</span> <span class="s">true</span>&#x000A;    <span class="na">MethodSettings</span><span class="pi">:</span>&#x000A;      <span class="pi">-</span> <span class="na">LoggingLevel</span><span class="pi">:</span> <span class="s">INFO</span>&#x000A;        <span class="na">ResourcePath</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/*'</span>&#x000A;        <span class="na">HttpMethod</span><span class="pi">:</span> <span class="s1">'</span><span class="s">*'</span>&#x000A;</code></pre><ol start="13">
+<li>Save and close the <strong>template.yml</strong> file.</li>
+</ol>
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> You can find the solution to this step in the <a href="#todo-4-solution" target="_self">TODO 4 Solution</a> section at the bottom of these instructions.</p>
+
+<h2 id="step6">Task 3: Deploy your application using AWS SAM</h2>
+
+<p>With the AWS SAM CLI, you can invoke Lambda functions locally, create a deployment package for your serverless application, deploy your serverless application to the AWS Cloud, and so on.</p>
+
+<p>Since SAM is using AWS CloudFormation, you are working with stacks. When the application was deployed as a part of this lab it created a stack. Just like any CloudFormation stack, you can update the stack by creating a changeset. The SAM CLI handles this for you.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> When the lab was started, an AWS CodeBuild project deployed the SAM application. It then used the Outputs to create the test Amazon DynamoDB items, Amazon Cognito user account, and deploy the web site to Amazon S3.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Install maven  and set java environment configurations in your AWS Cloud9 environment</li>
+<li>Build and deploy the AWS SAM application with the stack name <input readonly class="copyable-inline-input" size="15" type="text" value="polly-notes-api"> using the apiBucket</li>
+<li>Test the web application in your browser (hint: <strong>Username</strong> and <strong>Password</strong> are both <input readonly class="copyable-inline-input" size="7" type="text" value="student">)</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 3.1: Build and deploy the AWS SAM application</h3>
+
+<p>AWS Cloud9 instances are deployed without the Maven. This is needed so that the AWS SAM CLI can build this JAVA project.</p>
+<ol start="14">
+<li>Run the following commands to install Maven and set up JAVA alternatives.</li>
+</ol><ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Change directories into the <strong>~/environment/api/</strong> directory:</li>
+</ul><pre class="highlight shell"><code><span class="nb">cd</span> ~/environment/api/&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the command below to run the <strong>init.sh</strong> script:</li>
+</ul><pre class="highlight shell"><code>bash init.sh&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Truncated Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">Complete!<br>
+<b>Apache Maven 3.5.2 (138edd61fd100ec658bfa2d307c43b76940a5d7d; 2017-10-18T07:58:13Z)</b><br>
+Maven home: /usr/share/apache-maven<br>
+Java version: 11.0.12, vendor: Amazon<span>.</span>com Inc.<br>
+Java home: /usr/lib/jvm/java-11-amazon-corretto.x86_64<br>
+Default locale: en_US, platform encoding: UTF-8<br>
+OS name: "linux", version: "4.14.246-187.474.amzn2.x86_64", arch: "amd64", family: "unix"<br>
+</span></p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> There is more information about using Java in AWS Cloud9 in the Additional Resources section at the end of this lab.</p>
+
+<p>The following commands will build and deploy the SAM application. Start the following commands in the console, which will take up to 2 minutes, while you read an explanation of what is happening.</p>
+<ol start="15">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the following command to create a bucket variable to use for deployment:</li>
+</ol><pre class="highlight shell"><code><span class="nv">apiBucket</span><span class="o">=</span><span class="k">$(</span>aws s3api list-buckets --output text --query <span class="s1">'Buckets[?contains(Name, `pollynotesapi`) == `true`].Name'</span><span class="k">)</span>&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong>  Make sure that all files are saved before you perform the following step.</p>
+<ol start="16">
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the following commands in the AWS Cloud9 terminal.</li>
+</ol><ul>
+<li>Run the <strong>sam build</strong> command:</li>
+</ul><pre class="highlight shell"><code>sam build&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Truncated Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">Build Succeeded<br><br>
+Built Artifacts  : .aws-sam/build<br>
+Built Template   : .aws-sam/build/template.yaml<br><br>
+Commands you can use next<br>
+=========================<br>
+[*] Invoke Function: sam local invoke<br>
+[*] Deploy: sam deploy --guided<br><br><br>
+SAM CLI update available (1.33.0); (1.31.0 installed)<br>
+To download: ht<span>tps://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html</span><br>
+</span></p>
+<ul>
+<li>Run the <strong>sam deploy</strong> command:</li>
+</ul><pre class="highlight shell"><code>sam deploy --stack-name polly-notes-api --s3-bucket <span class="nv">$apiBucket</span> --parameter-overrides <span class="nv">apiBucket</span><span class="o">=</span><span class="nv">$apiBucket</span>&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Truncated Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">Uploading to 31116951d45f62f40e87d76944d2f838  9121833 / 9121833  (100.00%)<br>
+Uploading to cd20ebb6e0d572c11c45ae2c508c00a1  9121684 / 9121684  (100.00%)<br>
+Uploading to cc308c68a3bca72bf73c93891c8c07a4  9121918 / 9121918  (100.00%)<br>
+Uploading to 8d525e2086cf912700c52ba3ac98cb21  9121739 / 9121739  (100.00%)<br>
+Uploading to cf46e1ed5b261cd2123e41b18bc1b981  9122322 / 9122322  (100.00%)<br><br>
+      Deploying with following values<br>
+       ===============================<br>
+      Stack name                   : polly-notes-api<br>
+       Region                       : us-west-2<br>
+       Confirm changeset            : False<br>
+       Deployment s3 bucket         : qls-179878-511ea066ad0bac77-pollynotesapi-wwpvvd6pt7m0<br>
+       Capabilities                 : null<br>
+      Parameter overrides          : {"apiBucket": "qls-179878-511ea066ad0bac77-pollynotesapi-wwpvvd6pt7m0"}<br>
+      Signing Profiles             : {}<br><br>
+  Initiating deployment<br>
+  =====================<br>
+Uploading to 21db46b9e277d05514e9cae768390c61.template  5966 / 5966  (100.00%<br><br>
+CloudFormation outputs from deployed stack<br>
+-------------------------------------------------------------------------<br>
+Outputs<br>
+-------------------------------------------------------------------------<br>
+Key            ApiURL<br>
+Description    API Gateway endpoint URL for Prod stage<br>
+Value         ht<span>tps://w38clpwry3.execute-api.us-west-2.amazonaws.com/Prod</span> <br><br>
+Key           UserPoolId<br>
+Description   -<br>
+Value          us-west-2_ud1QxXIXs<br><br>
+Key           AppClientId<br>
+Description   -<br>
+Value         69vav3oavohae39avp6cb83nti<br><br>
+Key           CognitoPoolArn<br>
+Description   -<br>
+Value          arn:aws:cognito-idp:us-west-2:333217561387:userpool/us-west-2_ud1QxXIXs<br>
+-------------------------------------------------------------------------<br><br>
+Successfully created/updated stack - polly-notes-api in us-west-2<br>
+</span></p>
+
+<p><strong>SAM build</strong></p>
+
+<p>The sam build command processes your AWS SAM template file, application code, and any applicable language-specific files and dependencies. The command also copies build artifacts in the format and location expected for subsequent steps in your workflow. You specify dependencies in a manifest file that you include in your application, such as pom.xml for Maven projects, requirements.txt for Python functions, package.json for Node.js functions, and .NET project files (*.csproj).</p>
+
+<p><strong>sam deploy --stack-name polly-notes-api --s3-bucket $apiBucket</strong></p>
+
+<p>The AWS SAM CLI template file, built using the sam build command, is located in the .aws-sam subfolder (hidden in AWS Cloud9), and named template.yaml. The deploy command uploads the template and Lambda function code to Amazon S3 and then deploys the application with an AWS CloudFormation changeset.</p>
+
+<p>The <strong>--stack-name</strong> option is required. If you are updating an existing deployment it will match the originally deployed stack.  The <strong>--s3-bucket</strong> option is the Amazon S3 bucket name where your application template and function code are stored for deployment.</p>
+
+<p>Any outputs you specify in the CloudFormation template will be displayed at the end of the deployment.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> If you receive a message like the one below, press <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Don't Show Again</span></p>
+
+<p><img src="https://ap-northeast-1-tcprod.s3.amazonaws.com/courses/ILT-TF-200-DODEVA/v4.0.0/lab-7-java/instructions/en_us/images/git_warning.png" alt="Git warning"></p>
+
+<h3>Task 3.2: Test the website in your web browser</h3>
+
+<p>The web front-end is the same one used in the last lab. It is already configured to use the API deployed by SAM. You need to test the application to confirm that the functionality has not changed and everything was deployed correctly.</p>
+
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Keep in mind that the Lambda functions will take longer to run on the first invocation, this is called a <em>cold start</em>.  There are links in the <strong>Additional Resources</strong> section of the lab about how to mitigate this.</p>
+<ol start="17">
+<li><p>Paste the <strong>PollyNotesWebsite</strong> URL from the left of these instructions to a new web browser tab and test the deployed website.</p></li>
+<li><p>For <strong>Username</strong> and <strong>Password</strong>, enter <input readonly class="copyable-inline-input" size="7" type="text" value="student"></p></li>
+<li><p>In the <strong>Note</strong> text box, enter a new note and choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#007bff;border-color:#007bff;">Add</span></p></li>
+<li><p>Choose the <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;border-color:#17a2b8;"><i class="fas fa-pencil-alt"></i></span> edit button beside one of the notes.</p></li>
+<li><p>In the Note text box, edit the note text and choose <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#007bff;border-color:#007bff;">Update</span></p></li>
+<li><p>Enter text into the <strong>Search Notes</strong> box to confirm search functionality.</p></li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> This search is case sensitive.</p>
+<ol start="23">
+<li><p>Press the  <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#17a2b8;border-color:#17a2b8;"><i class="fas fa-bullhorn"></i></span> speak button to convert the note to speech and listen to the notes.</p></li>
+<li><p>Choose the <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#17a2b8;border-color:#17a2b8;"><i class="far fa-trash-alt"></i></span> delete button to delete the note.</p></li>
+</ol>
+<p>You received the following error:<br></p>
+
+<p><span style="border-radius:1px;border:1px solid #D90000;background-color:#FFC0CB;padding:1em 14em 1em 1em;white-space:nowrap;margin:1em;font-weight:bold;color:#D90000;">The API call returned an Error.</span></p>
+
+<p>It appears that everything is working except for the <strong>delete function</strong>. In the next task, you will use X-Ray to quickly find issues with your application.</p>
+
+<h2 id="step7">Task 4: Observe your application using AWS X-Ray</h2>
+
+<p>X-Ray can automatically highlight bugs or errors in your application code by analyzing the response code for each request made. This enables you to easily debug code without requiring you to reproduce the bug or error.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Generate a Service Map of the application traffic</li>
+<li>Using AWS X-Ray, determine why the delete function is failing</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 4.1: Explore findings in AWS X-Ray</h3>
+
+<p>You use the AWS X-Ray console to view the connections among client, server, and DynamoDB in a service map. The service map is a visual representation of the services that make up your web application. It is created from the trace data that it generates by serving requests.</p>
+<ol start="25">
+<li><p>On the <strong>"Your environments"</strong> web browser tab, on the navigation bar, in the unified search bar, search for and choose <input readonly class="copyable-inline-input" size="5" type="text" value="X-Ray"></p></li>
+<li><p>Choose the <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;">Last 5 minutes <i class="fas fa-caret-down"></i></span> and change it to show the last <strong>15 minutes</strong> of data.</p></li>
+</ol>
+<p>On the service map, you will either see the average and minimum latency for each node or the service icon. To make it easy to recognize what each node is in this lab, view the map with service icons.</p>
+<ol start="27">
+<li>In the bottom right confirm that the slider beside <strong>Service Icons</strong> is enabled.</li>
+</ol>
+<p>You can see that there are yellow or red indicators on <strong>Client</strong>, <strong>PollyNotesAPI/Prod</strong>, and <strong>Notes</strong>.</p>
+
+<p><i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Refresh the service map if you only see services with green circles around them. All of the traces may not be displayed yet.</p>
+<ol start="28">
+<li>Choose the <strong>DynamoDB</strong> table <strong>Notes</strong>.</li>
+</ol>
+<p><i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> If you have more than one, choose the one that does not have a complete green circle around it.</p>
+
+<p>You can see in the <strong>Response status</strong> section that the different colors indicate the percent of response types.</p>
+<ol start="29">
+<li>Choose <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Analyze traces <i class="fas fa-chart-line"></i></span>
+</li>
+</ol>
+<p>The Analytics screen shows information for all traces that were logged with connections to the <strong>Notes</strong> database.</p>
+
+<p>Scroll down to the <strong>HTTP STATUS CODE</strong> table. Status code 2xx is a success and 5xx is a failure.</p>
+<ol start="30">
+<li>Select the row of the <strong>502 Status Code</strong>.</li>
+</ol>
+<p>You only see information about failed operations attempted on this database.</p>
+<ol start="31">
+<li>Scroll down to the <strong>Trace list</strong> section at the bottom and select the <strong>URL</strong> for one of the traces listed.</li>
+</ol>
+<p>The trace details screen shows a map of the trace. This displays the API gateway stage, Lambda function and table that was needed. You want to start investigating at the last subsegment that was used.</p>
+<ol start="32">
+<li><p>In the details section, choose the row for <strong>DynamoDB</strong> that has a exclamation triangle (<i class="fas fa-exclamation-triangle" style="color:orange;"></i>) for the status.</p></li>
+<li><p>Choose the <strong>Exceptions</strong> tab.</p></li>
+</ol>
+<p>The <strong>Cause</strong> section of this tab shows you the detailed message. The Lambda delete function doesn't have permissions to delete items in the DynamoDB table.</p>
+
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example Error:</strong></p>
+
+<p><span style="font-family:Courier;">ClientError: An error occurred (AccessDeniedException) when calling the DeleteItem operation: User: arn:aws:sts::123456789101:assumed-role/DynamoDBReadRole/polly-notes-api-deleteFunction-aHsUxuZzCwTl is not authorized to perform: dynamodb:DeleteItem on resource: arn:aws:dynamodb:us-west-2:123456789101:table/Notes<br>
+</span></p>
+<ol start="34">
+<li>Choose the <span style="background-color:#257ACF;font-weight:bold;font-size:90%;color:white;border-radius:5px;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;white-space:nowrap;">Close</span>
+</li>
+</ol>
+<h2 id="step8">Task 5: Resolve application issues and re-deploy</h2>
+
+<p>Now that you have determined that the issue with the delete function is related to AWS Identity and Access Management (IAM) permissions, you can verify the configuration.  Since all parts of the SAM application are deployed by one template you only have one place to verify and make changes.</p>
+
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">High-Level Instructions</span></p>
+<ul>
+<li>Find the issue in your AWS SAM template and fix it</li>
+<li>Build and deploy the AWS SAM application with the stack name <input readonly class="copyable-inline-input" size="15" type="text" value="polly-notes-api"> using the apiBucket</li>
+<li>Confirm that you can delete notes</li>
+</ul>
+<p><span style="border-radius:2px;color:#fff;background-color:#232f3e;padding-right:4em;padding-left:4em;white-space:nowrap;margin:1em;font-weight:bold;">Detailed Instructions</span></p>
+
+<h3>Task 5.1: Associate the correct IAM Role with the delete function</h3>
+<ol start="35">
+<li>On the <strong>"Cloud9-..."</strong> web browser tab, in the <strong>api</strong> folder, open <strong>template.yml</strong>.</li>
+</ol>
+<p>When you create a Lambda function you have to specify an IAM role for it to access AWS resources. There are three IAM roles created for you to use in this lab.</p>
+<ul>
+<li>DynamoDBReadRole</li>
+<li>DynamoDBWriteRole</li>
+<li>DictateRole</li>
+</ul>
+<p>All roles allow the functions to write to Amazon CloudWatch and AWS X-Ray. The first two allow read or write access to the DynamoDB table for this application. The last role is only used for the dictate function and provides the permissions needed to access DynamoDB, S3, and Polly. Looking at the <strong>deleteFunction</strong> resource, the wrong role has been configured. Replace the incorrect role ARN with the correct ARN.</p>
+<ol start="36">
+<li><p>Change the deleteFunction Lambda Role property from <strong>!Sub arn:aws:iam::\${AWS::AccountId}:role/DynamoDBReadRole</strong> to <input readonly class="copyable-inline-input" size="58" type="text" value="!Sub arn:aws:iam::${AWS::AccountId}:role/DynamoDBWriteRole"></p></li>
+<li><p>Save and close the <strong>template.yml</strong>.</p></li>
+</ol>
+<h3>Task 5.2: Build and Deploy the SAM application</h3>
+
+<p>To update the API, build and deploy the SAM application with the corrected template.</p>
+<ol start="38">
+<li>Run the following commands in the AWS Cloud9 terminal.</li>
+</ol><ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Change directories into the <strong>~/environment/api/</strong> directory with the following command:</li>
+</ul><pre class="highlight shell"><code><span class="nb">cd</span> ~/environment/api/&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">None, unless there is an error.<br>
+</span></p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the <strong>sam build</strong> command:</li>
+</ul><pre class="highlight shell"><code>sam build&#x000A;&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Truncated Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">Build Succeeded<br><br>
+Built Artifacts  : .aws-sam/build<br>
+Built Template   : .aws-sam/build/template.yaml<br><br>
+Commands you can use next<br>
+=========================<br>
+[*] Invoke Function: sam local invoke<br>
+[*] Deploy: sam deploy --guided<br>
+</span></p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Run the <strong>sam deploy</strong> command:</li>
+</ul><pre class="highlight shell"><code>sam deploy --stack-name polly-notes-api --s3-bucket <span class="nv">$apiBucket</span> --parameter-overrides <span class="nv">apiBucket</span><span class="o">=</span><span class="nv">$apiBucket</span>&#x000A;</code></pre>
+<p><i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected Output:</strong></p>
+
+<p><span style="font-family:Courier;">CloudFormation outputs from deployed stack<br>
+-------------------------------------------------------------------------<br>
+Outputs<br>
+-------------------------------------------------------------------------<br>
+Key            ApiURL<br>
+Description    API Gateway endpoint URL for Prod stage<br>
+Value         ht<span>tps://w38clpwry3.execute-api.us-west-2.amazonaws.com/Prod </span> <br><br>
+Key           UserPoolId<br>
+Description   -<br>
+Value          us-west-2_ud1QxXIXs <br><br>
+Key           AppClientId<br>
+Description   -<br>
+Value         69vav3oavohae39avp6cb83nti<br><br>
+Key           CognitoPoolArn<br>
+Description   -<br>
+Value          arn:aws:cognito-idp:us-west-2:123456789101:userpool/us-west-2_ud1QxXIXs<br>
+-------------------------------------------------------------------------<br><br>
+Successfully created/updated stack - polly-notes-api in us-west-2<br>
+</span></p>
+
+<h3>Task 5.3: Test the changes in your web browser</h3>
+
+<p>Once the deployment is complete you need to test your changes.</p>
+<ol start="39">
+<li>In the <strong>"Polly Notes Application"</strong> web browser tab, choose the <span style="background-color:white;font-weight:bold;font-size:90%;color:#545b64;border-color:#545b64;border-radius:2px;border-width:1px;border-style:solid;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;white-space:nowrap;color:#17a2b8;border-color:#17a2b8;"><i class="far fa-trash-alt"></i></span> delete button to delete the note.</li>
+</ol>
+<p>It should delete with out any errors.</p>
+
+<h3>Optional Task 5.4: Review the application traffic in AWS X-Ray</h3>
+
+<p>AWS X-Ray is still receiving new traces from your application whenever there is activity. Return to the X-Ray console and confirm that everything is healthy now.</p>
+<ol start="40">
+<li><p>Logout and back into the web application and test repeat the same test actions you performed in <strong>Task 3.2</strong>.</p></li>
+<li><p>In the <strong>"AWS X-Ray"</strong> web browser tab, on the left navigation panel, choose <strong>Service Map</strong> and confirm the health of the application.</p></li>
+</ol>
+<h2 id="step9">Summary</h2>
+
+<p><i class="far fa-thumbs-up" style="color:#0073bb;"></i> Congratulations! Your service map will only show successful traces for the recent tests. Trace data sent to X-Ray is generally available for retrieval and filtering within 30 seconds of it being received by the service. X-Ray stores trace data for the last 30 days. This enables you to query trace data going back 30 days.</p>
+
+<p>You can now:</p>
+<ul>
+<li>Instrument your application code to use AWS X-Ray capabilities.</li>
+<li>Enable your application deployment package to generate logs.</li>
+<li>Understand the key components of AWS SAM template and deploy your application.</li>
+<li>Create X-Ray service maps to observe end-to-end processing behavior of your application.</li>
+<li>Analyze and debug application issues using X-Ray traces and annotations.</li>
+</ul>
+
+
+<h2 id="step10">End Lab</h2>
+
+<p>Follow these steps to close the console, end your lab, and evaluate the experience.</p>
+<ol start="42">
+<li><p>Return to the AWS Management Console.</p></li>
+<li><p>On the navigation bar, choose <strong>awsstudent@&lt;AccountNumber&gt;</strong>, and then choose <strong>Sign Out</strong>.</p></li>
+<li><p>Choose <span style="background-color:#D93025;font-family:Google Sans;font-weight:bold;font-size:90%;color:white;border-color:#D93025;border-radius:4px;border-width:2px;border-style:solid;padding-top:5px;padding-bottom:5px;padding-left:10px;padding-right:10px;">End Lab</span></p></li>
+<li><p>Choose <span style="background-color:#DEDEDE;font-family:Google Sans;font-weight:bold;font-size:90%;color:#444;border-width:1px;border-style:solid;border-color:#444;padding-top:3px;padding-bottom:3px;padding-left:10px;padding-right:10px;">OK</span></p></li>
+<li><p>(Optional):</p></li>
+</ol><ul>
+<li>Select the applicable number of stars <i class="far fa-star"></i>
+</li>
+<li>Type a comment</li>
+<li>
+<p>Choose <strong>Submit</strong></p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+</li>
+</ul>
+<p>You may close the window if you don't want to provide feedback.<br>
+For more information about AWS Training and Certification, see <a href="https://aws.amazon.com/training/" target="_blank"><em>https://aws.amazon.com/training/</em></a>.</p>
+
+<p><em>Your feedback is welcome and appreciated.</em></p>
+
+<p>If you would like to share any feedback, suggestions, or corrections, please provide the details in our <a href="https://support.aws.amazon.com/#/contacts/aws-training" target="_blank"><em>AWS Training and Certification Contact Form</em></a>.</p>
+
+<h2 id="step11">Additional Resources</h2>
+<ul>
+<li><a href="https://aws.amazon.com/serverless/sam/faqs/" target="_blank">What is the AWS Serverless Application Model (AWS SAM)</a></li>
+<li><a href="https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html" target="_blank">Using AWS Lambda with AWS X-Ray</a></li>
+<li><a href="https://docs.aws.amazon.com/cloud9/latest/user-guide/sample-java.html" target="_blank">Java samble for AWS Cloud9</a></li>
+<li><a href="https://aws.amazon.com/xray/faqs/" target="_blank">AWS X-Ray FAQs</a></li>
+<li><a href="https://aws.amazon.com/blogs/compute/scheduling-aws-lambda-provisioned-concurrency-for-recurring-peak-usage/" target="_blank">Scheduling AWS Lambda Provisioned Concurrency for recurring peak usage</a></li>
+<li><a href="https://docs.aws.amazon.com/cloud9/latest/user-guide/move-environment.html#move-environment-resize" target="_blank">Resize an Amazon EBS volume used by a AWS Cloud9 environment</a></li>
+</ul>
+<h2 id="step12">Code Challenge Solutions</h2>
+
+<p><a id="todo-2-solution" target="_blank"></a></p>
+
+<h3>TODO 2 Solution</h3>
+<ul>
+<li>
+<strong>Choice A is the  correct code snippet.</strong>
+TracingInterceptor</li>
+</ul><pre class="highlight java"><code><span class="o">.</span><span class="na">addExecutionInterceptor</span><span class="o">(</span><span class="k">new</span> <span class="n">TracingInterceptor</span><span class="o">())</span>&#x000A;</code></pre><ul>
+<li>Choice B is incorrect because TracingHandler is applicable as a request handler with AmazonDynamoDBClient only.</li>
+</ul>
+<p><a href="#todo-2" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-3-solution" target="_blank"></a></p>
+
+<h3>TODO 3 Solution</h3>
+<ul>
+<li>
+<strong>Choice A is the correct code snippet.</strong>
+putAnnotation<br>
+</li>
+</ul><pre class="highlight java"><code><span class="n">Subsegment</span> <span class="n">currentSubsegment</span> <span class="o">=</span> <span class="n">AWSXRay</span><span class="o">.</span><span class="na">getCurrentSubsegment</span><span class="o">();</span>&#x000A;<span class="n">currentSubsegment</span><span class="o">.</span><span class="na">putAnnotation</span><span class="o">(</span><span class="s">"UserId"</span><span class="o">,</span> <span class="n">UserId</span><span class="o">);</span>&#x000A;<span class="n">currentSubsegment</span><span class="o">.</span><span class="na">putAnnotation</span><span class="o">(</span><span class="s">"NoteId"</span><span class="o">,</span> <span class="n">id</span><span class="o">);</span>&#x000A;</code></pre><ul>
+<li>Choice B is incorrect because it is using <strong>addAnnotation</strong> instead of <strong>putAnnotation</strong>.</li>
+</ul>
+<p><a href="#todo-3" target="_self">Return to the instructions</a></p>
+
+<p><a id="todo-4-solution" target="_blank"></a></p>
+
+<h3>TODO 4 Solution</h3>
+<ul>
+<li><p>Choice A is incorrect because you have to specify the resource types you want to enable tracing for.</p></li>
+<li><p><strong>Choice B is the correct code snippet.</strong></p></li>
+</ul><pre class="highlight yaml"><code><span class="na">Globals</span><span class="pi">:</span>&#x000A;  <span class="na">Function</span><span class="pi">:</span>&#x000A;    <span class="na">Tracing</span><span class="pi">:</span> <span class="s">Active</span>&#x000A;  <span class="na">Api</span><span class="pi">:</span>&#x000A;    <span class="na">TracingEnabled</span><span class="pi">:</span> <span class="s">true</span>&#x000A;    <span class="na">MethodSettings</span><span class="pi">:</span>&#x000A;      <span class="pi">-</span> <span class="na">LoggingLevel</span><span class="pi">:</span> <span class="s">INFO</span>&#x000A;        <span class="na">ResourcePath</span><span class="pi">:</span> <span class="s1">'</span><span class="s">/*'</span>&#x000A;        <span class="na">HttpMethod</span><span class="pi">:</span> <span class="s1">'</span><span class="s">*'</span>&#x000A;</code></pre>
+<p><a href="#todo-4" target="_self">Return to the instructions</a></p>
+
+
+
+<p><a id="appendix" target="_blank"></a></p>
+
+<h2 id="step13">Appendix</h2>
+
+<h3>AWS Services Not Used in This Lab</h3>
+
+<p>AWS services that are not used in this lab are deactivated in the lab environment. In addition, the capabilities of the services used in this lab are limited to what the lab requires. Expect errors when accessing other services or performing actions beyond those provided in this lab guide.</p>
+
+<h3>Icon Key</h3>
+
+<p>Various icons are used throughout this lab to call attention to certain aspects of the guide. The following list explains the purpose for each one:</p>
+<ul>
+<li>
+<i class="fas fa-keyboard"></i> <strong>Command:</strong> Specifies the command you must run.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Example:</strong> See an example.</li>
+<li>
+<i class="fas fa-clipboard-check" style="color:#6aaf35;"></i> <strong>Expected output:</strong> Verify the output of a command or edited file.</li>
+<li>
+<i class="fas fa-sticky-note" style="color:#ec7211;"></i> <strong>NOTE:</strong> Specifies important hints, tips, guidance, or advice.</li>
+<li>
+<i class="fas fa-info-circle" style="color:#00a1c9;"></i> <strong>Additional information:</strong> Specifies where to find more information.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#ec7211;"></i> <strong>CAUTION:</strong> Calls attention to information of special interest or importance. Failure to read the note does not result in physical harm to the equipment or data, but could result in the need to repeat certain steps.</li>
+<li>
+<i class="fas fa-user-shield" style="color:#00a1c9;"></i> <strong>Security:</strong> Identifies opportunities to incorporate security best practices.</li>
+<li>
+<i class="fas fa-exclamation-triangle" style="color:#d13212;"></i> <strong>WARNING:</strong> Draws special attention to actions that are irreversible and could potentially impact the failure of a command or process. Includes warnings about configurations that cannot be changed after they are made.</li>
+<li>
+<i class="far fa-comment" style="color:#00a1c9;"></i> <strong>Consider:</strong> Suggests a moment to pause to consider how you might apply a concept in your own environment or to initiate a conversation about the topic at hand.</li>
+<li>
+<p><i class="fas fa-file-code" style="color:#00a1c9;"></i> <strong>Copy/Paste:</strong> In some cases, you may execute a script or apply a file that has been pre-created for you. This icon signifies a code block that is used to display the contents of the script or file you interacted with.</p>
+<ul>
+<li>When you need to copy only a certain part of a code block, there will be numbered <strong>TODO</strong> comments in the code.<span><br><br></span>
+</li>
+</ul>
+</li>
+<li><p><i class="far fa-compass" style="color:#dd6b10;"></i> <strong>Context:</strong> When asked to open the <strong>Context Menu</strong> for an item, this is the same action as right-clicking for a mouse or the appropriate action for your particular pointing device.</p></li>
+</ul>
+<p><a href="#prerequisites" target="_self">Return to the instructions</a></p>
+
+</div>
+</div>
+
+
+<div class='lab-content__end-lab-button js-end-lab-button-container hidden'>
+<ql-lab-control-button class='js-end-lab-button' running></ql-lab-control-button>
+</div>
+<!-- / TODO: Move recommendations into the end lab modal -->
+</ql-drawer-content>
+<ql-drawer end id='outline-drawer' open slot='drawer' width='320'>
+<div aria-label='Sommario del lab' role='navigation'>
+<ul class='lab-content__outline js-lab-content-outline'>
+<li><a href='#step1'>Prerequisites</a></li><li><a href='#step2'>Overview</a></li><li><a href='#step3'>Start Lab</a></li><li><a href='#step4'>Task 1: Configure AWS X-Ray capabilities in your code</a></li><li><a href='#step5'>Task 2: Configure logging capabilities in your deployment</a></li><li><a href='#step6'>Task 3: Deploy your application using AWS SAM</a></li><li><a href='#step7'>Task 4: Observe your application using AWS X-Ray</a></li><li><a href='#step8'>Task 5: Resolve application issues and re-deploy</a></li><li><a href='#step9'>Summary</a></li><li><a href='#step10'>End Lab</a></li><li><a href='#step11'>Additional Resources</a></li><li><a href='#step12'>Code Challenge Solutions</a></li><li><a href='#step13'>Appendix</a></li>
+</ul>
+</div>
+</ql-drawer>
+</ql-drawer-container>
+</ql-drawer-content>
+</ql-drawer-container>
+
+
+
+</div>
+</main>
+
+<span class='hidden' id='flash-sibling-before'></span>
+<ql-snackbar></ql-snackbar>
+
+
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='modal-content mdl-shadow--24dp'>
+<div class='modal-body'>
+<p class='l-mbm'>
+The application that you have built in previous labs has been re-deployed with AWS SAM. You will instrument the application code with AWS X-Ray to observe the operational state of the application.
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Durata:
+</strong>
+Configurazione in 2 m
+&middot;
+Accesso da 120 m
+&middot;
+Completamento in 120 m
+</p>
+<p class='small-label l-mbs'>
+<strong>Area geografica AWS:</strong>
+[us-west-2] <strong>US West (Oregon)</strong>
+</p>
+<p class='small-label l-mbs'>
+
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://it-flane.qwiklabs.com/catalog_lab/73990">https://it-flane.qwiklabs.com/catalog_lab/73990</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='button button--text' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix' tabindex='-1'></iframe>
+</div>
+<ql-dialog headline='Qual è il tuo livello di soddisfazione rispetto a questo lab?&lt;span aria-hidden=&quot;true&quot;&gt;*&lt;/span&gt;' id='lab-review-dialog'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div aria-labelledby='lab-review-dialog' aria-required='true' aria-valuemax='5' aria-valuemin='0' aria-valuenow='0' class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0' id='lab-review-rateit' role='slider' tabindex='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="14798" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="2083" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="73990" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="14574" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Commenti aggiuntivi</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</form><ql-button disabled id='submit' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+<ql-dialog headline='Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?' icon='error_outline' id='js-lab-are-you-sure-dialog'>
+<ql-button id='js-are-you-sure-button' label='Invia' slot='action' text></ql-button>
+</ql-dialog>
+
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    ql.chat.init();
+  ql.jumpContent.init();
+  initLabContent();
+  ql.labOutline.links.init();
+  initLabReviewModal();
+  initLabReviewTranslations( {"star_amount_1":"1 stelle su 5","star_amount_2":"2 stelle su 5","star_amount_3":"3 stelle su 5","star_amount_4":"4 stelle su 5","star_amount_5":"5 stelle su 5"} )
+  ql.labAssessment.init();
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"Hai finito? Se termini il lab perderai tutto il tuo lavoro. Potresti non riuscire a riavviare il lab se è presente un limite di quota. Vuoi terminare il lab?","in_progress":"*In corso*","ending":"*Conclusione*","starting":"*Avvio… Attendi*","end_concurrent_labs":"È possibile eseguire un solo lab alla volta. Per avviare questo lab, conferma di voler terminare tutti i lab esistenti.","copied":"Copiato","no_resource":"Errore durante il recupero della risorsa.","no_support":"Non viene fornita assistenza","mac_press":"Premi ⌘-C per copiare","thanks_review":"Grazie per aver inserito una recensione per questo lab.","windows_press":"Premi Ctrl+C per copiare","days":"giorni"} );
+  ql.labRun.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+
+</body>
+</html>
+
