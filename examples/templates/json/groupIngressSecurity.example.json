@@ -1,0 +1,56 @@
+{
+    "GroupId": "sg-03e6c19dccb53672b",
+    "IpPermissions": [
+        {
+            "FromPort": 22,
+            "IpProtocol": "tcp",
+            "IpRanges": [
+                {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": "SSH ipv4 permission"
+                }
+            ],
+            "Ipv6Ranges": [
+                {
+                    "CidrIpv6": "::/0",
+                    "Description": "SSH ipv6 permission"
+                }
+            ],
+            "ToPort": 22
+        },
+        {
+            "FromPort": 80,
+            "IpProtocol": "tcp",
+            "IpRanges": [
+                {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": "HTTP ipv4 permission"
+                }
+            ],
+            "Ipv6Ranges": [
+                {
+                    "CidrIpv6": "::/0",
+                    "Description": "HTTP ipv6 permission"
+                }
+            ],
+            "ToPort": 80
+        },
+        {
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "IpRanges": [
+                {
+                    "CidrIp": "0.0.0.0/0",
+                    "Description": "HTTPS ipv4 permission"
+                }
+            ],
+            "Ipv6Ranges": [
+                {
+                    "CidrIpv6": "::/0",
+                    "Description": "HTTPS ipv6 permission"
+                }
+            ],
+            "ToPort": 443
+        }
+    ]
+}

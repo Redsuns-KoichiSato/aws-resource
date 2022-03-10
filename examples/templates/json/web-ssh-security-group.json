@@ -1,0 +1,50 @@
+{
+    "group-id": "sg-03e6c19dccb53672b",
+    "ip-permissions": [
+        {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "Ipv6Ranges": [
+                {
+                    "CidrIpv6": "::/0"
+                }
+            ],
+            "Ipv4Ranges": [
+                {
+                    "CidrIpv4": "0.0.0.0/0"
+                }
+            ]
+        },
+        {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "Ipv6Ranges": [
+                {
+                    "CidrIpv6": "::/0"
+                }
+            ],
+            "Ipv4Ranges": [
+                {
+                    "CidrIpv4": "0.0.0.0/0"
+                }
+            ]
+        },
+        {
+            "IpProtocol": "tcp",
+            "FromPort": 443,
+            "ToPort": 443,
+            "Ipv6Ranges": [
+                {
+                    "CidrIpv6": "::/0"
+                }
+            ],
+            "Ipv4Ranges": [
+                {
+                    "CidrIpv4": "0.0.0.0/0"
+                }
+            ]
+        }
+    ]
+}
